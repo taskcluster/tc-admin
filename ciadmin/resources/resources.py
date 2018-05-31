@@ -9,12 +9,9 @@ import blessings
 import functools
 import textwrap
 import itertools
-import difflib
-import re
 from memoized import memoized
 from sortedcontainers import SortedKeyList
 
-from .util import strip_ansi
 from ..util import (
     MatchList,
     pretty_json,
@@ -153,39 +150,3 @@ class Resources:
         return Resources(
             (Resource.from_json(r) for r in json['resources']),
             json['managed'])
-
-    def diff(self, other, **kwargs):
-        '''
-        Compare changes from other to self, returning a string.
-
-        kwargs are passed to difflib.unified_diff
-        '''
-        left = str(other).split('\n')
-        right = str(self).split('\n')
-        resources_start = left.index('resources:')
-        context_re = re.compile(r'^@@ -([0-9]*),')
-        label_re = re.compile(r'^  ([^ ].*)')  # lines with exactly two spaces indentation
-
-        def contextualize(rangeInfo):
-            'add context information to range (@@ .. @@) line'
-            match = context_re.match(rangeInfo)
-            if not match:
-                return ''
-            line = int(match.group(1))
-            while line > resources_start:
-                line -= 1
-                match = label_re.match(left[line])
-                if match:
-                    return match.group(1)
-            return ''
-
-        lines = difflib.unified_diff(left, right, lineterm='', **kwargs)
-        colors = {
-            '-': lambda s: t.red(strip_ansi(s)),
-            '+': lambda s: t.green(strip_ansi(s)),
-            '@': lambda s: t.yellow(strip_ansi(s)) + ' ' + contextualize(s),
-            ' ': lambda s: s,
-        }
-        # colorize the lines
-        lines = (colors[l[0]](l).rstrip() for l in (line if line else ' ' for line in lines))
-        return '\n'.join(lines)

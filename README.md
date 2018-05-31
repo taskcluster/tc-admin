@@ -23,6 +23,7 @@ You do not need any Taskcluster credentials to run this command, and it's best t
 If you need to make modifications to the `ci-configuration` repository, you can point these tools to a local copy of the repository with `--ci-configuration-directory`.
 You can also point to a different repository or revision with `--ci-configuration-repository` and `--ci-configuration-revision`, respectively.
 
+See `ciadmin <command> --help` for more useful options.
 
 # Development
 

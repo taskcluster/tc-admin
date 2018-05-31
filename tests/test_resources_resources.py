@@ -256,19 +256,3 @@ def test_resources_repr():
 		}
 	    ]
 	}''')
-
-def test_resources_diff():
-    'Diffing two resources returns a dif'
-    left = Resources([Thing('a', 'no big deal'), Thing('x', 'abc')], ['*'])
-    right = Resources([Thing('a', 'no big deal'), Thing('x', 'def')], ['*'])
-    # note that this diff is selected to exercise the contextualize function, so "Thing=a:"
-    # appears on the range line
-    assert left.diff(right, fromfile='left', tofile='right') == textwrap.dedent('''\
-        --- left
-        +++ right
-        @@ -8,4 +8,4 @@ Thing=a:
-
-           Thing=x:
-             thingId: x
-        -    value: def
-        +    value: abc''')

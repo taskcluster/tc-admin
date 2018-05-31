@@ -8,6 +8,7 @@ import functools
 import aiohttp
 import attr
 import json
+import re
 
 _aiohttp_session = None
 
@@ -76,3 +77,12 @@ class MatchList:
         self._patterns = sorted(
             p1 for p1 in patterns if
             all(p1 == p2 or not (p2.endswith('*') and p1.startswith(p2[:-1])) for p2 in patterns))
+
+
+# from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
+ANSI_ESCAPE = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -/]*[@-~]')
+
+
+def strip_ansi(line):
+    'Strip ANSI color codes from a line of text (used to colorize diffs)'
+    return ANSI_ESCAPE.sub('', line)

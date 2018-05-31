@@ -12,6 +12,7 @@ from .util import with_aiohttp_session
 from . import generate
 from . import current
 from . import output
+from . import diff
 
 
 def run_async(fn):
@@ -53,10 +54,11 @@ async def currentCommand(**kwargs):
 
 @main.command(name='diff')
 @generate.options
+@diff.options
 @run_async
 @with_aiohttp_session
 async def diffCommand(**kwargs):
     'Compare the the current and expected runtime configuration'
     expected = await generate.resources()
     actual = await current.resources(expected.managed)
-    print(expected.diff(actual, fromfile='generated', tofile='current', n=8))
+    diff.show_diff(expected, actual)
