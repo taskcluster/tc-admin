@@ -35,10 +35,10 @@ async def update_resources(resources):
             if project.access == 'scm_level_{}'.format(level):
                 scopes.append('assume:repo:hg.mozilla.org/{}:*'.format(project.hgmo_path))
 
-        # refer to the in-tree-action-access roles for any defined actions
+        # refer to the in-tree-action-trigger roles for permission to trigger any defined actions
         trust_domains = set(a.trust_domain for a in actions if a.level == level and group in a.groups)
         for trust_domain in trust_domains:
-            scopes.append('project:{}:in-tree-action-access:active_scm_level_{}'.format(trust_domain, level))
+            scopes.append('assume:project:{}:in-tree-action-trigger:active_scm_level_{}'.format(trust_domain, level))
 
         if scopes:
             resources.add(Role(roleId=roleId, description=description, scopes=scopes))
