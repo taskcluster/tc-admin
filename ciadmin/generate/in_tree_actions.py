@@ -249,7 +249,7 @@ async def update_resources(resources):
                 continue
 
             # ignore if we've already generated this hook
-            if (hookGroupId, hook.hookId) in added_hooks:
+            if hook.id in added_hooks:
                 continue
 
             # ignore if the hook has never been fired

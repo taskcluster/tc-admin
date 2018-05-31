@@ -105,6 +105,7 @@ class Resources:
         if not self.is_managed(resource.id):
             raise RuntimeError('unmanaged resource: ' + resource.id)
         self.resources.add(resource)
+        self._verify()
 
     def manage(self, pattern):
         'Add the given pattern to the list of managed resources'
