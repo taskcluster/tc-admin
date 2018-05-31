@@ -48,6 +48,10 @@ class Resource(object):
         d['kind'] = self.kind
         return d
 
+    def to_api(self):
+        'Construct a payload for Taskcluster API methods'
+        raise NotImplementedError
+
     @property
     def kind(self):
         'The kind of this instance'

@@ -13,6 +13,7 @@ from . import generate
 from . import current
 from . import output
 from . import diff
+from . import apply
 
 
 def run_async(fn):
@@ -62,3 +63,15 @@ async def diffCommand(**kwargs):
     expected = await generate.resources()
     actual = await current.resources(expected.managed)
     diff.show_diff(expected, actual)
+
+
+@main.command(name='apply')
+@generate.options
+@apply.options
+@run_async
+@with_aiohttp_session
+async def applyCommand(**kwargs):
+    'Compare the the current and expected runtime configuration'
+    expected = await generate.resources()
+    actual = await current.resources(expected.managed)
+    await apply.apply_changes(expected, actual)

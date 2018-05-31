@@ -27,3 +27,10 @@ class Role(Resource):
             roleId=api_result['roleId'],
             description=api_result['description'],
             scopes=api_result['scopes'])
+
+    def to_api(self):
+        'Construct a payload for use with auth.createRole or auth.updateRole'
+        return {
+            'description': self.description,
+            'scopes': self.scopes,
+        }

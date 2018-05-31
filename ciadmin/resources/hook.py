@@ -28,8 +28,6 @@ class Hook(Resource):
     owner = attr.ib(type=str)
     emailOnError = attr.ib(type=bool)
     schedule = attr.ib(type=tuple, converter=schedule_converter, metadata={'formatter': list_formatter})
-    # deadline -- ignored (deprecated)
-    # expires -- ignored (deprecated)
     task = attr.ib(type=dict, metadata={'formatter': json_formatter})
     triggerSchema = attr.ib(type=dict, metadata={'formatter': json_formatter})
 
@@ -51,3 +49,19 @@ class Hook(Resource):
             schedule=api_result['schedule'],
             task=api_result['task'],
             triggerSchema=api_result['triggerSchema'])
+
+    def to_api(self):
+        'Construct a payload for Hooks.createHook and Hooks.updateHook'
+        return {
+            'hookGroupId': self.hookGroupId,
+            'hookId': self.hookId,
+            'metadata': {
+                'name': self.name,
+                'description': self.description,
+                'owner': self.owner,
+                'emailOnError': self.emailOnError,
+            },
+            'schedule': self.schedule,
+            'task': self.task,
+            'triggerSchema': self.triggerSchema,
+        }
