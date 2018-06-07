@@ -126,6 +126,14 @@ def test_resources_sorted():
     assert [r.thingId for r in coll] == ['x', 'y', 'z']
 
 
+def test_resources_filter():
+    coll = Resources([
+        Thing('abc', '3'),
+        Thing('abd', '1'),
+        Thing('dbc', '2'),
+    ], ['Thing=*']).filter('hin.=a')
+    assert [r.thingId for r in coll] == ['abc', 'abd']
+
 def test_resources_to_json():
     'Resources.to_json produces the expected data structure'
     rsrcs = Resources([

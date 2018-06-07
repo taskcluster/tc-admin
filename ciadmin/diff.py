@@ -102,13 +102,8 @@ def textual_diff(generated, current):
 def show_diff(generated, current, ignore_descriptions, grep, ids_only):
     # limit the resources considered if --grep
     if grep:
-        reg = re.compile(grep)
-        generated = Resources(
-            managed=generated.managed,
-            resources=(r for r in generated.resources if reg.search(r.id)))
-        current = Resources(
-            managed=current.managed,
-            resources=(r for r in current.resources if reg.search(r.id)))
+        generated = generated.filter(grep)
+        current = current.filter(grep)
 
     # reset descriptions to '' if --ignore-descriptions
     if ignore_descriptions:

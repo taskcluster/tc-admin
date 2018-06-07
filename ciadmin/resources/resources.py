@@ -4,6 +4,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
+import re
 import attr
 import blessings
 import functools
@@ -110,6 +111,14 @@ class Resources:
     def manage(self, pattern):
         'Add the given pattern to the list of managed resources'
         self.managed.add(pattern)
+
+    def filter(self, pattern):
+        '''Return a new Resources object with only resources matching the given regexp. The
+        'manages' property does not change.'''
+        reg = re.compile(pattern)
+        return Resources(
+            resources=[r for r in self.resources if reg.search(r.id)],
+            managed=self.managed)
 
     def _verify(self):
         'Verify that this set of resources is legal (all managed, no duplicates)'
