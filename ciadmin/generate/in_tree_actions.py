@@ -74,7 +74,7 @@ def make_hook(action, tcyml_content, tcyml_hash):
         schema = {
             'type': 'object',
             'additionalProperties': False,
-            'required': list(properties.keys()),
+            'required': sorted(properties.keys()),
             'properties': properties,
         }
         if _description:
