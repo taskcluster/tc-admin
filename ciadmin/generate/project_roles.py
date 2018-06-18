@@ -87,12 +87,19 @@ async def update_resources(resources):
             description='Scopes that apply to everything occuring in this repository - push, cron, actions, etc.',
             scopes=[
                 'assume:{role_root}:branch:{domain}:level-{level}:{alias}'.format(**subs),
-            ] + [
-                'assume:{role_root}:feature:{feature}:{domain}:level-{level}:{alias}'.format(
-                    feature=feature, **subs)
-                for feature in project.enabled_features
-                if feature in feature_roles
-            ] + project.extra_tc_scopes))
+            ]))
+
+        branch_scopes = [
+            'assume:{role_root}:feature:{feature}:{domain}:level-{level}:{alias}'.format(
+                feature=feature, **subs)
+            for feature in project.enabled_features
+            if feature in feature_roles
+        ] + project.extra_tc_scopes
+        if branch_scopes:
+            resources.add(Role(
+                roleId='{role_root}:branch:{domain}:level-{level}:{alias}'.format(**subs),
+                description='Scopes that apply to everything occuring in this repository - push, cron, actions, etc.',
+                scopes=branch_scopes))
 
         # repo:<repo>:branch:default
         resources.add(Role(
