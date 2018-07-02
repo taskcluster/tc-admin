@@ -33,8 +33,13 @@ async def hash_taskcluster_ymls():
     Download and hash .taskcluster.yml from every project repository
     '''
     projects = await Project.fetch_all()
-    tcyml_projects = [p for p in projects if p.feature(
-        'taskcluster-push') or p.feature('taskcluster-cron')]
+    def should_hash(project):
+        if not project.feature('taskcluster-push') and not project.feature('taskcluster-cron'):
+            return False
+        if project.is_try:
+            return False
+        return True
+    tcyml_projects = filter(should_hash, projects)
     tcymls = await asyncio.gather(*(tcyml.get(p.repo) for p in tcyml_projects))
 
     # hash the value of this .taskcluster.yml.  Note that this must match the
