@@ -30,7 +30,8 @@ HOOK_RETENTION_TIME = datetime.timedelta(days=60)
 
 async def hash_taskcluster_ymls():
     '''
-    Download and hash .taskcluster.yml from every project repository
+    Download and hash .taskcluster.yml from every project repository.  Returns
+    {alias: (parsed content, hash)}.
     '''
     projects = await Project.fetch_all()
     def should_hash(project):
@@ -39,7 +40,7 @@ async def hash_taskcluster_ymls():
         if project.is_try:
             return False
         return True
-    tcyml_projects = filter(should_hash, projects)
+    tcyml_projects = list(filter(should_hash, projects))
     tcymls = await asyncio.gather(*(tcyml.get(p.repo) for p in tcyml_projects))
 
     # hash the value of this .taskcluster.yml.  Note that this must match the
@@ -48,7 +49,7 @@ async def hash_taskcluster_ymls():
         return hashlib.sha256(val).hexdigest()[:10]
 
     rv = {}
-    for tcy in tcymls:
+    for project, tcy in zip(tcyml_projects, tcymls):
         # some ancient projects have no .taskcluster.yml
         if not tcy:
             continue
@@ -65,7 +66,8 @@ async def hash_taskcluster_ymls():
         # the expected {tasks: [{$let: .., in: ..}]}.  Those can be ignored too.
         if not isinstance(parsed['tasks'], list):
             continue
-        rv[hash(tcy)] = parsed
+
+        rv[project.alias] = parsed, hash(tcy)
     return rv
 
 
@@ -235,8 +237,18 @@ async def update_action_hook_resources(resources):
     # generate the hooks themselves and corresponding hook-id roles
     added_hooks = set()
     for action in actions:
-        for tcyml_hash, tcyml_content in hashed_tcymls.items():
-            hook = make_hook(action, tcyml_content, tcyml_hash)
+        # gather the hashes at the action's level or higher
+        hooks_to_make = {}  # {hash: content}, for uniqueness
+        for project in projects:
+            if project.alias not in hashed_tcymls:
+                continue
+            if project.level < action.level:
+                continue
+            content, hash = hashed_tcymls[project.alias]
+            hooks_to_make[hash] = content
+
+        for hash, content in hooks_to_make.items():
+            hook = make_hook(action, content, hash)
             resources.add(hook)
             added_hooks.add(hook.id)
 
