@@ -115,6 +115,8 @@ def show_diff(generated, current, ignore_descriptions, grep, ids_only):
             resources=(r.evolve(description='') for r in current.resources))
 
     if ids_only:
-        print(id_diff(generated, current))
+        result = id_diff(generated, current)
     else:
-        print(textual_diff(generated, current))
+        result = textual_diff(generated, current)
+    print(result)
+    return result.strip() != ''

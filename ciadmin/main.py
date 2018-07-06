@@ -7,6 +7,7 @@
 import functools
 import click
 import asyncio
+import sys
 
 from .util import with_aiohttp_session
 from . import generate
@@ -62,7 +63,9 @@ async def diffCommand(**kwargs):
     'Compare the the current and expected runtime configuration'
     expected = await generate.resources()
     actual = await current.resources(expected.managed)
-    diff.show_diff(expected, actual)
+    different = diff.show_diff(expected, actual)
+    if different:
+        sys.exit(1)
 
 
 @main.command(name='apply')
