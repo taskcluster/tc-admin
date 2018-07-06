@@ -75,3 +75,6 @@ async def applyCommand(**kwargs):
     expected = await generate.resources()
     actual = await current.resources(expected.managed)
     await apply.apply_changes(expected, actual)
+
+if __name__ == "__main__":
+    main()
