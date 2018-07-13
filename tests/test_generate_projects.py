@@ -17,7 +17,8 @@ async def test_fetch_empty(ciconfig_get):
 
 
 @pytest.mark.asyncio
-async def test_fetch_nodefaults(ciconfig_get):
+async def test_fetch_defaults(ciconfig_get):
+    'Test a fetch of project data only the required fields, applying defaults'
     ciconfig_get.fake_values['projects.yml'] = {
         "ash": {
             "repo": "https://hg.mozilla.org/projects/ash",
@@ -37,6 +38,7 @@ async def test_fetch_nodefaults(ciconfig_get):
         "access": "scm_level_2",
         "trust_domain": "gecko",
         # defaults
+        "is_try": False,
         "gecko_repo": None,
         "features": {},
         "extra_tc_scopes": [],
@@ -44,7 +46,8 @@ async def test_fetch_nodefaults(ciconfig_get):
 
 
 @pytest.mark.asyncio
-async def test_fetch_defaults(ciconfig_get):
+async def test_fetch_nodefaults(ciconfig_get):
+    'Test a fetch of project data with all required fields supplied'
     ciconfig_get.fake_values['projects.yml'] = {
         "ash": {
             "repo": "https://hg.mozilla.org/projects/ash",
@@ -52,6 +55,7 @@ async def test_fetch_defaults(ciconfig_get):
             "access": "scm_level_2",
             "trust_domain": "gecko",
             "gecko_repo": "https://hg.mozilla.org/mozilla-unified",
+            "is_try": True,
             "features": {
                 "taskcluster-push": True,
                 "taskcluster-cron": False,
@@ -69,7 +73,7 @@ async def test_fetch_defaults(ciconfig_get):
         "repo_type": "hg",
         "access": "scm_level_2",
         "trust_domain": "gecko",
-        # defaults
+        "is_try": True,
         "gecko_repo": "https://hg.mozilla.org/mozilla-unified",
         "features": {"taskcluster-push": True, "taskcluster-cron": False},
         "extra_tc_scopes": ["secret-scope"],
@@ -77,6 +81,7 @@ async def test_fetch_defaults(ciconfig_get):
 
 
 def test_project_feature():
+    'Test the feature method'
     prj = Project(alias='prj', repo='https://', repo_type='hg', access='scm_level_3', trust_domain='gecko',
                   features={'taskcluster-pull': True, 'taskcluster-cron': False})
     assert prj.feature('taskcluster-pull')
@@ -86,34 +91,40 @@ def test_project_feature():
 
 
 def test_project_enabled_features():
+    'Test enabled_features'
     prj = Project(alias='prj', repo='https://', repo_type='hg', access='scm_level_3', trust_domain='gecko',
                   features={'taskcluster-pull': True, 'taskcluster-cron': False})
     assert prj.enabled_features == ['taskcluster-pull']
 
 
 def test_project_level_property():
+    'Test the level attribute'
     prj = Project(alias='prj', repo='https://', repo_type='hg', access='scm_level_3', trust_domain='gecko')
     assert prj.level == 3
 
 
 def test_project_level_property_autoland():
+    'Test the level property for scm_autoland'
     prj = Project(alias='prj', repo='https://', repo_type='hg', access='scm_autoland', trust_domain='gecko')
     assert prj.level == 3
 
 
 def test_project_hmgo_path_property():
+    'Test the hgmo_path property'
     prj = Project(alias='prj', repo='https://hg.mozilla.org/a/b/c', repo_type='hg',
                            access='scm_level_3', trust_domain='gecko')
     assert prj.hgmo_path == 'a/b/c'
 
 
 def test_project_hmgo_path_property_trailing_slash():
+    'Test the hgmo_path property stripping trialing slashes'
     prj = Project(alias='prj', repo='https://hg.mozilla.org/a/b/c/', repo_type='hg',
                            access='scm_level_3', trust_domain='gecko')
     assert prj.hgmo_path == 'a/b/c'
 
 
 def test_project_hmgo_path_property_not_hg():
+    'Test the hgmo_path property for non-hg projects'
     prj = Project(alias='prj', repo='https://github.com/a/b/c/', repo_type='git',
                            access='scm_level_3', trust_domain='gecko')
     with pytest.raises(RuntimeError):
