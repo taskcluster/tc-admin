@@ -16,7 +16,7 @@ class Project:
     repo_type = attr.ib(type=str)
     access = attr.ib(type=str)
     trust_domain = attr.ib(type=str)
-    gecko_repo = attr.ib(type=str, default=None)
+    parent_repo = attr.ib(type=str, default=None)
     is_try = attr.ib(type=bool, default=False)
     features = attr.ib(type=dict, factory=lambda: {})
     extra_tc_scopes = attr.ib(type=list, factory=lambda: [])

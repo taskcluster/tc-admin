@@ -39,7 +39,7 @@ async def test_fetch_defaults(ciconfig_get):
         "trust_domain": "gecko",
         # defaults
         "is_try": False,
-        "gecko_repo": None,
+        "parent_repo": None,
         "features": {},
         "extra_tc_scopes": [],
     }
@@ -54,7 +54,7 @@ async def test_fetch_nodefaults(ciconfig_get):
             "repo_type": "hg",
             "access": "scm_level_2",
             "trust_domain": "gecko",
-            "gecko_repo": "https://hg.mozilla.org/mozilla-unified",
+            "parent_repo": "https://hg.mozilla.org/mozilla-unified",
             "is_try": True,
             "features": {
                 "taskcluster-push": True,
@@ -74,7 +74,7 @@ async def test_fetch_nodefaults(ciconfig_get):
         "access": "scm_level_2",
         "trust_domain": "gecko",
         "is_try": True,
-        "gecko_repo": "https://hg.mozilla.org/mozilla-unified",
+        "parent_repo": "https://hg.mozilla.org/mozilla-unified",
         "features": {"taskcluster-push": True, "taskcluster-cron": False},
         "extra_tc_scopes": ["secret-scope"],
     }

@@ -19,8 +19,8 @@ async def make_hook(project):
 
     # set up some options that differ for comm-central checkouts (which must
     # clone two repositories) and gecko checkouts (which only clone one)
-    if not project.gecko_repo:
-        # There is no `gecko_repo` for this project, so it is itself a regular gecko source repo
+    if not project.parent_repo:
+        # There is no `parent_repo` for this project, so it is itself a regular gecko source repo
         repo_env = {
             'GECKO_BASE_REPOSITORY': 'https://hg.mozilla.org/mozilla-unified',
             'GECKO_HEAD_REPOSITORY': project.repo,
@@ -31,11 +31,11 @@ async def make_hook(project):
         ]
         mach_cron_options = ''
     else:
-        # This project's configuration points to a separate gecko_repo, and should be checked
+        # This project's configuration points to a separate parent_repo, and should be checked
         # out as a subdirectory of that repo
         repo_env = {
             'GECKO_BASE_REPOSITORY': 'https://hg.mozilla.org/mozilla-unified',
-            'GECKO_HEAD_REPOSITORY': project.gecko_repo,
+            'GECKO_HEAD_REPOSITORY': project.parent_repo,
             'GECKO_HEAD_REF': 'default',
             'COMM_BASE_REPOSITORY': 'https://hg.mozilla.org/comm-central',
             'COMM_HEAD_REPOSITORY': project.repo,

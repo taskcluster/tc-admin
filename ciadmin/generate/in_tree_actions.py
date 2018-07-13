@@ -34,6 +34,7 @@ async def hash_taskcluster_ymls():
     {alias: (parsed content, hash)}.
     '''
     projects = await Project.fetch_all()
+
     def should_hash(project):
         if not project.feature('taskcluster-push') and not project.feature('taskcluster-cron'):
             return False
