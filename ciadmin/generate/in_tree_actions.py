@@ -36,6 +36,8 @@ async def hash_taskcluster_ymls():
     projects = await Project.fetch_all()
 
     def should_hash(project):
+        if not project.feature('gecko-actions'):
+            return False
         if not project.feature('taskcluster-push') and not project.feature('taskcluster-cron'):
             return False
         if project.is_try:
@@ -226,6 +228,7 @@ async def update_action_hook_resources(resources):
     hashed_tcymls = await hash_taskcluster_ymls()
     actions = await Action.fetch_all()
     projects = await Project.fetch_all()
+    projects = [p for p in projects if p.feature('gecko-actions')]
 
     # manage the in-tree-action-* hooks, and corresponding roles, for each trust domain
     trust_domains = set(action.trust_domain for action in actions)

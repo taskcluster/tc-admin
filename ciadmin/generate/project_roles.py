@@ -9,11 +9,27 @@ import textwrap
 from ..resources import Role
 from .projects import Project
 
+ROLE_ROOTS = {
+    'gecko': 'project:releng',
+    'comm': 'project:comm:thunderbird:comm:releng',
+}
+
 
 async def update_resources(resources):
-    '''
+    for root in ROLE_ROOTS.values():
+        resources.manage('Role={}:branch:*'.format(root))
+        resources.manage('Role={}:push:*'.format(root))
+        resources.manage('Role={}:feature:*'.format(root))
+        # nightly are still manually maintained
 
-    Manage the roles for various projects.  This is a tree of roles designed to
+    projects = await Project.fetch_all()
+    await update_resources_gecko(resources, [p for p in projects if p.feature('gecko-roles')])
+    await update_resources_non_gecko(resources, [p for p in projects if not p.feature('gecko-roles')])
+
+
+async def update_resources_gecko(resources, projects):
+    '''
+    Manage the roles for various gecko projects.  This is a tree of roles designed to
     minimize unnecessary repetition of scopes; it is designed as follows:
 
     - 'repo:<repo>:*' -- scopes for anything to do with the project's repo
@@ -58,23 +74,10 @@ async def update_resources(resources):
         'is-trunk',
     ])
 
-    role_roots = {
-        'gecko': 'project:releng',
-        'comm': 'project:comm:thunderbird:comm:releng',
-    }
-
-    for root in role_roots.values():
-        resources.manage('Role={}:branch:*'.format(root))
-        resources.manage('Role={}:push:*'.format(root))
-        resources.manage('Role={}:feature:*'.format(root))
-        # nightly are still manually maintained
-
-    projects = await Project.fetch_all()
-
     for project in projects:
         subs = {}
         subs['domain'] = domain = project.trust_domain
-        subs['role_root'] = role_roots[domain]
+        subs['role_root'] = ROLE_ROOTS[domain]
         subs['level'] = project.level
         subs['alias'] = project.alias
 
@@ -82,19 +85,20 @@ async def update_resources(resources):
         resources.manage('Role={}:*'.format(repo_prefix))
 
         # repo:<repo>:*
+        repo_role_scopes = project.extra_tc_scopes[:]
+        if project.feature('gecko-roles'):
+            repo_role_scopes.append('assume:{role_root}:branch:{domain}:level-{level}:{alias}'.format(**subs))
         resources.add(Role(
             roleId=repo_prefix + ':*',
             description='Scopes that apply to everything occuring in this repository - push, cron, actions, etc.',
-            scopes=[
-                'assume:{role_root}:branch:{domain}:level-{level}:{alias}'.format(**subs),
-            ]))
+            scopes=repo_role_scopes))
 
         branch_scopes = [
             'assume:{role_root}:feature:{feature}:{domain}:level-{level}:{alias}'.format(
                 feature=feature, **subs)
             for feature in project.enabled_features
             if feature in feature_roles
-        ] + project.extra_tc_scopes
+        ]
         if branch_scopes:
             resources.add(Role(
                 roleId='{role_root}:branch:{domain}:level-{level}:{alias}'.format(**subs),
@@ -122,7 +126,7 @@ async def update_resources(resources):
     all_levels = set(p.level for p in projects)
     for domain in all_domains:
         for level in all_levels:
-            subs = {'domain': domain, 'level': level, 'role_root': role_roots[domain]}
+            subs = {'domain': domain, 'level': level, 'role_root': ROLE_ROOTS[domain]}
 
             # <role_root>:branch:..
             resources.add(Role(
@@ -218,3 +222,17 @@ async def update_resources(resources):
                 raise AssertionError(
                     'made a different set of feature roles than were configured for repos; '
                     'made roles {} but expected roles {}'.format(made_feature_roles, feature_roles))
+
+
+async def update_resources_non_gecko(resources, projects):
+    '''
+    Manage the roles for various non-gecko projects (those without the gecko-roles feature)
+    This entails only applying the extra_tc_scopes property.
+    '''
+    for project in projects:
+        repo_prefix = 'repo:hg.mozilla.org/{}'.format(project.hgmo_path)
+        resources.manage('Role={}:*'.format(repo_prefix))
+        resources.add(Role(
+            roleId=repo_prefix + ':*',
+            description='Scopes that apply to everything occuring in this repository',
+            scopes=project.extra_tc_scopes))
