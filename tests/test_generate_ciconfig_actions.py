@@ -23,9 +23,8 @@ async def test_fetch_entry(mock_ciconfig_file):
             'trust_domain': 'gecko',
             'level': 1,
             'action_perm': 'generic',
-            'groups': ['g1', 'g2'],
         }
     ])
     assert await Action.fetch_all() == [
-        Action(trust_domain='gecko', level=1, action_perm='generic', groups=('g1', 'g2'))
+        Action(trust_domain='gecko', level=1, action_perm='generic')
     ]

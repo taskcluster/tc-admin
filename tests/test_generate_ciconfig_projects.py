@@ -41,7 +41,6 @@ async def test_fetch_defaults(mock_ciconfig_file):
         "is_try": False,
         "parent_repo": None,
         "features": {},
-        "extra_tc_scopes": [],
     }
 
 
@@ -60,7 +59,6 @@ async def test_fetch_nodefaults(mock_ciconfig_file):
                 "taskcluster-push": True,
                 "taskcluster-cron": False,
             },
-            "extra_tc_scopes": ["secret-scope"],
         }
     })
     prjs = await Project.fetch_all()
@@ -76,7 +74,6 @@ async def test_fetch_nodefaults(mock_ciconfig_file):
         "is_try": True,
         "parent_repo": "https://hg.mozilla.org/mozilla-unified",
         "features": {"taskcluster-push": True, "taskcluster-cron": False},
-        "extra_tc_scopes": ["secret-scope"],
     }
 
 

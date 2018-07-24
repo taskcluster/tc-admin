@@ -14,7 +14,6 @@ class Action:
     trust_domain = attr.ib(type=str)
     level = attr.ib(type=int)
     action_perm = attr.ib(type=str)
-    groups = attr.ib(type=tuple, converter=lambda v: tuple(v))
 
     @staticmethod
     async def fetch_all():

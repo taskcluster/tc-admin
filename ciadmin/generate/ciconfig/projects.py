@@ -19,7 +19,6 @@ class Project:
     parent_repo = attr.ib(type=str, default=None)
     is_try = attr.ib(type=bool, default=False)
     features = attr.ib(type=dict, factory=lambda: {})
-    extra_tc_scopes = attr.ib(type=list, factory=lambda: [])
 
     @staticmethod
     async def fetch_all():
@@ -40,15 +39,22 @@ class Project:
         'The list of enabled features'
         return [f for f, enabled in self.features.items() if enabled]
 
-    @property
-    def level(self):
+    def get_level(self):
+        'Get the level, or None if the access level does not define a level'
         if self.access.startswith('scm_level_'):
             return int(self.access[-1])
         elif self.access == 'scm_autoland':
             return 3
         else:
+            return None
+
+    @property
+    def level(self):
+        level = self.get_level()
+        if level is None:
             raise RuntimeError("unknown access {} for project {}"
                                .format(self.access, self.alias))
+        return level
 
     @property
     def hgmo_path(self):

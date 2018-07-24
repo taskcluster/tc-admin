@@ -20,7 +20,7 @@ t = blessings.Terminal()
 
 
 @functools.total_ordering
-@attr.s(frozen=True, slots=True)
+@attr.s(slots=True, frozen=True)
 class Resource(object):
     '''
     Base class for a single runtime configuration resource

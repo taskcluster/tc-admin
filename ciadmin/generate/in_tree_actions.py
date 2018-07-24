@@ -211,17 +211,7 @@ def make_hook(action, tcyml_content, tcyml_hash):
 
 async def update_resources(resources):
     '''
-    Manage the resources related to in-tree actions.
-    '''
-    await asyncio.gather(
-        update_action_hook_resources(resources),
-        update_action_access_resources(resources),
-    )
-
-
-async def update_action_hook_resources(resources):
-    '''
-    Manage the hooks and accompanying roles for in-tree actions.
+    Manage the hooks and accompanying hook-id:.. roles for in-tree actions.
     '''
     hashed_tcymls = await hash_taskcluster_ymls()
     actions = await Action.fetch_all()
@@ -300,38 +290,3 @@ async def update_action_hook_resources(resources):
                     '\n\nThis hook is no longer current and is kept for historical purposes.'
                 hook = hook.evolve(description=description)
             resources.add(hook)
-
-
-async def update_action_access_resources(resources):
-    '''
-    Manage the project-<domain>:in-tree-action-trigger:<group> roles.  These
-    roles are assumed by `mozilla-group:<group> and give users in that group
-    access to trigger specific hooks.
-    '''
-
-    actions = await Action.fetch_all()
-
-    # Each action can be described as a hook (well, a hookId with a * matching the hash), and
-    # each action lists the groups that should have access to it.  So this just performs a little
-    # transform to get the set of actions each group has access to, and then encodes those as
-    # roles.
-
-    trust_domains = set(action.trust_domain for action in actions)
-    for trust_domain in trust_domains:
-        resources.manage('Role=project:{}:in-tree-action-trigger:*'.format(trust_domain))
-
-    roles = {}
-    for action in actions:
-        scope = 'hooks:trigger-hook:project-{}/in-tree-action-{}-{}/*'.format(
-                action.trust_domain, action.level, action.action_perm)
-        for group in action.groups:
-            roleId = 'project:{}:in-tree-action-trigger:{}'.format(action.trust_domain, group)
-            roles.setdefault(roleId, (group, []))[1].append(scope)
-
-    for roleId, (group, scopes) in roles.items():
-        description = 'Permission for people in the {} group to trigger action hooks'.format(group)
-        role = Role(
-            roleId=roleId,
-            description=description,
-            scopes=scopes)
-        resources.add(role)
