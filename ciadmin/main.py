@@ -14,6 +14,7 @@ from . import generate
 from . import current
 from . import output
 from . import diff
+from . import check
 from . import apply
 
 
@@ -65,6 +66,22 @@ async def diffCommand(**kwargs):
     actual = await current.resources(expected.managed)
     different = diff.show_diff(expected, actual)
     if different:
+        sys.exit(1)
+
+
+@main.command(name='check')
+@generate.options
+@check.options
+@run_async
+@with_aiohttp_session
+async def checkCommand(**kwargs):
+    '''Check the current and generated resource sets against expectations
+
+    This uses pytest under the hood, and you can supply pytest args such
+    as `-x` and `-vv` after a `--`: `ci-admin check -- -x -vv`'''
+    generated = await generate.resources()
+    actual = await current.resources(generated.managed)
+    if not check.run_checks(generated, actual):
         sys.exit(1)
 
 
