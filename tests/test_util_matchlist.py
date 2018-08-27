@@ -6,7 +6,7 @@
 
 import pytest
 
-from ciadmin.util import MatchList
+from ciadmin.util.matchlist import MatchList
 
 @pytest.fixture
 def minimize():

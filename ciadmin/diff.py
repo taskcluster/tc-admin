@@ -10,7 +10,7 @@ import difflib
 import blessings
 import attr
 
-from .util import strip_ansi
+from .util.ansi import strip_ansi
 from .resources import Resources
 from .options import decorate, with_click_options
 

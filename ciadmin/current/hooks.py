@@ -7,7 +7,7 @@
 from taskcluster.async import Hooks
 
 from ..resources import Hook
-from ..util import aiohttp_session
+from ..util.sessions import aiohttp_session
 
 
 async def fetch_hooks(resources):

@@ -7,7 +7,7 @@
 from taskcluster.async import Auth
 
 from ..resources import Role
-from ..util import aiohttp_session
+from ..util.sessions import aiohttp_session
 
 
 async def fetch_roles(resources):

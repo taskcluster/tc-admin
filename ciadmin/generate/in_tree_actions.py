@@ -16,10 +16,8 @@ from ..resources import Role, Hook
 from .projects import Project
 from . import tcyml
 from .actions import Action
-from ..util import (
-    aiohttp_session,
-    MatchList,
-)
+from ..util.sessions import aiohttp_session
+from ..util.matchlist import MatchList
 
 # Any existing hooks that no longer correspond to active .taskcluster.yml files
 # will nonetheless be kept around until this time has passed since they were

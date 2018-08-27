@@ -7,7 +7,7 @@
 import aiohttp
 from asyncio import Lock
 
-from ..util import aiohttp_session
+from ..util.sessions import aiohttp_session
 
 _cache = {}
 _lock = {}

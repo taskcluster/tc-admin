@@ -12,10 +12,8 @@ from taskcluster.async import (
     Hooks,
 )
 
-from ..util import (
-    strip_ansi,
-    aiohttp_session,
-)
+from ..util.ansi import strip_ansi
+from ..util.sessions import aiohttp_session
 from ..resources import Resources
 from ..options import decorate, with_click_options
 

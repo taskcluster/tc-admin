@@ -9,7 +9,7 @@ import click
 import asyncio
 import sys
 
-from .util import with_aiohttp_session
+from .util.sessions import with_aiohttp_session
 from . import generate
 from . import current
 from . import output

@@ -4,36 +4,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
-import functools
-import aiohttp
 import attr
-import json
-import re
-
-_aiohttp_session = None
-
-
-def pretty_json(value):
-    return json.dumps(value, sort_keys=True, indent=4, separators=(',', ': '))
-
-
-def aiohttp_session():
-    'Return the active aiohttp session'
-    return _aiohttp_session
-
-
-def with_aiohttp_session(fn):
-    @functools.wraps(fn)
-    async def wrap(*args, **kwargs):
-        global _aiohttp_session
-        assert not _aiohttp_session, 'nested with_aiohttp_session calls!'
-        with aiohttp.ClientSession() as session:
-            _aiohttp_session = session
-            try:
-                await fn(*args, **kwargs)
-            finally:
-                _aiohttp_session = None
-    return wrap
 
 
 @attr.s
@@ -48,7 +19,7 @@ class MatchList:
     A MatchList is a list of patterns that automatically keeps itself
     "minimized" such that no pattern matches any other pattern.
 
-    Emtpy strings are prohibited.
+    Empty strings are prohibited.
     '''
 
     _patterns = attr.ib(type=list)
@@ -77,12 +48,3 @@ class MatchList:
         self._patterns = sorted(
             p1 for p1 in patterns if
             all(p1 == p2 or not (p2.endswith('*') and p1.startswith(p2[:-1])) for p2 in patterns))
-
-
-# from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
-ANSI_ESCAPE = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -/]*[@-~]')
-
-
-def strip_ansi(line):
-    'Strip ANSI color codes from a line of text (used to colorize diffs)'
-    return ANSI_ESCAPE.sub('', line)

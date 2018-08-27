@@ -9,7 +9,7 @@ import attr
 import pytest
 import hashlib
 
-from ciadmin.util import with_aiohttp_session
+from ciadmin.util.sessions import with_aiohttp_session
 from ciadmin.generate import tcyml
 
 # pin a revision of mozilla-central so we know what to expect

@@ -8,7 +8,7 @@ import os.path
 import attr
 import pytest
 
-from ciadmin.util import with_aiohttp_session
+from ciadmin.util.sessions import with_aiohttp_session
 from ciadmin.generate import ciconfig
 
 # pin a revision of build/ci-configuration so we know what to expect

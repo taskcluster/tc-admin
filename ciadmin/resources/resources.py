@@ -13,10 +13,8 @@ import itertools
 from memoized import memoized
 from sortedcontainers import SortedKeyList
 
-from ..util import (
-    MatchList,
-    pretty_json,
-)
+from ..util.matchlist import MatchList
+from ..util.json import pretty_json
 
 t = blessings.Terminal()
 
