@@ -7,25 +7,25 @@
 import attr
 import pytest
 
-from ciadmin.generate.actions import Action
+from ciadmin.generate.ciconfig.actions import Action
 
 
 @pytest.mark.asyncio
-async def test_fetch_empty(ciconfig_get):
-    ciconfig_get.fake_values['actions.yml'] = {}
+async def test_fetch_empty(mock_ciconfig_file):
+    mock_ciconfig_file('actions.yml', [])
     assert await Action.fetch_all() == []
 
 
 @pytest.mark.asyncio
-async def test_fetch_entry(ciconfig_get):
-    ciconfig_get.fake_values['actions.yml'] = [
+async def test_fetch_entry(mock_ciconfig_file):
+    mock_ciconfig_file('actions.yml', [
         {
             'trust_domain': 'gecko',
             'level': 1,
             'action_perm': 'generic',
             'groups': ['g1', 'g2'],
         }
-    ]
+    ])
     assert await Action.fetch_all() == [
         Action(trust_domain='gecko', level=1, action_perm='generic', groups=('g1', 'g2'))
     ]

@@ -7,8 +7,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from ..resources import Role
-from .projects import Project
-from .actions import Action
+from .ciconfig.projects import Project
+from .ciconfig.actions import Action
 
 
 async def update_resources(resources):

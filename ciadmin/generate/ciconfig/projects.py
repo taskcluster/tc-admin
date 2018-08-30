@@ -6,7 +6,7 @@
 
 import attr
 
-from . import ciconfig
+from .get import get_ciconfig_file
 
 
 @attr.s(frozen=True)
@@ -24,7 +24,7 @@ class Project:
     @staticmethod
     async def fetch_all():
         """Load project metadata from projects.yml in ci-configuration"""
-        projects = await ciconfig.get('projects.yml')
+        projects = await get_ciconfig_file('projects.yml')
         return [Project(alias, **info) for alias, info in projects.items()]
 
     # The `features` property is designed for ease of use in yaml, with true and false

@@ -9,8 +9,8 @@ import jsone
 import re
 
 from ..resources import Role, Hook
-from .projects import Project
-from . import ciconfig
+from .ciconfig.projects import Project
+from .ciconfig.get import get_ciconfig_file
 
 
 async def make_hook(project):
@@ -49,7 +49,7 @@ async def make_hook(project):
 
     # use the cron-task-template.yml from the ci-configuration repository, rendering it
     # with the context values described there
-    task_template = await ciconfig.get('cron-task-template.yml')
+    task_template = await get_ciconfig_file('cron-task-template.yml')
     task = jsone.render(task_template, {
         'level': project.level,
         'hookGroupId': hookGroupId,

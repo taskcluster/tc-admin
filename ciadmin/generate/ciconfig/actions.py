@@ -6,7 +6,7 @@
 
 import attr
 
-from . import ciconfig
+from .get import get_ciconfig_file
 
 
 @attr.s(frozen=True)
@@ -19,5 +19,5 @@ class Action:
     @staticmethod
     async def fetch_all():
         """Load project metadata from actions.yml in ci-configuration"""
-        actions = await ciconfig.get('actions.yml')
+        actions = await get_ciconfig_file('actions.yml')
         return [Action(**info) for info in actions]

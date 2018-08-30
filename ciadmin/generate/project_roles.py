@@ -7,7 +7,7 @@
 import textwrap
 
 from ..resources import Role
-from .projects import Project
+from .ciconfig.projects import Project
 
 ROLE_ROOTS = {
     'gecko': 'project:releng',

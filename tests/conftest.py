@@ -5,23 +5,18 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import pytest
+from ciadmin.generate.ciconfig import get
 
 
 @pytest.fixture
-def ciconfig_get(mocker):
+def mock_ciconfig_file(mocker):
     '''
-    Mock out ciconfig.get (which would ordinarily fetch something remotely).
-
-    The expected return value should be set in ciconfig_get.fake_values[filename]
+    Set a mock value for `get_ciconfig_file`.
     '''
-    get = mocker.patch('ciadmin.generate.ciconfig.get')
-    fake_values = {}
-
-    async def fake_get(filename):
-        return fake_values[filename]
-    get.side_effect = fake_get
-    get.fake_values = fake_values
-    return get
+    def mocker(filename, content):
+        get._cache[filename] = content
+    yield mocker
+    get._cache.clear()
 
 
 def pytest_addoption(parser):

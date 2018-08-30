@@ -13,9 +13,9 @@ import iso8601
 from taskcluster.async import Hooks
 
 from ..resources import Role, Hook
-from .projects import Project
+from .ciconfig.projects import Project
 from . import tcyml
-from .actions import Action
+from .ciconfig.actions import Action
 from ..util.sessions import aiohttp_session
 from ..util.matchlist import MatchList
 

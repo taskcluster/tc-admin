@@ -7,26 +7,26 @@
 import attr
 import pytest
 
-from ciadmin.generate.projects import Project
+from ciadmin.generate.ciconfig.projects import Project
 
 
 @pytest.mark.asyncio
-async def test_fetch_empty(ciconfig_get):
-    ciconfig_get.fake_values['projects.yml'] = {}
+async def test_fetch_empty(mock_ciconfig_file):
+    mock_ciconfig_file('projects.yml', {})
     assert await Project.fetch_all() == []
 
 
 @pytest.mark.asyncio
-async def test_fetch_defaults(ciconfig_get):
+async def test_fetch_defaults(mock_ciconfig_file):
     'Test a fetch of project data only the required fields, applying defaults'
-    ciconfig_get.fake_values['projects.yml'] = {
+    mock_ciconfig_file('projects.yml', {
         "ash": {
             "repo": "https://hg.mozilla.org/projects/ash",
             "repo_type": "hg",
             "access": "scm_level_2",
             "trust_domain": "gecko",
         }
-    }
+    })
     prjs = await Project.fetch_all()
     assert len(prjs) == 1
     assert attr.asdict(prjs[0]) == {
@@ -46,9 +46,9 @@ async def test_fetch_defaults(ciconfig_get):
 
 
 @pytest.mark.asyncio
-async def test_fetch_nodefaults(ciconfig_get):
+async def test_fetch_nodefaults(mock_ciconfig_file):
     'Test a fetch of project data with all required fields supplied'
-    ciconfig_get.fake_values['projects.yml'] = {
+    mock_ciconfig_file('projects.yml', {
         "ash": {
             "repo": "https://hg.mozilla.org/projects/ash",
             "repo_type": "hg",
@@ -62,7 +62,7 @@ async def test_fetch_nodefaults(ciconfig_get):
             },
             "extra_tc_scopes": ["secret-scope"],
         }
-    }
+    })
     prjs = await Project.fetch_all()
     assert len(prjs) == 1
     assert attr.asdict(prjs[0]) == {
