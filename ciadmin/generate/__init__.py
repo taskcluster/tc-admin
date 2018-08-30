@@ -13,6 +13,7 @@ from . import (
     project_roles,
     in_tree_actions,
     cron_tasks,
+    moz_tree,
 )
 from ..options import decorate
 
@@ -39,5 +40,6 @@ async def resources():
         project_roles.update_resources(resources),
         in_tree_actions.update_resources(resources),
         cron_tasks.update_resources(resources),
+        moz_tree.update_resources(resources),
     )
     return resources
