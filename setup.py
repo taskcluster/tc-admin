@@ -8,17 +8,17 @@ setup(name='ci-admin',
       url='https://hg.mozilla.org/build/ci-admin',
       packages=find_packages('.'),
       install_requires=[
-          'taskcluster',
-          'click',
-          'blessings',
-          'attrs',
-          'memoized',
-          'sortedcontainers',
-          'aiohttp',
-          'pyyaml',
-          'iso8601',
-          'json-e',
-          'pytest',
+          'taskcluster<4',
+          'click<7',
+          'blessings<2',
+          'attrs',  # http://www.attrs.org/en/stable/backward-compatibility.html
+          'memoized==0.3',  # no semver..
+          'sortedcontainers<3',
+          'aiohttp<3',
+          'pyyaml<4',
+          'iso8601==0.1.12',  # no semver..
+          'json-e<3',
+          'pytest<4',
       ],
       setup_requires=[
           'pytest-runner',
