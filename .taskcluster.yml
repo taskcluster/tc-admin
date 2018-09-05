@@ -28,6 +28,7 @@ tasks:
             pip install -r requirements.txt &&
             ${cfg.commandSuffix}
       maxRunTime: 3600
+    scopes: []
     extra:
       treeherder:
         symbol: "${cfg.symbol}"
