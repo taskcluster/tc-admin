@@ -13,6 +13,8 @@ tasks:
       commandSuffix:  >-
         python setup.py test
   each(cfg):
+    taskGroupId: "${as_slugid('taskGroup')}"
+    taskId: "${as_slugid(cfg.name)}"
     provisionerId: aws-provisioner-v1
     workerType: gecko-misc
     deadline: {$fromNow: '1 day'}
