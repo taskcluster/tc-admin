@@ -7,7 +7,7 @@
 import re
 import click
 import blessings
-from taskcluster.async import (
+from taskcluster.aio import (
     Auth,
     Hooks,
 )

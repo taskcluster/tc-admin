@@ -10,7 +10,7 @@ import textwrap
 import yaml
 import datetime
 import iso8601
-from taskcluster.async import Hooks
+from taskcluster.aio import Hooks
 
 from ..resources import Role, Hook
 from .ciconfig.projects import Project
