@@ -1,0 +1,44 @@
+version: 1
+tasks:
+  $map:
+    - name: ci-admin check run
+      symbol: check
+      description: "Run `ci-admin check` to validate the latest changes"
+      commandSuffix:  >-
+        python setup.py develop &&
+        ci-admin check
+    - name: unit test run
+      symbol: unit
+      description: "Run `unit tests` to validate the latest changes"
+      commandSuffix:  >-
+        python setup.py test
+  each(cfg):
+    provisionerId: aws-provisioner-v1
+    workerType: gecko-misc
+    deadline: {$fromNow: '1 day'}
+    payload:
+      image: 'python:3.6'
+      command:
+        - /bin/bash
+        - '-c'
+        - >-
+            hg clone https://hg.mozilla.org/build/ci-admin ci-admin &&
+            cd ci-admin &&
+            hg update ${push.revision} &&
+            pip install -r requirements.txt &&
+            ${cfg.commandSuffix}
+      maxRunTime: 3600
+    extra:
+      treeherder:
+        symbol: "${cfg.symbol}"
+        jobKind: "test"
+        machine:
+          platform: "on-push"
+        productName: ci-admin
+    routes:
+      - "tc-treeherder.v2.ci-admin.${push.revision}.${push.pushlog_id}"
+    metadata:
+      name: "${cfg.name}"
+      description: "${cfg.description}"
+      owner: nobody@mozilla.org
+      source: 'https://hg.mozilla.org/build/ci-admin'
