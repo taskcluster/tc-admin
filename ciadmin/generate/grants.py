@@ -57,6 +57,10 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
             level = project.get_level()
             if level is not None:
                 subs['level'] = project.level
+            try:
+                subs['hgmo_path'] = project.hgmo_path
+            except AttributeError:
+                pass  # not an hg.mozilla.org repo..
 
             for scope in grant.scopes:
                 add_scope(roleId, scope.format(**subs))

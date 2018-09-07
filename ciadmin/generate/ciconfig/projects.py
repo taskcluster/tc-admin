@@ -61,4 +61,4 @@ class Project:
         if self.repo_type == 'hg' and self.repo.startswith('https://hg.mozilla.org/'):
             return self.repo.replace('https://hg.mozilla.org/', '').rstrip('/')
         else:
-            raise RuntimeError("no hgmo_path available for project {}".format(self.alias))
+            raise AttributeError("no hgmo_path available for project {}".format(self.alias))
