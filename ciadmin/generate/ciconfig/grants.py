@@ -52,16 +52,28 @@ class Grant:
         grants = await get_ciconfig_file('grants.yml')
 
         # convert grantees into instances..
+        def grantees(grant_to):
+            if type(grant_to) != list:
+                raise ValueError(
+                    'grant `to` property must be a list (add `-` in yaml): {}'.format(grant_to))
+            return [grantee_instance(ge) for ge in grant_to]
+
         def grantee_instance(grantee):
             if len(grantee) != 1:
-                raise ValueError('Malformed grantee (too many keys): %s'.format(grantee))
+                raise ValueError('Malformed grantee (expected 1 key): {}'.format(repr(grantee)))
             kind, content = list(grantee.items())[0]
 
             if kind == 'project' or kind == 'projects':
+                if type(content) != dict:
+                    raise ValueError(
+                        'grant `to.{}` property must be a dictionary (remove `-` in yaml): {}'.format(kind, grantee))
                 return ProjectGrantee(**content)
             elif kind == 'group' or kind == 'groups':
+                if type(content) != list:
+                    raise ValueError(
+                        'grant `to.{}` property must be a list (add `-` in yaml): {}'.format(kind, grantee))
                 return GroupGrantee(groups=content)
             else:
-                raise ValueError('Malformed grantee (invalid top-level key): %s'.format(grantee))
+                raise ValueError('Malformed grantee (invalid top-level key): {}'.format(repr(grantee)))
 
-        return [Grant(scopes=grant['grant'], grantees=[grantee_instance(ge) for ge in grant['to']]) for grant in grants]
+        return [Grant(scopes=grant['grant'], grantees=grantees(grant['to'])) for grant in grants]
