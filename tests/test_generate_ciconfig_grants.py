@@ -96,6 +96,20 @@ async def test_fetch_entries(mock_ciconfig_file):
 
 
 @pytest.mark.asyncio
+async def test_fetch_grants_to_not_list(mock_ciconfig_file):
+    'Fetching grants.yml a malformed grants.to is an error'
+    mock_ciconfig_file('grants.yml', [
+        {
+            'grant': [1, 2, 3],
+            'to': 'example-user:frankie'
+        }
+    ])
+
+    with pytest.raises(ValueError):
+        await Grant.fetch_all()
+
+
+@pytest.mark.asyncio
 async def test_fetch_non_string_scopes(mock_ciconfig_file):
     'Fetching grants.yml with non-strings scopes is an error'
     mock_ciconfig_file('grants.yml', [
@@ -124,7 +138,7 @@ async def test_fetch_non_list_scopes(mock_ciconfig_file):
 
 
 @pytest.mark.asyncio
-async def test_fetch_invalid_grantee_too_many_keys(mock_ciconfig_file):
+async def test_fetch_invalid_project_grantee_too_many_keys(mock_ciconfig_file):
     'A grantee with too many keys (not just project or group) is an error'
     mock_ciconfig_file('grants.yml', [
         {
@@ -132,6 +146,22 @@ async def test_fetch_invalid_grantee_too_many_keys(mock_ciconfig_file):
             'to': [
                 # this is easy to do in YAML..
                 {'project': None, 'level': 3},
+            ],
+        }
+    ])
+
+    with pytest.raises(ValueError):
+        await Grant.fetch_all()
+
+
+@pytest.mark.asyncio
+async def test_fetch_invalid_group_grantee(mock_ciconfig_file):
+    'A malformed group grantee is an error'
+    mock_ciconfig_file('grants.yml', [
+        {
+            'grant': [],
+            'to': [
+                {'groups': {'admins': True}},
             ],
         }
     ])

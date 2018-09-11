@@ -124,5 +124,5 @@ def test_project_hmgo_path_property_not_hg():
     'Test the hgmo_path property for non-hg projects'
     prj = Project(alias='prj', repo='https://github.com/a/b/c/', repo_type='git',
                            access='scm_level_3', trust_domain='gecko')
-    with pytest.raises(RuntimeError):
+    with pytest.raises(AttributeError):
         prj.hgmo_path

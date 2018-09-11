@@ -69,9 +69,10 @@ class Grant:
                         'grant `to.{}` property must be a dictionary (remove `-` in yaml): {}'.format(kind, grantee))
                 return ProjectGrantee(**content)
             elif kind == 'group' or kind == 'groups':
-                if type(content) != list:
+                if not isinstance(content, (list, str)):
                     raise ValueError(
-                        'grant `to.{}` property must be a list (add `-` in yaml): {}'.format(kind, grantee))
+                        'grant `to.{}` property must be a list or string (add `-` '
+                        'in yaml): {}'.format(kind, grantee))
                 return GroupGrantee(groups=content)
             else:
                 raise ValueError('Malformed grantee (invalid top-level key): {}'.format(repr(grantee)))
