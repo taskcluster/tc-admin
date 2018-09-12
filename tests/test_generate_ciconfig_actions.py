@@ -26,5 +26,37 @@ async def test_fetch_entry(mock_ciconfig_file):
         }
     ])
     assert await Action.fetch_all() == [
-        Action(trust_domain='gecko', level=1, action_perm='generic')
+        Action(
+            trust_domain='gecko',
+            level=1,
+            action_perm='generic',
+            input_schema={
+                'anyOf': [
+                    {'type': 'object', 'description': 'user input for the task'},
+                    {'const': None, 'description': 'null when the action takes no input'},
+                ]
+            },
+        )
+    ]
+
+
+@pytest.mark.asyncio
+async def test_fetch_entry_with_input_schema(mock_ciconfig_file):
+    mock_ciconfig_file('actions.yml', [
+        {
+            'trust_domain': 'gecko',
+            'level': 1,
+            'action_perm': 'generic',
+            'input_schema': {
+                'type': 'string',
+            },
+        }
+    ])
+    assert await Action.fetch_all() == [
+        Action(
+            trust_domain='gecko',
+            level=1,
+            action_perm='generic',
+            input_schema={'type': 'string'},
+        )
     ]

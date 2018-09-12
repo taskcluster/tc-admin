@@ -127,13 +127,7 @@ def make_hook(action, tcyml_content, tcyml_hash):
         }),
         user=obj(
             'Information provided by the user or user interface',
-            # TODO: provide input schema for action
-            input={
-                'anyOf': [
-                    {'type': 'object', 'description': 'user input for the task'},
-                    {'const': None, 'description': 'null when the action takes no input'},
-                ]
-            },
+            input=action.input_schema,
             taskId={
                 'anyOf': [
                     prop('taskId of the task on which this action was activated'),
