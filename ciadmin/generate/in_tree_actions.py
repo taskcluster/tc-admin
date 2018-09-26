@@ -230,6 +230,8 @@ async def update_resources(resources):
                 continue
             if project.level < action.level:
                 continue
+            if project.trust_domain != action.trust_domain:
+                continue
             content, hash = hashed_tcymls[project.alias]
             hooks_to_make[hash] = content
 
