@@ -1,6 +1,5 @@
 ---
 trust-domain: ci
-taskgraph: {}
 treeherder:
     group-names:
         'I': 'Docker Image Builds'
