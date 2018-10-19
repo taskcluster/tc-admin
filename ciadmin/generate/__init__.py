@@ -34,18 +34,6 @@ async def resources():
     # NOTE: we can't do this with /projects/, because it contains nss and nss-try, which
     # are not confiugred in projects.yml
 
-    # manage the roles that are being removed; this can be removed when these roles
-    # no longer exist
-    resources.manage('Role=moz-tree:*')
-    resources.manage('Role=project:releng:branch*')
-    resources.manage('Role=project:releng:feature*')
-    resources.manage('Role=project:releng:push*')
-    resources.manage('Role=project:comm:thunderbird:comm:releng:branch*')
-    resources.manage('Role=project:comm:thunderbird:comm:releng:feature*')
-    resources.manage('Role=project:comm:thunderbird:comm:releng:push*')
-    resources.manage('Role=project:gecko:in-tree-action-trigger:*')
-    resources.manage('Role=project:comm:in-tree-action-trigger:*')
-
     await asyncio.gather(
         scm_group_roles.update_resources(resources),
         in_tree_actions.update_resources(resources),
