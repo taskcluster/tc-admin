@@ -11,6 +11,7 @@ import click
 from ..resources import Resources
 from . import (
     ciconfig,
+    modify,
     scm_group_roles,
     in_tree_actions,
     cron_tasks,
@@ -77,4 +78,7 @@ async def resources():
         cron_tasks.update_resources(resources),
         grants.update_resources(resources),
     )
+
+    resources = await modify.modify_resources(resources, environment)
+
     return resources
