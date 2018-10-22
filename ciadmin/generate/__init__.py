@@ -5,6 +5,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import asyncio
+import os
+import click
 
 from ..resources import Resources
 from . import (
@@ -14,11 +16,44 @@ from . import (
     cron_tasks,
     grants,
 )
-from ..options import decorate
+from .ciconfig.environments import Environment
+from ..options import (
+    decorate,
+    with_click_options,
+)
 
 
 def options(fn):
-    return decorate(fn, ciconfig.options)
+    fn = decorate(fn, ciconfig.options)
+    return decorate(
+        fn,
+        click.option(
+            '--environment',
+            required=True,
+            help='environment for which resources are to be generated'))
+
+
+@with_click_options('environment')
+async def load_environment(environment):
+    '''
+    Load environment.yml and return the instance corresponding to this environment.
+
+    This also sanity-checks the TASKCLUSTER_ROOT_URL
+    '''
+    for env in await Environment.fetch_all():
+        if env.environment == environment:
+            break
+    else:
+        raise KeyError('Environment {} is not defined'.format(environment))
+
+    # sanity-check, to prevent applying to the wrong Taskcluster instance
+    root_url = os.environ.get('TASKCLUSTER_ROOT_URL')
+    if root_url and root_url != env.root_url:
+        raise RuntimeError(
+            'Environment {} expects rootUrl {}, but active credentials are for {}'.format(
+                environment, env.root_url, root_url))
+
+    return env
 
 
 async def resources():
@@ -33,6 +68,8 @@ async def resources():
     resources.manage('Role=repo:hg.mozilla.org/releases/*')
     # NOTE: we can't do this with /projects/, because it contains nss and nss-try, which
     # are not confiugred in projects.yml
+
+    environment = await load_environment()
 
     await asyncio.gather(
         scm_group_roles.update_resources(resources),

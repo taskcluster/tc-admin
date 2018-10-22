@@ -118,6 +118,13 @@ class Resources:
             resources=[r for r in self.resources if reg.search(r.id)],
             managed=self.managed)
 
+    def map(self, functor):
+        '''Call functor for each resource in this collection, returning a new Resources
+        containing the result.'''
+        return Resources(
+            resources=[functor(r) for r in self.resources],
+            managed=self.managed)
+
     def _verify(self):
         'Verify that this set of resources is legal (all managed, no duplicates)'
 
