@@ -73,10 +73,10 @@ async def resources():
     environment = await load_environment()
 
     await asyncio.gather(
-        scm_group_roles.update_resources(resources),
-        in_tree_actions.update_resources(resources),
-        cron_tasks.update_resources(resources),
-        grants.update_resources(resources),
+        scm_group_roles.update_resources(resources, environment),
+        in_tree_actions.update_resources(resources, environment),
+        cron_tasks.update_resources(resources, environment),
+        grants.update_resources(resources, environment),
     )
 
     resources = await modify.modify_resources(resources, environment)

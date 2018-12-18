@@ -10,7 +10,7 @@ from ..resources import Role
 from .ciconfig.projects import Project
 
 
-async def update_resources(resources):
+async def update_resources(resources, environment):
     '''
     Manage the `mozilla-group:active_scm_level_L` roles.
 

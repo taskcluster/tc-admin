@@ -203,7 +203,7 @@ def make_hook(action, tcyml_content, tcyml_hash):
         triggerSchema=trigger_schema)
 
 
-async def update_resources(resources):
+async def update_resources(resources, environment):
     '''
     Manage the hooks and accompanying hook-id:.. roles for in-tree actions.
     '''

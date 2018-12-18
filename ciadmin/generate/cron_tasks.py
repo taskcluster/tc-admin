@@ -13,7 +13,7 @@ from .ciconfig.projects import Project
 from .ciconfig.get import get_ciconfig_file
 
 
-async def make_hook(project):
+async def make_hook(project, environment):
     hookGroupId = 'project-releng'
     hookId = 'cron-task-{}'.format(project.hgmo_path.replace('/', '-'))
 
@@ -54,6 +54,7 @@ async def make_hook(project):
         'level': project.level,
         'hookGroupId': hookGroupId,
         'hookId': hookId,
+        'taskcluster_root_url': environment.root_url,
         'repo_env': repo_env,
         'checkout_options': checkout_options,
         'project_repo': project.repo,
@@ -86,7 +87,7 @@ async def make_hook(project):
         })
 
 
-async def update_resources(resources):
+async def update_resources(resources, environment):
     '''
     Manage the hooks and roles for cron tasks
     '''
@@ -103,7 +104,7 @@ async def update_resources(resources):
         if not project.feature('taskcluster-cron'):
             continue
 
-        hook = await make_hook(project)
+        hook = await make_hook(project, environment)
         resources.add(hook)
 
         role = Role(

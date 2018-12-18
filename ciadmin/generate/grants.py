@@ -74,7 +74,7 @@ def add_scopes_for_groups(grant, grantee, add_scope):
             add_scope(roleId, scope.format())
 
 
-async def update_resources(resources):
+async def update_resources(resources, environment):
     '''
     Manage the scopes granted to projects.  This file interprets `grants.yml` in ci-configuration.
     Its behavior is largely documentd in the comment in that file.
