@@ -145,6 +145,9 @@ def make_hook(action, tcyml_content, tcyml_hash):
     # This context format is what `.taskcluster.yml` expects, and is based on
     # that provided by mozilla-taskcluster.
 
+    # If this changes, we likely also need to change the corresponding logic in
+    # scriptworker.cot.verify._wrap_action_hook_with_let
+    # https://github.com/mozilla-releng/scriptworker/search?q=_wrap_action_hook_with_let
     task = {
         '$let': {
             'tasks_for': 'action',
