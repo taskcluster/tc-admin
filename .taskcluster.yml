@@ -6,7 +6,7 @@ tasks:
       description: "Run `ci-admin check` to validate the latest changes"
       commandSuffix:  >-
         python setup.py develop &&
-        ci-admin check
+        ci-admin check --environment production
     - name: unit test run
       symbol: unit
       description: "Run `unit tests` to validate the latest changes"
