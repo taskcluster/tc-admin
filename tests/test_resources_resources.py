@@ -134,6 +134,7 @@ def test_resources_filter():
     ], ['Thing=*']).filter('hin.=a')
     assert [r.thingId for r in coll] == ['abc', 'abd']
 
+
 def test_resources_to_json():
     'Resources.to_json produces the expected data structure'
     rsrcs = Resources([
@@ -247,20 +248,20 @@ def test_resources_repr():
         Thing('y', '1'),
     ], ['*'])
     assert json.loads(repr(resources)) == json.loads('''\
-	{
+        {
             "managed": [
                 "*"
             ],
-	    "resources": [
-		{
-		    "kind": "Thing",
-		    "thingId": "x",
-		    "value": "1"
-		},
-		{
-		    "kind": "Thing",
-		    "thingId": "y",
-		    "value": "1"
-		}
-	    ]
-	}''')
+            "resources": [
+                {
+                    "kind": "Thing",
+                    "thingId": "x",
+                    "value": "1"
+                },
+                {
+                    "kind": "Thing",
+                    "thingId": "y",
+                    "value": "1"
+                }
+            ]
+        }''')

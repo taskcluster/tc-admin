@@ -5,7 +5,6 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import pytest
-import textwrap
 
 from ciadmin.resources import (
     Resources,
@@ -28,9 +27,9 @@ def Auth(mocker):
         async def listRoles(self):
             return Auth.roles
 
-
     Auth.return_value = FakeAuth()
     return Auth
+
 
 @pytest.fixture
 def make_role():

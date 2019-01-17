@@ -109,20 +109,20 @@ def test_project_level_property_autoland():
 def test_project_hmgo_path_property():
     'Test the hgmo_path property'
     prj = Project(alias='prj', repo='https://hg.mozilla.org/a/b/c', repo_type='hg',
-                           access='scm_level_3', trust_domain='gecko')
+                  access='scm_level_3', trust_domain='gecko')
     assert prj.hgmo_path == 'a/b/c'
 
 
 def test_project_hmgo_path_property_trailing_slash():
     'Test the hgmo_path property stripping trialing slashes'
     prj = Project(alias='prj', repo='https://hg.mozilla.org/a/b/c/', repo_type='hg',
-                           access='scm_level_3', trust_domain='gecko')
+                  access='scm_level_3', trust_domain='gecko')
     assert prj.hgmo_path == 'a/b/c'
 
 
 def test_project_hmgo_path_property_not_hg():
     'Test the hgmo_path property for non-hg projects'
     prj = Project(alias='prj', repo='https://github.com/a/b/c/', repo_type='git',
-                           access='scm_level_3', trust_domain='gecko')
+                  access='scm_level_3', trust_domain='gecko')
     with pytest.raises(AttributeError):
         prj.hgmo_path

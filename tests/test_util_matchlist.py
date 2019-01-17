@@ -8,13 +8,16 @@ import pytest
 
 from ciadmin.util.matchlist import MatchList
 
+
 @pytest.fixture
 def minimize():
     return lambda patterns: sorted(MatchList(patterns))
 
+
 def test_MatchList_empty_string():
     with pytest.raises(RuntimeError, message='Empty strings are not alloewd in MatchList'):
         MatchList([''])
+
 
 def test_MatchList_minimize_empty(minimize):
     assert minimize([]) == []
@@ -38,6 +41,7 @@ def test_MatchList_minimize_with_common_prefix(minimize):
     'A pattern that is just a prefix of another does not consume anything'
     assert minimize(['a', 'abc*', 'abd', 'abelincoln']) == ['a', 'abc*', 'abd', 'abelincoln']
 
+
 def test_MatchList_add():
     'Patterns stay minimal while adding elements one at a time'
     ml = MatchList(['a*', 'b'])
@@ -49,15 +53,18 @@ def test_MatchList_add():
     ml.add('b*')
     assert sorted(ml) == ['a*', 'b*']
 
+
 def test_MatchList_matches_exact():
     ml = MatchList(['a*', 'b'])
     assert ml.matches('b')
     assert not ml.matches('x')
 
+
 def test_MatchList_matches_exact_star():
     ml = MatchList(['a*', 'b', 'abc'])
     assert ml.matches('a*')
     assert not ml.matches('bbc')
+
 
 def test_MatchList_matches_longer_star():
     ml = MatchList(['a*', 'b', 'abc'])

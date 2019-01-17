@@ -4,7 +4,6 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
-import attr
 import pytest
 
 from ciadmin.generate.ciconfig.grants import (
@@ -75,8 +74,8 @@ async def test_fetch_entries(mock_ciconfig_file):
     # check out the structure more deeply, to check None and listifying
     grantee = grants[0].grantees[0]
     assert grantee.level == [3]
-    assert grantee.alias == None
-    assert grantee.is_try == None
+    assert grantee.alias is None
+    assert grantee.is_try is None
     assert grantee.job == ['*']
 
     grantee = grants[0].grantees[1]
@@ -84,7 +83,7 @@ async def test_fetch_entries(mock_ciconfig_file):
     assert grantee.level == [3]
     assert grantee.alias == ['myproject', 'yours']
     assert grantee.feature == ['buildbot']
-    assert grantee.is_try == True
+    assert not grantee.is_try
     assert grantee.trust_domain == ['nss']
     assert grantee.job == ['cron:*']
 

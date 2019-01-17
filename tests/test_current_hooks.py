@@ -5,7 +5,6 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import pytest
-import textwrap
 
 from ciadmin.resources import (
     Resources,

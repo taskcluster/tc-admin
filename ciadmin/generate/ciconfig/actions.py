@@ -15,6 +15,7 @@ DEFAULT_INPUT_SCHEMA = {
     ]
 }
 
+
 @attr.s(frozen=True)
 class Action:
     trust_domain = attr.ib(type=str)

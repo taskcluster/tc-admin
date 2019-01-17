@@ -6,7 +6,6 @@
 
 import pytest
 
-from ciadmin.util.sessions import with_aiohttp_session
 from ciadmin.generate import grants
 from ciadmin.resources import Resources
 from ciadmin.generate.ciconfig.projects import Project

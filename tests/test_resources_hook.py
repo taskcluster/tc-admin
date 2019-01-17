@@ -7,7 +7,6 @@
 import pytest
 import textwrap
 
-from ciadmin.resources.resources import Resource
 from ciadmin.resources.hook import Hook
 
 
@@ -49,7 +48,8 @@ def test_hook_formatter(simple_hook):
             {
                 "$magic": "Siri, please test my code"
             }
-          triggerSchema: {}''')
+          triggerSchema: {}'''  # noqa: E501, W291
+    )
 
 
 def test_role_from_api():
@@ -74,7 +74,7 @@ def test_role_from_api():
     assert hook.name == 'my-test'
     assert hook.description == api_result['metadata']['description']
     assert hook.owner == 'dustin@mozilla.com'
-    assert hook.emailOnError == False
+    assert not hook.emailOnError
     assert hook.schedule == ('0 0 9,21 * * 1-5', '0 0 12 * * 0,6')
     assert hook.task == {'$magic': 'build-task'}
     assert hook.triggerSchema == {}

@@ -60,7 +60,7 @@ async def make_hook(project, environment):
         'project_repo': project.repo,
         'alias': project.alias,
         'mach_cron_options': mach_cron_options,
-        'trim_whitespace': lambda s: re.sub('\s+', ' ', s).strip(),
+        'trim_whitespace': lambda s: re.sub(r'\s+', ' ', s).strip(),
     })
 
     return Hook(

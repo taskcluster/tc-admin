@@ -23,7 +23,8 @@ def test_role_formatter():
           scopes:
             - a
             - b
-            - c''')
+            - c'''  # noqa: E501, W293
+    )
 
 
 def test_role_json():

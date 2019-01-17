@@ -12,6 +12,12 @@ tasks:
       description: "Run `unit tests` to validate the latest changes"
       commandSuffix:  >-
         python setup.py test
+    - name: flake8
+      symbol: flake8
+      description: "Run `unit tests` to validate the latest changes"
+      commandSuffix:  >-
+        pip install flake8==3.6.0 &&
+        flake8
   each(cfg):
     taskGroupId: "${as_slugid('taskGroup')}"
     taskId: "${as_slugid(cfg.name)}"

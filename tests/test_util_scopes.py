@@ -5,8 +5,6 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import pytest
-import textwrap
-import unittest
 import taskcluster
 
 from ciadmin.util.scopes import Resolver, satisfies
@@ -83,17 +81,6 @@ def test_assume_can_get_star():
         res,
         ['assume:thing-id:test'],
         ['*'])
-
-
-def test_indirect_roles():
-    res = Resolver({
-        'test-client-1': ['assume:test-role'],
-        'test-role': ['special-scope'],
-    })
-    check_resolved(
-        res,
-        ['assume:test-client-1'],
-        ['assume:test-client-1', 'assume:test-role', 'special-scope'])
 
 
 def test_indirect_roles():
@@ -287,9 +274,11 @@ def test_real_scopes(scope, resolver, auth):
     real = sorted(auth.expandScopes({'scopes': [scope]})['scopes'])
     assert local == real
 
+
 def test_satisfies_simple():
     assert satisfies(['scope1', 'scope2'], ['scope1'])
     assert not satisfies(['scope1'], ['scope1', 'scope2'])
+
 
 def test_satisfies_stars():
     assert satisfies(['scope:*', 'other:*'], ['scope:xyz'])
