@@ -83,7 +83,7 @@ async def test_fetch_entries(mock_ciconfig_file):
     assert grantee.level == [3]
     assert grantee.alias == ['myproject', 'yours']
     assert grantee.feature == ['buildbot']
-    assert not grantee.is_try
+    assert grantee.is_try
     assert grantee.trust_domain == ['nss']
     assert grantee.job == ['cron:*']
 
