@@ -7,30 +7,26 @@
 import attr
 
 from .resources import Resource
-from .util import (
-    description_converter,
-    scopes_converter,
-    list_formatter,
-)
+from .util import description_converter, scopes_converter, list_formatter
 
 
 @attr.s
 class Role(Resource):
     roleId = attr.ib(type=str)
     description = attr.ib(type=str, converter=description_converter)
-    scopes = attr.ib(type=tuple, converter=scopes_converter, metadata={'formatter': list_formatter})
+    scopes = attr.ib(
+        type=tuple, converter=scopes_converter, metadata={"formatter": list_formatter}
+    )
 
     @classmethod
     def from_api(cls, api_result):
-        'Construct a new instance from the result of a taskcluster API call'
+        "Construct a new instance from the result of a taskcluster API call"
         return cls(
-            roleId=api_result['roleId'],
-            description=api_result['description'],
-            scopes=api_result['scopes'])
+            roleId=api_result["roleId"],
+            description=api_result["description"],
+            scopes=api_result["scopes"],
+        )
 
     def to_api(self):
-        'Construct a payload for use with auth.createRole or auth.updateRole'
-        return {
-            'description': self.description,
-            'scopes': self.scopes,
-        }
+        "Construct a payload for use with auth.createRole or auth.updateRole"
+        return {"description": self.description, "scopes": self.scopes}

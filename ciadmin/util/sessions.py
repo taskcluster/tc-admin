@@ -6,11 +6,12 @@
 
 import aiohttp
 import functools
+
 _aiohttp_session = None
 
 
 def aiohttp_session():
-    'Return the active aiohttp session'
+    "Return the active aiohttp session"
     return _aiohttp_session
 
 
@@ -18,11 +19,12 @@ def with_aiohttp_session(fn):
     @functools.wraps(fn)
     async def wrap(*args, **kwargs):
         global _aiohttp_session
-        assert not _aiohttp_session, 'nested with_aiohttp_session calls!'
+        assert not _aiohttp_session, "nested with_aiohttp_session calls!"
         with aiohttp.ClientSession() as session:
             _aiohttp_session = session
             try:
                 await fn(*args, **kwargs)
             finally:
                 _aiohttp_session = None
+
     return wrap

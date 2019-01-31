@@ -9,7 +9,7 @@ import attr
 
 @attr.s
 class MatchList:
-    '''
+    """
     A sorted list of patterns.  If you're familiar with Taskcluster scopes and
     scopesets, this is the same thing.
 
@@ -20,7 +20,7 @@ class MatchList:
     "minimized" such that no pattern matches any other pattern.
 
     Empty strings are prohibited.
-    '''
+    """
 
     _patterns = attr.ib(type=list)
 
@@ -28,14 +28,16 @@ class MatchList:
         self._minimize()
 
     def add(self, item):
-        'Add `item` to the set of patterns'
+        "Add `item` to the set of patterns"
         if not self.matches(item):
             self._patterns.append(item)
             self._minimize()
 
     def matches(self, item):
-        'Return True if this item is matched by one of the patterns in the list'
-        return any(item.startswith(pat[:-1]) if pat[-1] == '*' else item == pat for pat in self)
+        "Return True if this item is matched by one of the patterns in the list"
+        return any(
+            item.startswith(pat[:-1]) if pat[-1] == "*" else item == pat for pat in self
+        )
 
     def __iter__(self):
         return self._patterns.__iter__()
@@ -43,8 +45,13 @@ class MatchList:
     def _minimize(self):
         # this is O(n^2) but we don't manage 1000's of items, so it's OK for now
         patterns = set(self._patterns)  # remove duplicates
-        if '' in patterns:
-            raise RuntimeError('Empty strings are not allowed in MatchList')
+        if "" in patterns:
+            raise RuntimeError("Empty strings are not allowed in MatchList")
         self._patterns = sorted(
-            p1 for p1 in patterns if
-            all(p1 == p2 or not (p2.endswith('*') and p1.startswith(p2[:-1])) for p2 in patterns))
+            p1
+            for p1 in patterns
+            if all(
+                p1 == p2 or not (p2.endswith("*") and p1.startswith(p2[:-1]))
+                for p2 in patterns
+            )
+        )

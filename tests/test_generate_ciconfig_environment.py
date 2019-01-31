@@ -11,21 +11,19 @@ from ciadmin.generate.ciconfig.environments import Environment
 
 @pytest.mark.asyncio
 async def test_fetch_empty(mock_ciconfig_file):
-    mock_ciconfig_file('environments.yml', {})
+    mock_ciconfig_file("environments.yml", {})
     assert await Environment.fetch_all() == []
 
 
 @pytest.mark.asyncio
 async def test_fetch_entry(mock_ciconfig_file):
-    mock_ciconfig_file('environments.yml', {
-        'dev': {
-            'root_url': 'https://tc-tests.localhost',
-        }
-    })
+    mock_ciconfig_file(
+        "environments.yml", {"dev": {"root_url": "https://tc-tests.localhost"}}
+    )
     assert await Environment.fetch_all() == [
         Environment(
-            environment='dev',
-            root_url='https://tc-tests.localhost',
+            environment="dev",
+            root_url="https://tc-tests.localhost",
             modify_resources=[],
         )
     ]
@@ -33,16 +31,19 @@ async def test_fetch_entry(mock_ciconfig_file):
 
 @pytest.mark.asyncio
 async def test_fetch_entry_with_mods(mock_ciconfig_file):
-    mock_ciconfig_file('environments.yml', {
-        'dev': {
-            'root_url': 'https://tc-tests.localhost',
-            'modify_resources': ['mod1', 'mod2'],
-        }
-    })
+    mock_ciconfig_file(
+        "environments.yml",
+        {
+            "dev": {
+                "root_url": "https://tc-tests.localhost",
+                "modify_resources": ["mod1", "mod2"],
+            }
+        },
+    )
     assert await Environment.fetch_all() == [
         Environment(
-            environment='dev',
-            root_url='https://tc-tests.localhost',
-            modify_resources=['mod1', 'mod2'],
+            environment="dev",
+            root_url="https://tc-tests.localhost",
+            modify_resources=["mod1", "mod2"],
         )
     ]

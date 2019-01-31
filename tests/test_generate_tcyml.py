@@ -11,11 +11,11 @@ from ciadmin.util.sessions import with_aiohttp_session
 from ciadmin.generate import tcyml
 
 # pin a revision of mozilla-central so we know what to expect
-PINNED_REV = 'ff8505d177b9'
+PINNED_REV = "ff8505d177b9"
 
 
 @pytest.mark.asyncio
 @with_aiohttp_session
 async def test_get_tcyml():
-    res = await tcyml.get('https://hg.mozilla.org/mozilla-central', revision=PINNED_REV)
-    assert hashlib.sha512(res).hexdigest()[:10] == '684648599a'
+    res = await tcyml.get("https://hg.mozilla.org/mozilla-central", revision=PINNED_REV)
+    assert hashlib.sha512(res).hexdigest()[:10] == "684648599a"

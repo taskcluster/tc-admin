@@ -15,32 +15,42 @@ _cache = {}
 _lock = {}
 
 
-@with_click_options('ci_configuration_repository', 'ci_configuration_revision', 'ci_configuration_directory')
-async def _read_file(filename, ci_configuration_repository, ci_configuration_revision, ci_configuration_directory):
+@with_click_options(
+    "ci_configuration_repository",
+    "ci_configuration_revision",
+    "ci_configuration_directory",
+)
+async def _read_file(
+    filename,
+    ci_configuration_repository,
+    ci_configuration_revision,
+    ci_configuration_directory,
+):
     if ci_configuration_directory:
         with open(os.path.join(ci_configuration_directory, filename), "rb") as f:
             result = f.read()
     else:
-        url = '{}/raw-file/{}/{}'.format(
-            ci_configuration_repository.rstrip('/'),
+        url = "{}/raw-file/{}/{}".format(
+            ci_configuration_repository.rstrip("/"),
             ci_configuration_revision,
-            filename.lstrip('/'))
+            filename.lstrip("/"),
+        )
         async with aiohttp_session().get(url) as response:
             response.raise_for_status()
             result = await response.read()
 
-    if filename.endswith('.yml'):
+    if filename.endswith(".yml"):
         result = yaml.load(result)
 
     return result
 
 
 async def get_ciconfig_file(filename):
-    '''
+    """
     Get the named file from the ci-configuration repository, parsing .yml if necessary.
 
     Fetches are cached, so it's safe to call this many times for the same file.
-    '''
+    """
     with await _lock.setdefault(filename, Lock()):
         if filename in _cache:
             return _cache[filename]

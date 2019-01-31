@@ -10,13 +10,10 @@ from . import hooks, roles
 
 
 async def resources(managed):
-    '''
+    """
     Fetch the existing resources that are managed by the provided list.
-    '''
+    """
     resources = Resources([], managed)
 
-    await asyncio.gather(
-        roles.fetch_roles(resources),
-        hooks.fetch_hooks(resources),
-    )
+    await asyncio.gather(roles.fetch_roles(resources), hooks.fetch_hooks(resources))
     return resources

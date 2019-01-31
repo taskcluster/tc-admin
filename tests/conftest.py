@@ -10,11 +10,13 @@ from ciadmin.generate.ciconfig import get
 
 @pytest.fixture
 def mock_ciconfig_file(mocker):
-    '''
+    """
     Set a mock value for `get_ciconfig_file`.
-    '''
+    """
+
     def mocker(filename, content):
         get._cache[filename] = content
+
     yield mocker
     get._cache.clear()
 

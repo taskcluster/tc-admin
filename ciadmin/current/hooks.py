@@ -12,14 +12,14 @@ from ..util.sessions import aiohttp_session
 
 async def fetch_hooks(resources):
     hooks = Hooks(session=aiohttp_session())
-    for hookGroupId in (await hooks.listHookGroups())['groups']:
-        idPrefix = 'Hook={}/'.format(hookGroupId)
+    for hookGroupId in (await hooks.listHookGroups())["groups"]:
+        idPrefix = "Hook={}/".format(hookGroupId)
         # if no hook with this hookGroupId is managed, skip it
         is_managed = any(m.startswith(idPrefix) for m in resources.managed)
         is_managed = is_managed or resources.is_managed(idPrefix)
         if not is_managed:
             continue
-        for hook in (await hooks.listHooks(hookGroupId))['hooks']:
+        for hook in (await hooks.listHooks(hookGroupId))["hooks"]:
             hook = Hook.from_api(hook)
             if resources.is_managed(hook.id):
                 resources.add(hook)

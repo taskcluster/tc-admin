@@ -12,14 +12,12 @@ from ..options import decorate, with_click_options
 
 
 def options(fn):
-    return decorate(
-        fn,
-        click.argument('pytest_options', nargs=-1))
+    return decorate(fn, click.argument("pytest_options", nargs=-1))
 
 
-@with_click_options('pytest_options')
+@with_click_options("pytest_options")
 def run_checks(generated_, actual_, pytest_options):
     global generated, actual
     generated = generated_
     actual = actual_
-    return 0 == pytest.main([os.path.dirname(__file__) + '/'] + list(pytest_options))
+    return 0 == pytest.main([os.path.dirname(__file__) + "/"] + list(pytest_options))

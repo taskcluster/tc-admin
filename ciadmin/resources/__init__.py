@@ -8,6 +8,4 @@ from .resources import Resources
 from .role import Role
 from .hook import Hook
 
-__all__ = [
-    'Resources', 'Role', 'Hook',
-]
+__all__ = ["Resources", "Role", "Hook"]

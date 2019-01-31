@@ -11,28 +11,27 @@ from ciadmin.generate.ciconfig.actions import Action
 
 @pytest.mark.asyncio
 async def test_fetch_empty(mock_ciconfig_file):
-    mock_ciconfig_file('actions.yml', [])
+    mock_ciconfig_file("actions.yml", [])
     assert await Action.fetch_all() == []
 
 
 @pytest.mark.asyncio
 async def test_fetch_entry(mock_ciconfig_file):
-    mock_ciconfig_file('actions.yml', [
-        {
-            'trust_domain': 'gecko',
-            'level': 1,
-            'action_perm': 'generic',
-        }
-    ])
+    mock_ciconfig_file(
+        "actions.yml", [{"trust_domain": "gecko", "level": 1, "action_perm": "generic"}]
+    )
     assert await Action.fetch_all() == [
         Action(
-            trust_domain='gecko',
+            trust_domain="gecko",
             level=1,
-            action_perm='generic',
+            action_perm="generic",
             input_schema={
-                'anyOf': [
-                    {'type': 'object', 'description': 'user input for the task'},
-                    {'const': None, 'description': 'null when the action takes no input'},
+                "anyOf": [
+                    {"type": "object", "description": "user input for the task"},
+                    {
+                        "const": None,
+                        "description": "null when the action takes no input",
+                    },
                 ]
             },
         )
@@ -41,21 +40,22 @@ async def test_fetch_entry(mock_ciconfig_file):
 
 @pytest.mark.asyncio
 async def test_fetch_entry_with_input_schema(mock_ciconfig_file):
-    mock_ciconfig_file('actions.yml', [
-        {
-            'trust_domain': 'gecko',
-            'level': 1,
-            'action_perm': 'generic',
-            'input_schema': {
-                'type': 'string',
-            },
-        }
-    ])
+    mock_ciconfig_file(
+        "actions.yml",
+        [
+            {
+                "trust_domain": "gecko",
+                "level": 1,
+                "action_perm": "generic",
+                "input_schema": {"type": "string"},
+            }
+        ],
+    )
     assert await Action.fetch_all() == [
         Action(
-            trust_domain='gecko',
+            trust_domain="gecko",
             level=1,
-            action_perm='generic',
-            input_schema={'type': 'string'},
+            action_perm="generic",
+            input_schema={"type": "string"},
         )
     ]

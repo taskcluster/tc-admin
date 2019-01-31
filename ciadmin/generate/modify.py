@@ -14,25 +14,27 @@ def modifier(fn):
 
 @modifier
 def remove_hook_schedules(resources):
-    '''
+    """
     Remove schedules from all managed hooks, so that they do not run and create tasks.
-    '''
+    """
+
     def modify(resource):
-        if resource.kind != 'Hook':
+        if resource.kind != "Hook":
             return resource
         if not resource.schedule:
             return resource
         return resource.evolve(schedule=[])
+
     return resources.map(modify)
 
 
 async def modify_resources(resources, environment):
-    '''
+    """
     Apply any `modify_resources` functions to the given resources, and return
     a new set of resources.
-    '''
+    """
     for mod in environment.modify_resources:
         if mod not in MODIFIERS:
-            raise KeyError('No modify_resources function named {}'.format(mod))
+            raise KeyError("No modify_resources function named {}".format(mod))
         resources = MODIFIERS[mod](resources)
     return resources

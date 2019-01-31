@@ -13,13 +13,17 @@ def options(fn):
     return decorate(
         fn,
         click.option(
-            '--ci-configuration-repository',
-            default='https://hg.mozilla.org/build/ci-configuration',
-            help='repository containing ci-configuration'),
+            "--ci-configuration-repository",
+            default="https://hg.mozilla.org/build/ci-configuration",
+            help="repository containing ci-configuration",
+        ),
         click.option(
-            '--ci-configuration-revision',
-            default='default',
-            help='revision of the ci-configuration repository'),
+            "--ci-configuration-revision",
+            default="default",
+            help="revision of the ci-configuration repository",
+        ),
         click.option(
-            '--ci-configuration-directory',
-            help='local directory containing ci-configuration repository (overrides repository/revision)'))
+            "--ci-configuration-directory",
+            help="local directory containing ci-configuration repository (overrides repository/revision)",
+        ),
+    )

@@ -9,14 +9,15 @@ import functools
 
 
 def decorate(fn, *decorators):
-    'Apply the given decorators to `fn`'
+    "Apply the given decorators to `fn`"
     for decorator in reversed(decorators):
         fn = decorator(fn)
     return fn
 
 
 def with_click_options(*options):
-    'When invoked, add the named Click options as keyword arguments to this function'
+    "When invoked, add the named Click options as keyword arguments to this function"
+
     def dec(fn):
         @functools.wraps(fn)
         def wrap(*args, **kwargs):
@@ -24,6 +25,8 @@ def with_click_options(*options):
             for opt in options:
                 kwargs[opt] = ctx.params[opt]
             return fn(*args, **kwargs)
+
         wrap.unwrapped = fn  # for testing
         return wrap
+
     return dec

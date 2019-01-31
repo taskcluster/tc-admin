@@ -9,9 +9,9 @@ import attr
 from .get import get_ciconfig_file
 
 DEFAULT_INPUT_SCHEMA = {
-    'anyOf': [
-        {'type': 'object', 'description': 'user input for the task'},
-        {'const': None, 'description': 'null when the action takes no input'},
+    "anyOf": [
+        {"type": "object", "description": "user input for the task"},
+        {"const": None, "description": "null when the action takes no input"},
     ]
 }
 
@@ -26,5 +26,5 @@ class Action:
     @staticmethod
     async def fetch_all():
         """Load project metadata from actions.yml in ci-configuration"""
-        actions = await get_ciconfig_file('actions.yml')
+        actions = await get_ciconfig_file("actions.yml")
         return [Action(**info) for info in actions]

@@ -23,7 +23,7 @@ class Project:
     @staticmethod
     async def fetch_all():
         """Load project metadata from projects.yml in ci-configuration"""
-        projects = await get_ciconfig_file('projects.yml')
+        projects = await get_ciconfig_file("projects.yml")
         return [Project(alias, **info) for alias, info in projects.items()]
 
     # The `features` property is designed for ease of use in yaml, with true and false
@@ -31,19 +31,19 @@ class Project:
     # easier access for Python uses.
 
     def feature(self, feature):
-        'Return True if this feature is enabled'
+        "Return True if this feature is enabled"
         return feature in self.features and self.features[feature]
 
     @property
     def enabled_features(self):
-        'The list of enabled features'
+        "The list of enabled features"
         return [f for f, enabled in self.features.items() if enabled]
 
     def get_level(self):
-        'Get the level, or None if the access level does not define a level'
-        if self.access.startswith('scm_level_'):
+        "Get the level, or None if the access level does not define a level"
+        if self.access.startswith("scm_level_"):
             return int(self.access[-1])
-        elif self.access == 'scm_autoland':
+        elif self.access == "scm_autoland":
             return 3
         else:
             return None
@@ -52,13 +52,16 @@ class Project:
     def level(self):
         level = self.get_level()
         if level is None:
-            raise RuntimeError("unknown access {} for project {}"
-                               .format(self.access, self.alias))
+            raise RuntimeError(
+                "unknown access {} for project {}".format(self.access, self.alias)
+            )
         return level
 
     @property
     def hgmo_path(self):
-        if self.repo_type == 'hg' and self.repo.startswith('https://hg.mozilla.org/'):
-            return self.repo.replace('https://hg.mozilla.org/', '').rstrip('/')
+        if self.repo_type == "hg" and self.repo.startswith("https://hg.mozilla.org/"):
+            return self.repo.replace("https://hg.mozilla.org/", "").rstrip("/")
         else:
-            raise AttributeError("no hgmo_path available for project {}".format(self.alias))
+            raise AttributeError(
+                "no hgmo_path available for project {}".format(self.alias)
+            )

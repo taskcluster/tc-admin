@@ -11,9 +11,10 @@ from ciadmin.resources.role import Role
 
 
 def test_role_formatter():
-    'Roles are properly formatted with a string, including the description preamble and sorted scopes'
-    role = Role('my:role-id', 'This is my role', ['b', 'a', 'c'])
-    assert str(role) == textwrap.dedent('''\
+    "Roles are properly formatted with a string, including the description preamble and sorted scopes"
+    role = Role("my:role-id", "This is my role", ["b", "a", "c"])
+    assert str(role) == textwrap.dedent(
+        """\
         Role=my:role-id:
           roleId: my:role-id
           description:
@@ -23,32 +24,32 @@ def test_role_formatter():
           scopes:
             - a
             - b
-            - c'''  # noqa: E501, W293
+            - c"""  # noqa: E501, W293
     )
 
 
 def test_role_json():
-    'Roles are properly output as JSON, including the description preamble and sorted scopes'
-    role = Role('my:role-id', 'This is my role', ['b', 'a', 'c'])
+    "Roles are properly output as JSON, including the description preamble and sorted scopes"
+    role = Role("my:role-id", "This is my role", ["b", "a", "c"])
     assert role == Resource.from_json(role.to_json())
     assert role.to_json() == {
-        'roleId': 'my:role-id',
-        'kind': 'Role',
-        'description': '*DO NOT EDIT* - This resource is configured automatically by [ci-admin]'
-        '(https://hg.mozilla.org/build/ci-admin).\n\nThis is my role',
-        'scopes': ['a', 'b', 'c'],
+        "roleId": "my:role-id",
+        "kind": "Role",
+        "description": "*DO NOT EDIT* - This resource is configured automatically by [ci-admin]"
+        "(https://hg.mozilla.org/build/ci-admin).\n\nThis is my role",
+        "scopes": ["a", "b", "c"],
     }
 
 
 def test_role_from_api():
-    'Roles are properly read from a Taskcluster API result'
+    "Roles are properly read from a Taskcluster API result"
     api_result = {
-        'roleId': 'my:role-id',
-        'description': '*DO NOT EDIT* - This resource is configured automatically by [ci-admin]'
-        '(https://hg.mozilla.org/build/ci-admin).\n\nThis is my role',
-        'scopes': ['scope-a', 'scope-b'],
+        "roleId": "my:role-id",
+        "description": "*DO NOT EDIT* - This resource is configured automatically by [ci-admin]"
+        "(https://hg.mozilla.org/build/ci-admin).\n\nThis is my role",
+        "scopes": ["scope-a", "scope-b"],
     }
     role = Role.from_api(api_result)
-    assert role.roleId == 'my:role-id'
-    assert role.description == api_result['description']
-    assert role.scopes == ('scope-a', 'scope-b')
+    assert role.roleId == "my:role-id"
+    assert role.description == api_result["description"]
+    assert role.scopes == ("scope-a", "scope-b")

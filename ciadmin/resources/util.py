@@ -7,29 +7,29 @@
 from ..util.json import pretty_json
 
 # utilities for resource attr.ib's
-DESCRIPTION_PREFIX = '''\
+DESCRIPTION_PREFIX = """\
 *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/build/ci-admin).
 
-'''
+"""
 
 
 def description_converter(value):
-    '''Prepend *DO NOT EDIT* and a short explainer to the given value'''
-    if not value.startswith('*DO NOT EDIT*'):
+    """Prepend *DO NOT EDIT* and a short explainer to the given value"""
+    if not value.startswith("*DO NOT EDIT*"):
         value = DESCRIPTION_PREFIX + value
     return value
 
 
 def scopes_converter(value):
-    '''Ensure that scopes are always sorted and immutable (a tuple)'''
+    """Ensure that scopes are always sorted and immutable (a tuple)"""
     return tuple(sorted(value))
 
 
 def list_formatter(value):
-    '''Format as a list of bulleted strings'''
-    return '\n'.join('- ' + scope for scope in value)
+    """Format as a list of bulleted strings"""
+    return "\n".join("- " + scope for scope in value)
 
 
 def json_formatter(value):
-    '''Format as a pretty-printed JSON string'''
+    """Format as a pretty-printed JSON string"""
     return pretty_json(value)

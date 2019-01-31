@@ -13,19 +13,19 @@ _cache = {}
 _lock = {}
 
 
-async def get(repo_path, revision='default'):
-    '''
+async def get(repo_path, revision="default"):
+    """
     Get `.taskcluster.yml` from 'default' (or the given revision) at the named
     repo_path.  Note that this does not parse the yml (so that it can be hashed
     in its original form).
 
     If the file is not found, this returns None.
-    '''
+    """
     with await _lock.setdefault(repo_path, Lock()):
         if repo_path in _cache:
             return _cache[repo_path]
 
-        url = '{}/raw-file/{}/.taskcluster.yml'.format(repo_path, revision)
+        url = "{}/raw-file/{}/.taskcluster.yml".format(repo_path, revision)
         try:
             async with aiohttp_session().get(url) as response:
                 response.raise_for_status()

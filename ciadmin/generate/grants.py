@@ -22,7 +22,7 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
         if features is None:
             return True
         for feature in features:
-            if feature.startswith('!'):
+            if feature.startswith("!"):
                 if project.feature(feature[1:]):
                     return False
             else:
@@ -47,18 +47,18 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
 
         # ok, this project matches!
         for job in grantee.job:
-            roleId = 'repo:hg.mozilla.org/{}:{}'.format(project.hgmo_path, job)
+            roleId = "repo:hg.mozilla.org/{}:{}".format(project.hgmo_path, job)
 
             # perform substitutions as grants.yml describes
             subs = {}
-            subs['alias'] = project.alias
+            subs["alias"] = project.alias
             if project.trust_domain:
-                subs['trust_domain'] = project.trust_domain
+                subs["trust_domain"] = project.trust_domain
             level = project.get_level()
             if level is not None:
-                subs['level'] = project.level
+                subs["level"] = project.level
             try:
-                subs['hgmo_path'] = project.hgmo_path
+                subs["hgmo_path"] = project.hgmo_path
             except AttributeError:
                 pass  # not an hg.mozilla.org repo..
 
@@ -68,26 +68,26 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
 
 def add_scopes_for_groups(grant, grantee, add_scope):
     for group in grantee.groups:
-        roleId = 'project:releng:ci-group:{}'.format(group)
+        roleId = "project:releng:ci-group:{}".format(group)
         for scope in grant.scopes:
             # use an empty format() to catch any stray {..} in the scope
             add_scope(roleId, scope.format())
 
 
 async def update_resources(resources, environment):
-    '''
+    """
     Manage the scopes granted to projects.  This file interprets `grants.yml` in ci-configuration.
     Its behavior is largely documentd in the comment in that file.
-    '''
+    """
 
     grants = await Grant.fetch_all()
     projects = await Project.fetch_all()
 
     # manage our resources..
-    resources.manage('Role=project:releng:ci-group:*')
+    resources.manage("Role=project:releng:ci-group:*")
     for project in projects:
-        if project.repo_type == 'hg':
-            resources.manage('Role=repo:hg.mozilla.org/{}:*'.format(project.hgmo_path))
+        if project.repo_type == "hg":
+            resources.manage("Role=repo:hg.mozilla.org/{}:*".format(project.hgmo_path))
 
     # calculate scopes..
     roles = {}
@@ -102,14 +102,15 @@ async def update_resources(resources, environment):
             elif isinstance(grantee, GroupGrantee):
                 add_scopes_for_groups(grant, grantee, add_scope)
             else:
-                raise RuntimeError('unknown grantee!')
+                raise RuntimeError("unknown grantee!")
 
     # ..and add the roles
     for roleId, scopes in roles.items():
         role = Role(
             roleId=roleId,
             scopes=normalizeScopes(scopes),
-            description='Scopes in this role are defined in '
-            '[ci-configuration/grants.yml]'
-            '(https://hg.mozilla.org/build/ci-configuration/file/tip/grants.yml).')
+            description="Scopes in this role are defined in "
+            "[ci-configuration/grants.yml]"
+            "(https://hg.mozilla.org/build/ci-configuration/file/tip/grants.yml).",
+        )
         resources.add(role)

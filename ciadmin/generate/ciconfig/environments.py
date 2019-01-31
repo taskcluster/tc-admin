@@ -18,5 +18,8 @@ class Environment:
     @staticmethod
     async def fetch_all():
         """Load environment data from environments.yml in ci-configuration"""
-        environments = await get_ciconfig_file('environments.yml')
-        return [Environment(environment, **info) for environment, info in environments.items()]
+        environments = await get_ciconfig_file("environments.yml")
+        return [
+            Environment(environment, **info)
+            for environment, info in environments.items()
+        ]

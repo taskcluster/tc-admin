@@ -8,4 +8,4 @@ import json
 
 
 def pretty_json(value):
-    return json.dumps(value, sort_keys=True, indent=4, separators=(',', ': '))
+    return json.dumps(value, sort_keys=True, indent=4, separators=(",", ": "))

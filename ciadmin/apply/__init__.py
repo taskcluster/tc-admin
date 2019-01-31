@@ -7,10 +7,7 @@
 import re
 import click
 import blessings
-from taskcluster.aio import (
-    Auth,
-    Hooks,
-)
+from taskcluster.aio import Auth, Hooks
 
 from ..util.ansi import strip_ansi
 from ..util.sessions import aiohttp_session
@@ -23,13 +20,14 @@ t = blessings.Terminal()
 def options(fn):
     return decorate(
         fn,
-        click.option('--grep', help='regular expression limiting resources displayed'))
+        click.option("--grep", help="regular expression limiting resources displayed"),
+    )
 
 
 class Modifier:
-    '''
+    """
     A simple one-instance class to encapsulate shared Taskcluster API clients.
-    '''
+    """
 
     def __init__(self):
         self.auth = Auth(session=aiohttp_session())
@@ -55,18 +53,18 @@ class Modifier:
 
     async def modify_resource(self, verb, resource):
         msg = {
-            'create': '{t.green}Creating{t.normal} {resource.id}',
-            'update': '{t.yellow}Updating{t.normal} {resource.id}',
-            'delete': '{t.red}Deleting{t.normal} {resource.id}',
+            "create": "{t.green}Creating{t.normal} {resource.id}",
+            "update": "{t.yellow}Updating{t.normal} {resource.id}",
+            "delete": "{t.red}Deleting{t.normal} {resource.id}",
         }[verb].format(t=t, resource=resource)
         try:
             print(msg)
-            await getattr(self, '{}_{}'.format(verb, resource.kind.lower()))(resource)
+            await getattr(self, "{}_{}".format(verb, resource.kind.lower()))(resource)
         except Exception as e:
-            raise RuntimeError('Error While {}'.format(strip_ansi(msg))) from e
+            raise RuntimeError("Error While {}".format(strip_ansi(msg))) from e
 
     async def modify(self, generated, current):
-        'modify all resources to match generated'
+        "modify all resources to match generated"
         generated_resources = {r.id: r for r in generated}
         current_resources = {r.id: r for r in current}
         all_resources = set(generated_resources) | set(current_resources)
@@ -84,25 +82,27 @@ class Modifier:
                     c = current_resources[id]
                     if c == g:
                         continue  # no difference
-                    await self.modify_resource('update', g)
+                    await self.modify_resource("update", g)
                 else:
-                    await self.modify_resource('create', g)
+                    await self.modify_resource("create", g)
             else:
                 c = current_resources[id]
-                await self.modify_resource('delete', c)
+                await self.modify_resource("delete", c)
 
 
-@with_click_options('grep')
+@with_click_options("grep")
 async def apply_changes(generated, current, grep):
     # limit the resources considered if --grep
     if grep:
         reg = re.compile(grep)
         generated = Resources(
             managed=generated.managed,
-            resources=(r for r in generated.resources if reg.search(r.id)))
+            resources=(r for r in generated.resources if reg.search(r.id)),
+        )
         current = Resources(
             managed=current.managed,
-            resources=(r for r in current.resources if reg.search(r.id)))
+            resources=(r for r in current.resources if reg.search(r.id)),
+        )
 
     modifier = Modifier()
     await modifier.modify(generated, current)

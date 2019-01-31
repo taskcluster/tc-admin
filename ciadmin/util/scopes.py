@@ -31,10 +31,12 @@ class Resolver:
         return cls(roles)
 
     def _star_match(self, star_match, role_scopes):
-        if star_match.endswith('*'):
-            pat = re.compile(r'<\.\.>.*')  # * in star_match consumes everything after <...>
+        if star_match.endswith("*"):
+            pat = re.compile(
+                r"<\.\.>.*"
+            )  # * in star_match consumes everything after <...>
         else:
-            pat = re.compile(r'<\.\.>')
+            pat = re.compile(r"<\.\.>")
         scopes = set()
         for rs in role_scopes:
             scopes.add(pat.sub(star_match, rs))
@@ -62,18 +64,18 @@ class Resolver:
                 expanded.add(scope)
 
                 for role, role_scopes in self.roles.items():
-                    assume = 'assume:{}'.format(role)
-                    if role.endswith('*'):
+                    assume = "assume:{}".format(role)
+                    if role.endswith("*"):
                         pfx = assume[:-1]
                         if scope.startswith(pfx):
-                            for s in self._star_match(scope[len(pfx):], role_scopes):
+                            for s in self._star_match(scope[len(pfx) :], role_scopes):
                                 add_scope(s, role)
                                 scopes[s].update(already_expanded)
-                    if scope.endswith('*'):
+                    if scope.endswith("*"):
                         pfx = scope[:-1]
                         if assume.startswith(pfx):
-                            if assume.endswith('*'):
-                                for s in self._star_match('*', role_scopes):
+                            if assume.endswith("*"):
+                                for s in self._star_match("*", role_scopes):
                                     add_scope(s, role)
                                     scopes[s].update(already_expanded)
                             else:
@@ -88,7 +90,7 @@ class Resolver:
             if scopes == prev:
                 break
         else:
-            raise RuntimeError('maxium role expansion depth reached')
+            raise RuntimeError("maxium role expansion depth reached")
 
         return normalizeScopes(scopes)
 
@@ -100,7 +102,9 @@ def satisfies(have, require):
     assert isinstance(require, list)
     for req_scope in require:
         for have_scope in have:
-            if have_scope == req_scope or (have_scope.endswith('*') and req_scope.startswith(have_scope[:-1])):
+            if have_scope == req_scope or (
+                have_scope.endswith("*") and req_scope.startswith(have_scope[:-1])
+            ):
                 break
         else:
             return False
