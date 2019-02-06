@@ -14,7 +14,7 @@ def options(fn):
         fn,
         click.option(
             "--ci-configuration-repository",
-            default="https://hg.mozilla.org/build/ci-configuration",
+            default="https://hg.mozilla.org/ci/ci-configuration",
             help="repository containing ci-configuration",
         ),
         click.option(

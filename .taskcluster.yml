@@ -32,7 +32,7 @@ tasks:
         - /bin/bash
         - '-c'
         - >-
-            hg clone https://hg.mozilla.org/build/ci-admin ci-admin &&
+            hg clone https://hg.mozilla.org/ci/ci-admin ci-admin &&
             cd ci-admin &&
             hg update ${push.revision} &&
             pip install -r requirements.txt &&
@@ -52,4 +52,4 @@ tasks:
       name: "${cfg.name}"
       description: "${cfg.description}"
       owner: nobody@mozilla.org
-      source: 'https://hg.mozilla.org/build/ci-admin'
+      source: 'https://hg.mozilla.org/ci/ci-admin'

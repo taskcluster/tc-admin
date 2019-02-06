@@ -18,7 +18,7 @@ def test_role_formatter():
         Role=my:role-id:
           roleId: my:role-id
           description:
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/build/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
             
             This is my role
           scopes:
@@ -36,7 +36,7 @@ def test_role_json():
         "roleId": "my:role-id",
         "kind": "Role",
         "description": "*DO NOT EDIT* - This resource is configured automatically by [ci-admin]"
-        "(https://hg.mozilla.org/build/ci-admin).\n\nThis is my role",
+        "(https://hg.mozilla.org/ci/ci-admin).\n\nThis is my role",
         "scopes": ["a", "b", "c"],
     }
 
@@ -46,7 +46,7 @@ def test_role_from_api():
     api_result = {
         "roleId": "my:role-id",
         "description": "*DO NOT EDIT* - This resource is configured automatically by [ci-admin]"
-        "(https://hg.mozilla.org/build/ci-admin).\n\nThis is my role",
+        "(https://hg.mozilla.org/ci/ci-admin).\n\nThis is my role",
         "scopes": ["scope-a", "scope-b"],
     }
     role = Role.from_api(api_result)

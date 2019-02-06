@@ -111,6 +111,6 @@ async def update_resources(resources, environment):
             scopes=normalizeScopes(scopes),
             description="Scopes in this role are defined in "
             "[ci-configuration/grants.yml]"
-            "(https://hg.mozilla.org/build/ci-configuration/file/tip/grants.yml).",
+            "(https://hg.mozilla.org/ci/ci-configuration/file/tip/grants.yml).",
         )
         resources.add(role)

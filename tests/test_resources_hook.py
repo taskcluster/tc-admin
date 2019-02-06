@@ -40,7 +40,7 @@ def test_hook_formatter(simple_hook):
           hookId: test-hook
           name: test
           description:
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/build/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
 
             This is my hook
           owner: me@me.com
@@ -62,7 +62,7 @@ def test_role_from_api():
         "metadata": {
             "name": "my-test",
             "description": "*DO NOT EDIT* - This resource is configured automatically by [ci-admin]"
-            "(https://hg.mozilla.org/build/ci-admin).\n\nThis is my role",
+            "(https://hg.mozilla.org/ci/ci-admin).\n\nThis is my role",
             "owner": "dustin@mozilla.com",
             "emailOnError": False,
         },

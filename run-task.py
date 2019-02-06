@@ -27,7 +27,7 @@ have
       - bash
       - -c
       - >-
-        wget https://hg.mozilla.org/build/ci-admin/raw-file/default/run-task.py &&
+        wget https://hg.mozilla.org/ci/ci-admin/raw-file/default/run-task.py &&
         python run-task.py
 """
 

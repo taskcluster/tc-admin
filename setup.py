@@ -6,7 +6,7 @@ setup(
     description="Administration of runtime configuration (Taskcluster settings) for Firefox CI",
     author=u"Dustin Mitchell",
     author_email="dustin@mozilla.com",
-    url="https://hg.mozilla.org/build/ci-admin",
+    url="https://hg.mozilla.org/ci/ci-admin",
     packages=find_packages("."),
     install_requires=[
         "taskcluster<5",

@@ -10,7 +10,7 @@ import pytest
 from ciadmin.util.sessions import with_aiohttp_session
 from ciadmin.generate.ciconfig.get import _read_file
 
-# pin a revision of build/ci-configuration so we know what to expect
+# pin a revision of ci/ci-configuration so we know what to expect
 PINNED_REV = "8c90613a29f5"
 
 
@@ -19,7 +19,7 @@ PINNED_REV = "8c90613a29f5"
 async def test_get_yml():
     res = await _read_file.unwrapped(
         "projects.yml",
-        ci_configuration_repository="https://hg.mozilla.org/build/ci-configuration",
+        ci_configuration_repository="https://hg.mozilla.org/ci/ci-configuration",
         ci_configuration_revision=PINNED_REV,
         ci_configuration_directory=None,
     )
@@ -31,7 +31,7 @@ async def test_get_yml():
 async def test_get_data():
     res = await _read_file.unwrapped(
         "README.md",
-        ci_configuration_repository="https://hg.mozilla.org/build/ci-configuration",
+        ci_configuration_repository="https://hg.mozilla.org/ci/ci-configuration",
         ci_configuration_revision=PINNED_REV,
         ci_configuration_directory=None,
     )
@@ -43,7 +43,7 @@ async def test_get_data():
 async def test_get_file_path():
     res = await _read_file.unwrapped(
         os.path.basename(__file__),
-        ci_configuration_repository="https://hg.mozilla.org/build/ci-configuration",
+        ci_configuration_repository="https://hg.mozilla.org/ci/ci-configuration",
         ci_configuration_revision=PINNED_REV,
         ci_configuration_directory=os.path.dirname(__file__),
     )

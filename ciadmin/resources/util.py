@@ -8,7 +8,7 @@ from ..util.json import pretty_json
 
 # utilities for resource attr.ib's
 DESCRIPTION_PREFIX = """\
-*DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/build/ci-admin).
+*DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
 
 """
 
