@@ -85,9 +85,7 @@ async def update_resources(resources, environment):
 
     # manage our resources..
     resources.manage("Role=project:releng:ci-group:*")
-    for project in projects:
-        if project.repo_type == "hg":
-            resources.manage("Role=repo:hg.mozilla.org/{}:*".format(project.hgmo_path))
+    resources.manage("Role=repo:hg.mozilla.org/*")
 
     # calculate scopes..
     roles = {}
