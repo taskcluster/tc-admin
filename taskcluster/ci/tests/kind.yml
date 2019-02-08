@@ -72,3 +72,16 @@ jobs:
                     cd /builds/worker/checkouts/src &&
                     pip install --user black &&
                     black --check .
+
+    yamllint:
+        description: "Run `yamllint` to validate the latest changes"
+        treeherder:
+            symbol: yaml
+        run:
+            command:
+                - /bin/bash
+                - '-c'
+                - >-
+                    cd /builds/worker/checkouts/src &&
+                    pip install --user yamllint &&
+                    yamllint .
