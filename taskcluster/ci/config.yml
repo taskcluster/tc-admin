@@ -1,0 +1,7 @@
+---
+trust-domain: ci
+treeherder:
+    group-names:
+        'I': 'Docker Image Builds'
+
+task-priority: low
