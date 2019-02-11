@@ -23,7 +23,7 @@ def with_aiohttp_session(fn):
         with aiohttp.ClientSession() as session:
             _aiohttp_session = session
             try:
-                await fn(*args, **kwargs)
+                return await fn(*args, **kwargs)
             finally:
                 _aiohttp_session = None
 

@@ -21,9 +21,11 @@ from . import apply
 def run_async(fn):
     @functools.wraps(fn)
     def wrap(*args, **kwargs):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(fn(*args, **kwargs))
-        loop.close()
+        try:
+            loop = asyncio.get_event_loop()
+            return loop.run_until_complete(fn(*args, **kwargs))
+        finally:
+            loop.close()
 
     return wrap
 
