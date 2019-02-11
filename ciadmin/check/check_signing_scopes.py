@@ -40,7 +40,7 @@ def l3_scopes(generated_resolver):
         ("queue:create-task:highest:scriptworker-prov-v1/tb-signing-v1", False),
     ],
 )
-def test_l1_scopes(l1_scopes, scope, present):
+def check_l1_scopes(l1_scopes, scope, present):
     if present:
         assert satisfies(l1_scopes, [scope])
     else:
@@ -63,7 +63,7 @@ def test_l1_scopes(l1_scopes, scope, present):
         ("queue:create-task:highest:scriptworker-prov-v1/tb-signing-v1", True),
     ],
 )
-def test_l3_scopes(l3_scopes, scope, present):
+def check_l3_scopes(l3_scopes, scope, present):
     if present:
         assert satisfies(l3_scopes, [scope])
     else:
