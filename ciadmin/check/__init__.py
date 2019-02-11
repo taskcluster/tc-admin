@@ -17,4 +17,6 @@ def options(fn):
 
 @with_click_options("pytest_options")
 def run_checks(pytest_options):
-    return 0 == pytest.main([os.path.dirname(__file__) + "/"] + list(pytest_options))
+    check_path = os.path.dirname(__file__) + "/"
+    os.chdir(check_path)
+    return 0 == pytest.main(list(pytest_options))
