@@ -7,7 +7,8 @@
 import pytest
 import asyncio
 
-import ciadmin.check
+from ciadmin import current, generate
+from ciadmin.util.sessions import with_aiohttp_session
 
 
 # Imported from pytest-asyncio, but with scope session
@@ -21,14 +22,14 @@ def event_loop(request):
 
 
 @pytest.fixture(scope="session")
-def generated():
+@with_aiohttp_session
+async def generated():
     """Return the generated resources"""
-    # this is set as a module-global before running the tests
-    return ciadmin.check.generated
+    return await generate.resources()
 
 
 @pytest.fixture(scope="session")
-def actual():
+@with_aiohttp_session
+async def actual(generated):
     """Return the actual resources (as fetched from Taskcluster)"""
-    # this is set as a module-global before running the tests
-    return ciadmin.check.actual
+    return await current.resources(generated.managed)

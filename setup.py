@@ -19,7 +19,9 @@ setup(
         "pyyaml<4",
         "iso8601==0.1.12",  # no semver..
         "json-e<3",
+        # These are used at run-time as part of `ci-admin check`
         "pytest<4",
+        "pytest-asyncio<0.9.0",
     ],
     setup_requires=["pytest-runner", "flake8"],
     tests_require=["pytest-mock", "pytest-asyncio", "flake8"],
