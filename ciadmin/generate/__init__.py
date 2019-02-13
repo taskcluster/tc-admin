@@ -57,13 +57,6 @@ async def resources():
     """
     resources = Resources()
 
-    # manage a few repo-related prefixes so that any removed repos have their
-    # resources deleted
-    resources.manage("Role=repo:hg.mozilla.org/incubator/*")
-    resources.manage("Role=repo:hg.mozilla.org/releases/*")
-    # NOTE: we can't do this with /projects/, because it contains nss and nss-try, which
-    # are not confiugred in projects.yml
-
     environment = await load_environment()
 
     await asyncio.gather(
