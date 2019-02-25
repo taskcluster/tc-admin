@@ -8,6 +8,7 @@ setup(
     author_email="dustin@mozilla.com",
     url="https://hg.mozilla.org/ci/ci-admin",
     packages=find_packages("."),
+    package_data={"ciadmin.check": ["pytest.ini"]},
     install_requires=[
         "taskcluster<5",
         "click<7",

@@ -35,7 +35,7 @@ jobs:
                 - >-
                     cd /builds/worker/checkouts/src &&
                     pip install --user -r requirements.txt &&
-                    pip install --user -e . &&
+                    pip install --user . &&
                     ci-admin check --environment production
     unit:
         description: "Run `unit tests` to validate the latest changes"
