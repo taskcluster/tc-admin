@@ -4,7 +4,7 @@ setup(
     name="ci-admin",
     version="1.0.0",
     description="Administration of runtime configuration (Taskcluster settings) for Firefox CI",
-    author=u"Dustin Mitchell",
+    author="Dustin Mitchell",
     author_email="dustin@mozilla.com",
     url="https://hg.mozilla.org/ci/ci-admin",
     packages=find_packages("."),
