@@ -41,11 +41,18 @@ class TestAddScopesForProjects:
             trust_domain="nss",
             is_try=True,
         ),
+        Project(
+            alias="proj3",
+            repo="https://hg.mozilla.org/foo/proj3",
+            repo_type="hg",
+            access="scm_level_3",
+            trust_domain="comm",
+        ),
     ]
 
     def test_no_match(self, add_scope):
         "If no projects match, it does not add scopes"
-        grantee = ProjectGrantee(level=3)
+        grantee = ProjectGrantee(level=2)
         grants.add_scopes_for_projects(
             Grant(scopes=["sc"], grantees=[grantee]), grantee, add_scope, self.projects
         )
@@ -105,7 +112,10 @@ class TestAddScopesForProjects:
         grants.add_scopes_for_projects(
             Grant(scopes=["sc"], grantees=[grantee]), grantee, add_scope, self.projects
         )
-        assert add_scope.added == [("repo:hg.mozilla.org/foo/proj2:*", "sc")]
+        assert add_scope.added == [
+            ("repo:hg.mozilla.org/foo/proj2:*", "sc"),
+            ("repo:hg.mozilla.org/foo/proj3:*", "sc"),
+        ]
 
     def test_match_is_try_false(self, add_scope):
         "If is_try matches and is false it adds scopes"
@@ -113,7 +123,10 @@ class TestAddScopesForProjects:
         grants.add_scopes_for_projects(
             Grant(scopes=["sc"], grantees=[grantee]), grantee, add_scope, self.projects
         )
-        assert add_scope.added == [("repo:hg.mozilla.org/foo/proj1:*", "sc")]
+        assert add_scope.added == [
+            ("repo:hg.mozilla.org/foo/proj1:*", "sc"),
+            ("repo:hg.mozilla.org/foo/proj3:*", "sc"),
+        ]
 
     def test_match_is_try_true(self, add_scope):
         "If is_try matches and is true it adds scopes"
@@ -133,17 +146,18 @@ class TestAddScopesForProjects:
 
     def test_scope_substitution(self, add_scope):
         "Values alias, trust_domain, and level are substituted"
-        grantee = ProjectGrantee(level=1)
+        grantee = ProjectGrantee(level=[1,3])
         grants.add_scopes_for_projects(
             Grant(
-                scopes=["foo:{trust_domain}:level:{level}:{alias}"], grantees=[grantee]
+                scopes=["foo:{trust_domain}:level:{level}:{alias}:{priority}"], grantees=[grantee]
             ),
             grantee,
             add_scope,
             self.projects,
         )
         assert add_scope.added == [
-            ("repo:hg.mozilla.org/foo/proj1:*", "foo:gecko:level:1:proj1")
+            ("repo:hg.mozilla.org/foo/proj1:*", "foo:gecko:level:1:proj1:low"),
+            ("repo:hg.mozilla.org/foo/proj3:*", "foo:comm:level:3:proj3:highest"),
         ]
 
     def test_scope_substitution_invalid_key(self, add_scope):
@@ -163,6 +177,13 @@ class TestAddScopesForProjects:
         with pytest.raises(KeyError):
             grants.add_scopes_for_projects(
                 Grant(scopes=["foo:{level}"], grantees=[grantee]),
+                grantee,
+                add_scope,
+                self.projects,
+            )
+        with pytest.raises(KeyError):
+            grants.add_scopes_for_projects(
+                Grant(scopes=["foo:{priority}"], grantees=[grantee]),
                 grantee,
                 add_scope,
                 self.projects,

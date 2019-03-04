@@ -9,6 +9,8 @@ from ..resources import Role
 from .ciconfig.projects import Project
 from .ciconfig.grants import Grant, ProjectGrantee, GroupGrantee
 
+LEVEL_PRIORITIES = {1: "low", 2: "low", 3: "highest"}
+
 
 def add_scopes_for_projects(grant, grantee, add_scope, projects):
     def match(grantee_values, proj_value):
@@ -57,6 +59,7 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
             level = project.get_level()
             if level is not None:
                 subs["level"] = project.level
+                subs["priority"] = LEVEL_PRIORITIES[project.level]
             try:
                 subs["hgmo_path"] = project.hgmo_path
             except AttributeError:
