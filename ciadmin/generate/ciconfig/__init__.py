@@ -26,7 +26,7 @@ def options(fn):
         click.option(
             "--ci-configuration-directory",
             # capture the absolute path, in case the cwd changes later
-            callback=lambda c, p, value: os.path.abspath(value),
+            callback=lambda c, p, value: os.path.abspath(value) if value else None,
             help="local directory containing ci-configuration repository (overrides repository/revision)",
         ),
     )
