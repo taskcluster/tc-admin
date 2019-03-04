@@ -111,6 +111,8 @@ async def make_hook(project, environment):
                                         }
                                     ],
                                 },
+                                # not used by this hook, but allowed here for copy-pasta:
+                                "source": {},
                             },
                             "additionalProperties": False,
                         },
