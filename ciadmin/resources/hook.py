@@ -95,7 +95,7 @@ class Hook(Resource):
             },
             "schedule": self.schedule,
             "bindings": [
-                {"exchange": v[0], "routingKeyPattern": v[1]} for v in self.bindings
+                {"exchange": v.exchange, "routingKeyPattern": v.routingKeyPattern} for v in self.bindings
             ],
             "task": self.task,
             "triggerSchema": self.triggerSchema,
