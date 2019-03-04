@@ -217,6 +217,7 @@ def make_hook(action, tcyml_content, tcyml_hash):
         owner="taskcluster-notifications@mozilla.com",
         emailOnError=True,
         schedule=[],
+        bindings=[],
         task=task,
         triggerSchema=trigger_schema,
     )

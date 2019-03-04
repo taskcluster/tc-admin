@@ -50,6 +50,7 @@ def make_hook():
         kwargs.setdefault("schedule", ["0 0 1 * * *"])
         kwargs.setdefault("task", {})
         kwargs.setdefault("triggerSchema", {})
+        kwargs.setdefault("bindings", [{"exchange": "e", "routingKeyPattern": "rkp"}])
         return kwargs
 
     return make_hook

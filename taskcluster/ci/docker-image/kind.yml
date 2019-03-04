@@ -21,3 +21,8 @@ jobs:
         definition: python
         args:
             PYTHON_VERSION: "3.6"
+    hg-push:
+        symbol: I(hg-push)
+        definition: hg-push
+        args:
+            PYTHON_VERSION: "3.6"

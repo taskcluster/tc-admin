@@ -7,8 +7,10 @@
 import pytest
 import asyncio
 
-from ciadmin import current, generate
+import ciadmin.check
+from ciadmin import generate
 from ciadmin.util.sessions import with_aiohttp_session
+from ciadmin.util.scopes import Resolver
 
 
 # Imported from pytest-asyncio, but with scope session
@@ -33,3 +35,13 @@ async def generated():
 async def actual(generated):
     """Return the actual resources (as fetched from Taskcluster)"""
     return await current.resources(generated.managed)
+
+
+@pytest.fixture(scope="session")
+def generated_resolver(generated):
+    return Resolver.from_resources(generated)
+
+
+@pytest.fixture(scope="session")
+def queue_priorities():
+    return "highest very-high high medium low very-low lowest normal".split()

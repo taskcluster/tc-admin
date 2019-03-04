@@ -79,6 +79,7 @@ async def make_hook(project, environment):
         owner="taskcluster-notifications@mozilla.com",
         emailOnError=True,
         schedule=["0 0,15,30,45 * * * *"],  # every 15 minutes
+        bindings=[],
         task=task,
         # this schema simply requires an empty object (the default)
         triggerSchema={

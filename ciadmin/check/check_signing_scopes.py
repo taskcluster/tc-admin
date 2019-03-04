@@ -6,12 +6,7 @@
 
 import pytest
 
-from ciadmin.util.scopes import Resolver, satisfies
-
-
-@pytest.fixture(scope="module")
-def generated_resolver(generated):
-    return Resolver.from_resources(generated)
+from ciadmin.util.scopes import satisfies
 
 
 @pytest.fixture(scope="module")

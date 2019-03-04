@@ -6,6 +6,6 @@
 
 from .resources import Resources
 from .role import Role
-from .hook import Hook
+from .hook import Hook, Binding
 
-__all__ = ["Resources", "Role", "Hook"]
+__all__ = ["Resources", "Role", "Hook", "Binding"]

@@ -9,7 +9,15 @@ import os
 import click
 
 from ..resources import Resources
-from . import ciconfig, modify, scm_group_roles, in_tree_actions, cron_tasks, grants
+from . import (
+    ciconfig,
+    modify,
+    scm_group_roles,
+    in_tree_actions,
+    cron_tasks,
+    hg_pushes,
+    grants,
+)
 from .ciconfig.environments import Environment
 from ..options import decorate, with_click_options
 
@@ -63,6 +71,7 @@ async def resources():
         scm_group_roles.update_resources(resources, environment),
         in_tree_actions.update_resources(resources, environment),
         cron_tasks.update_resources(resources, environment),
+        hg_pushes.update_resources(resources, environment),
         grants.update_resources(resources, environment),
     )
 

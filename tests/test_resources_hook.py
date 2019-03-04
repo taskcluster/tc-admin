@@ -7,7 +7,7 @@
 import pytest
 import textwrap
 
-from ciadmin.resources.hook import Hook
+from ciadmin.resources.hook import Hook, Binding
 
 
 @pytest.fixture(scope="module")
@@ -21,6 +21,9 @@ def simple_hook():
         emailOnError=False,
         schedule=[],
         task={"$magic": "Siri, please test my code"},
+        bindings=(
+            Binding(exchange="e", routingKeyPattern="rkp"),
+        ),
         triggerSchema={},
     )
 
@@ -46,6 +49,7 @@ def test_hook_formatter(simple_hook):
           owner: me@me.com
           emailOnError: False
           schedule: 
+          bindings: - Binding(exchange='e', routingKeyPattern='rkp')
           task:
             {
                 "$magic": "Siri, please test my code"
@@ -69,6 +73,7 @@ def test_role_from_api():
         "schedule": ["0 0 9,21 * * 1-5", "0 0 12 * * 0,6"],
         "task": {"$magic": "build-task"},
         "triggerSchema": {},
+        "bindings": [{"exchange": "e", "routingKeyPattern": "rkp"}],
     }
     hook = Hook.from_api(api_result)
     assert hook.hookGroupId == "garbage"
@@ -79,4 +84,7 @@ def test_role_from_api():
     assert not hook.emailOnError
     assert hook.schedule == ("0 0 9,21 * * 1-5", "0 0 12 * * 0,6")
     assert hook.task == {"$magic": "build-task"}
+    assert hook.bindings == (
+        Binding(exchange="e", routingKeyPattern="rkp"),
+    )
     assert hook.triggerSchema == {}

@@ -15,6 +15,34 @@ def schedule_converter(value):
     return tuple(value)
 
 
+def bindings_converter(value):
+    """Convert a list to a tuple to ensure immutability"""
+    return tuple(sorted(value))
+
+
+def bindings_validator(instance, attribute, value):
+    """Ensure that bindings are always a sequence of Bindings"""
+    if not all(isinstance(v, Binding) for v in value):
+        raise ValueError('bindings must be a sequence of Binding instances')
+
+
+def bindings_formatter(value):
+    """Format bindings as a list of bulleted strings"""
+    return "\n".join(
+        "- {}".format(v) for v in value
+    )
+
+
+@attr.s
+class Binding(object):
+    exchange = attr.ib(type=str)
+    routingKeyPattern = attr.ib(type=str)
+
+    @classmethod
+    def from_api(cls, api_result):
+        return cls(**api_result)
+
+
 @attr.s
 class Hook(Resource):
     hookGroupId = attr.ib(type=str)
@@ -25,6 +53,12 @@ class Hook(Resource):
     emailOnError = attr.ib(type=bool)
     schedule = attr.ib(
         type=tuple, converter=schedule_converter, metadata={"formatter": list_formatter}
+    )
+    bindings = attr.ib(
+        type=tuple,
+        converter=bindings_converter,
+        validator=bindings_validator,
+        metadata={"formatter": bindings_formatter},
     )
     task = attr.ib(type=dict, metadata={"formatter": json_formatter})
     triggerSchema = attr.ib(type=dict, metadata={"formatter": json_formatter})
@@ -45,6 +79,9 @@ class Hook(Resource):
             owner=api_result["metadata"]["owner"],
             emailOnError=api_result["metadata"]["emailOnError"],
             schedule=api_result["schedule"],
+            bindings=tuple(
+                Binding.from_api(b) for b in api_result["bindings"]
+            ),
             task=api_result["task"],
             triggerSchema=api_result["triggerSchema"],
         )
@@ -61,6 +98,9 @@ class Hook(Resource):
                 "emailOnError": self.emailOnError,
             },
             "schedule": self.schedule,
+            "bindings": [
+                {"exchange": v[0], "routingKeyPattern": v[1]} for v in self.bindings
+            ],
             "task": self.task,
             "triggerSchema": self.triggerSchema,
         }
