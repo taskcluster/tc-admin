@@ -146,10 +146,11 @@ class TestAddScopesForProjects:
 
     def test_scope_substitution(self, add_scope):
         "Values alias, trust_domain, and level are substituted"
-        grantee = ProjectGrantee(level=[1,3])
+        grantee = ProjectGrantee(level=[1, 3])
         grants.add_scopes_for_projects(
             Grant(
-                scopes=["foo:{trust_domain}:level:{level}:{alias}:{priority}"], grantees=[grantee]
+                scopes=["foo:{trust_domain}:level:{level}:{alias}:{priority}"],
+                grantees=[grantee],
             ),
             grantee,
             add_scope,
