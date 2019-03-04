@@ -43,8 +43,7 @@ def repo_roles(generated, generated_resolver):
     return {
         resource.roleId: generated_resolver.expandScopes(["assume:" + resource.roleId])
         for resource in generated
-        if isinstance(resource, Role)
-        and resource.roleId.startswith("repo:")
+        if isinstance(resource, Role) and resource.roleId.startswith("repo:")
     }
 
 

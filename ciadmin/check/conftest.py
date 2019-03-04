@@ -7,7 +7,7 @@
 import pytest
 import asyncio
 
-import ciadmin.check
+from ciadmin import current
 from ciadmin import generate
 from ciadmin.util.sessions import with_aiohttp_session
 from ciadmin.util.scopes import Resolver

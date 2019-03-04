@@ -48,7 +48,9 @@ async def make_hook(project, environment):
         emailOnError=False,
         schedule=[],
         bindings=(
-            Binding(exchange="exchange/hgpushes/v2", routingKeyPattern=project.hgmo_path),
+            Binding(
+                exchange="exchange/hgpushes/v2", routingKeyPattern=project.hgmo_path
+            ),
         ),
         task=task,
         triggerSchema={

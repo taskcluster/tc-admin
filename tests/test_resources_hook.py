@@ -21,9 +21,7 @@ def simple_hook():
         emailOnError=False,
         schedule=[],
         task={"$magic": "Siri, please test my code"},
-        bindings=(
-            Binding(exchange="e", routingKeyPattern="rkp"),
-        ),
+        bindings=(Binding(exchange="e", routingKeyPattern="rkp"),),
         triggerSchema={},
     )
 
@@ -84,7 +82,5 @@ def test_role_from_api():
     assert not hook.emailOnError
     assert hook.schedule == ("0 0 9,21 * * 1-5", "0 0 12 * * 0,6")
     assert hook.task == {"$magic": "build-task"}
-    assert hook.bindings == (
-        Binding(exchange="e", routingKeyPattern="rkp"),
-    )
+    assert hook.bindings == (Binding(exchange="e", routingKeyPattern="rkp"),)
     assert hook.triggerSchema == {}

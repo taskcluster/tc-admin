@@ -23,14 +23,12 @@ def bindings_converter(value):
 def bindings_validator(instance, attribute, value):
     """Ensure that bindings are always a sequence of Bindings"""
     if not all(isinstance(v, Binding) for v in value):
-        raise ValueError('bindings must be a sequence of Binding instances')
+        raise ValueError("bindings must be a sequence of Binding instances")
 
 
 def bindings_formatter(value):
     """Format bindings as a list of bulleted strings"""
-    return "\n".join(
-        "- {}".format(v) for v in value
-    )
+    return "\n".join("- {}".format(v) for v in value)
 
 
 @attr.s
@@ -79,9 +77,7 @@ class Hook(Resource):
             owner=api_result["metadata"]["owner"],
             emailOnError=api_result["metadata"]["emailOnError"],
             schedule=api_result["schedule"],
-            bindings=tuple(
-                Binding.from_api(b) for b in api_result["bindings"]
-            ),
+            bindings=tuple(Binding.from_api(b) for b in api_result["bindings"]),
             task=api_result["task"],
             triggerSchema=api_result["triggerSchema"],
         )
