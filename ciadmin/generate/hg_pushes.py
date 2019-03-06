@@ -27,7 +27,7 @@ async def make_hook(project, environment):
             "hookGroupId": hookGroupId,
             "hookId": hookId,
             "project_repo": project.repo,
-            "project_hgmo_path": project.hgmo_path,
+            "project_repo_path": project.repo_path,
             "alias": project.alias,
         },
     )
@@ -49,7 +49,7 @@ async def make_hook(project, environment):
         schedule=[],
         bindings=(
             Binding(
-                exchange="exchange/hgpushes/v2", routingKeyPattern=project.hgmo_path
+                exchange="exchange/hgpushes/v2", routingKeyPattern=project.repo_path
             ),
         ),
         task=task,
@@ -151,7 +151,7 @@ async def update_resources(resources, environment):
             ),
             scopes=[
                 "assume:repo:hg.mozilla.org/{}:branch:default".format(
-                    project.hgmo_path
+                    project.repo_path
                 ),
                 # all hg-push tasks use the same workerType, and branches do not have permission
                 # to create tasks on that workerType

@@ -14,11 +14,56 @@ class Project:
     alias = attr.ib(type=str)
     repo = attr.ib(type=str)
     repo_type = attr.ib(type=str)
-    access = attr.ib(type=str)
+    access = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
+    )
+    _level = attr.ib(
+        type=int,
+        default=None,
+        validator=[
+            attr.validators.optional(attr.validators.instance_of(int)),
+            attr.validators.optional(attr.validators.in_([1, 2, 3])),
+        ],
+    )
     trust_domain = attr.ib(type=str, default=None)
     parent_repo = attr.ib(type=str, default=None)
     is_try = attr.ib(type=bool, default=False)
     features = attr.ib(type=dict, factory=lambda: {})
+
+    def __attrs_post_init__(self):
+        """Once the object is initialised, perform more sanity checks to ensure
+        the values received are sane together"""
+        # if neither `access` nor `level` are present, bail out
+        if not self.access and not self._level:
+            raise RuntimeError(
+                "No access or level specified for project {}".format(self.alias)
+            )
+        # `access` is mandatory while `level` forbidden for hg based projects
+        # and vice-versa for non-hg repositories
+        if self.repo_type == "hg":
+            if not self.access:
+                raise ValueError(
+                    "Mercurial repo {} needs to provide an input for "
+                    "its `access` value".format(self.alias)
+                )
+            if self._level:
+                raise ValueError(
+                    "Mercurial repo {} cannot define a `level` "
+                    "property".format(self.alias)
+                )
+        else:
+            if not self._level:
+                raise ValueError(
+                    "Non-hg repo {} needs to provide an input for "
+                    "its `level` value".format(self.alias)
+                )
+            if self.access:
+                raise ValueError(
+                    "Non-hg repo {} cannot define an `access` "
+                    "property".format(self.alias)
+                )
 
     @staticmethod
     async def fetch_all():
@@ -41,10 +86,12 @@ class Project:
 
     def get_level(self):
         "Get the level, or None if the access level does not define a level"
-        if self.access.startswith("scm_level_"):
+        if self.access and self.access.startswith("scm_level_"):
             return int(self.access[-1])
-        elif self.access == "scm_autoland":
+        elif self.access and self.access == "scm_autoland":
             return 3
+        elif self._level:
+            return self._level
         else:
             return None
 
@@ -58,10 +105,12 @@ class Project:
         return level
 
     @property
-    def hgmo_path(self):
+    def repo_path(self):
         if self.repo_type == "hg" and self.repo.startswith("https://hg.mozilla.org/"):
             return self.repo.replace("https://hg.mozilla.org/", "").rstrip("/")
+        elif self.repo_type == "git" and self.repo.startswith("https://github.com/"):
+            return self.repo.replace("https://github.com/", "").rstrip("/")
         else:
             raise AttributeError(
-                "no hgmo_path available for project {}".format(self.alias)
+                "no repo_path available for project {}".format(self.alias)
             )

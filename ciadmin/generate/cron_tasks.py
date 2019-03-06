@@ -15,7 +15,7 @@ from .ciconfig.get import get_ciconfig_file
 
 async def make_hook(project, environment):
     hookGroupId = "project-releng"
-    hookId = "cron-task-{}".format(project.hgmo_path.replace("/", "-"))
+    hookId = "cron-task-{}".format(project.repo_path.replace("/", "-"))
 
     # set up some options that differ for comm-central checkouts (which must
     # clone two repositories) and gecko checkouts (which only clone one)
@@ -117,6 +117,6 @@ async def update_resources(resources, environment):
             ),
             # this task has the scopes of *all* cron tasks in this project; the tasks it creates will have
             # the scopes for a specific cron task (replacing * with the task name)
-            scopes=["assume:repo:hg.mozilla.org/{}:cron:*".format(project.hgmo_path)],
+            scopes=["assume:repo:hg.mozilla.org/{}:cron:*".format(project.repo_path)],
         )
         resources.add(role)

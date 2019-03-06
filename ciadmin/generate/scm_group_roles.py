@@ -34,7 +34,7 @@ async def update_resources(resources, environment):
         for project in projects:
             if project.access == "scm_level_{}".format(level):
                 scopes.append(
-                    "assume:repo:hg.mozilla.org/{}:*".format(project.hgmo_path)
+                    "assume:repo:hg.mozilla.org/{}:*".format(project.repo_path)
                 )
 
         if scopes:

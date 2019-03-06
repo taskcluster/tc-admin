@@ -272,7 +272,7 @@ async def update_resources(resources, environment):
             ),
             scopes=[
                 "assume:repo:hg.mozilla.org/{}:action:{}".format(
-                    p.hgmo_path, action.action_perm
+                    p.repo_path, action.action_perm
                 )
                 for p in projects_by_level[action.level]
             ],

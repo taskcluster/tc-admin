@@ -16,44 +16,69 @@ async def test_fetch_empty(mock_ciconfig_file):
     assert await Project.fetch_all() == []
 
 
-@pytest.mark.asyncio
-async def test_fetch_defaults(mock_ciconfig_file):
-    "Test a fetch of project data only the required fields, applying defaults"
-    mock_ciconfig_file(
-        "projects.yml",
-        {
-            "ash": {
+@pytest.mark.parametrize(
+    "project_name,project_data,expected_data",
+    (
+        (
+            "ash",
+            {
                 "repo": "https://hg.mozilla.org/projects/ash",
                 "repo_type": "hg",
                 "access": "scm_level_2",
                 "trust_domain": "gecko",
-            }
-        },
-    )
+            },
+            {
+                "alias": "ash",
+                "repo": "https://hg.mozilla.org/projects/ash",
+                "repo_type": "hg",
+                "access": "scm_level_2",
+                "trust_domain": "gecko",
+                # defaults
+                "_level": None,
+                "is_try": False,
+                "parent_repo": None,
+                "features": {},
+            },
+        ),
+        (
+            "fenix",
+            {
+                "repo": "https://github.com/mozilla-mobile/fenix/",
+                "repo_type": "git",
+                "level": 3,
+            },
+            {
+                "alias": "fenix",
+                "repo": "https://github.com/mozilla-mobile/fenix/",
+                "repo_type": "git",
+                # defaults
+                "_level": 3,
+                "access": None,
+                "is_try": False,
+                "parent_repo": None,
+                "trust_domain": None,
+                "features": {},
+            },
+        ),
+    ),
+)
+@pytest.mark.asyncio
+async def test_fetch_defaults(
+    mock_ciconfig_file, project_name, project_data, expected_data
+):
+    "Test a fetch of project data only the required fields, applying defaults"
+    mock_ciconfig_file("projects.yml", {project_name: project_data})
     prjs = await Project.fetch_all()
     assert len(prjs) == 1
-    assert attr.asdict(prjs[0]) == {
-        # alias
-        "alias": "ash",
-        # from file
-        "repo": "https://hg.mozilla.org/projects/ash",
-        "repo_type": "hg",
-        "access": "scm_level_2",
-        "trust_domain": "gecko",
-        # defaults
-        "is_try": False,
-        "parent_repo": None,
-        "features": {},
-    }
+    assert attr.asdict(prjs[0]) == expected_data
 
 
-@pytest.mark.asyncio
-async def test_fetch_nodefaults(mock_ciconfig_file):
-    "Test a fetch of project data with all required fields supplied"
-    mock_ciconfig_file(
-        "projects.yml",
-        {
-            "ash": {
+@pytest.mark.parametrize(
+    "project_name,project_data,expected_data",
+    (
+        (
+            "ash",
+            {
                 "repo": "https://hg.mozilla.org/projects/ash",
                 "repo_type": "hg",
                 "access": "scm_level_2",
@@ -61,23 +86,57 @@ async def test_fetch_nodefaults(mock_ciconfig_file):
                 "parent_repo": "https://hg.mozilla.org/mozilla-unified",
                 "is_try": True,
                 "features": {"taskcluster-push": True, "taskcluster-cron": False},
-            }
-        },
-    )
+            },
+            {
+                # alias
+                "alias": "ash",
+                # from file
+                "repo": "https://hg.mozilla.org/projects/ash",
+                "repo_type": "hg",
+                "access": "scm_level_2",
+                "trust_domain": "gecko",
+                "_level": None,
+                "is_try": True,
+                "parent_repo": "https://hg.mozilla.org/mozilla-unified",
+                "features": {"taskcluster-push": True, "taskcluster-cron": False},
+            },
+        ),
+        (
+            "beetmoverscript",  # git project but not mobile
+            {
+                "repo": "https://github.com/mozilla-releng/beetmoverscript/",
+                "repo_type": "git",
+                "level": 3,
+                "trust_domain": "beet",
+                "parent_repo": "https://github.com/mozilla-releng/",
+                "is_try": False,
+                "features": {"taskcluster-push": True, "taskcluster-cron": False},
+            },
+            {
+                # alias
+                "alias": "beetmoverscript",
+                # from file
+                "repo": "https://github.com/mozilla-releng/beetmoverscript/",
+                "repo_type": "git",
+                "access": None,
+                "trust_domain": "beet",
+                "_level": 3,
+                "is_try": False,
+                "parent_repo": "https://github.com/mozilla-releng/",
+                "features": {"taskcluster-push": True, "taskcluster-cron": False},
+            },
+        ),
+    ),
+)
+@pytest.mark.asyncio
+async def test_fetch_nodefaults(
+    mock_ciconfig_file, project_name, project_data, expected_data
+):
+    "Test a fetch of project data with all required fields supplied"
+    mock_ciconfig_file("projects.yml", {project_name: project_data})
     prjs = await Project.fetch_all()
     assert len(prjs) == 1
-    assert attr.asdict(prjs[0]) == {
-        # alias
-        "alias": "ash",
-        # from file
-        "repo": "https://hg.mozilla.org/projects/ash",
-        "repo_type": "hg",
-        "access": "scm_level_2",
-        "trust_domain": "gecko",
-        "is_try": True,
-        "parent_repo": "https://hg.mozilla.org/mozilla-unified",
-        "features": {"taskcluster-push": True, "taskcluster-cron": False},
-    }
+    assert attr.asdict(prjs[0]) == expected_data
 
 
 def test_project_feature():
@@ -109,32 +168,140 @@ def test_project_enabled_features():
     assert prj.enabled_features == ["taskcluster-pull"]
 
 
-def test_project_level_property():
+@pytest.mark.parametrize(
+    "project_data,expected_level",
+    (
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "hg",
+                "access": "scm_level_3",
+                "trust_domain": "gecko",
+            },
+            3,
+        ),
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "hg",
+                "access": "scm_level_2",
+                "trust_domain": "gecko",
+            },
+            2,
+        ),
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "hg",
+                "access": "scm_level_1",
+                "trust_domain": "gecko",
+            },
+            1,
+        ),
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "hg",
+                "access": "scm_autoland",
+                "trust_domain": "gecko",
+            },
+            3,
+        ),
+        ({"alias": "prj", "repo": "https://", "repo_type": "git", "level": 3}, 3),
+        ({"alias": "prj", "repo": "https://", "repo_type": "git", "level": 1}, 1),
+        ({"alias": "prj", "repo": "https://", "repo_type": "git", "level": 1}, 1),
+    ),
+)
+def test_project_level_property(project_data, expected_level):
     "Test the level attribute"
-    prj = Project(
-        alias="prj",
-        repo="https://",
-        repo_type="hg",
-        access="scm_level_3",
-        trust_domain="gecko",
-    )
-    assert prj.level == 3
+    prj = Project(**project_data)
+    assert prj.level == expected_level
 
 
-def test_project_level_property_autoland():
-    "Test the level property for scm_autoland"
-    prj = Project(
-        alias="prj",
-        repo="https://",
-        repo_type="hg",
-        access="scm_autoland",
-        trust_domain="gecko",
-    )
-    assert prj.level == 3
+@pytest.mark.parametrize(
+    "project_data,error_type",
+    (
+        (
+            {"alias": "prj", "repo": "https://", "repo_type": "git", "access": 10},
+            TypeError,
+        ),
+        (
+            {"alias": "prj", "repo": "https://", "repo_type": "git", "level": "10"},
+            TypeError,
+        ),
+        (
+            {"alias": "prj", "repo": "https://", "repo_type": "git", "level": 4},
+            ValueError,
+        ),
+    ),
+)
+def test_project_level_failing_validators(project_data, error_type):
+    "Test the level attribute"
+    with pytest.raises(error_type):
+        Project(**project_data)
 
 
-def test_project_hmgo_path_property():
-    "Test the hgmo_path property"
+@pytest.mark.parametrize(
+    "project_data,error_type",
+    (
+        ({"alias": "prj", "repo": "https://", "repo_type": "git"}, RuntimeError),
+        (
+            {"alias": "prj", "repo": "https://", "repo_type": "hg", "level": 3},
+            ValueError,
+        ),
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "hg",
+                "access": "scm_level_3",
+                "level": 3,
+            },
+            ValueError,
+        ),
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "git",
+                "access": "scm_level_3",
+            },
+            ValueError,
+        ),
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "git",
+                "access": "scm_level_3",
+                "level": 3,
+            },
+            ValueError,
+        ),
+        (
+            {
+                "alias": "prj",
+                "repo": "https://",
+                "repo_type": "hg",
+                "access": "scm_mobile???",
+            },
+            RuntimeError,
+        ),
+    ),
+)
+def test_project_level_failing_post_init_checks(project_data, error_type):
+    "Test the level attribute"
+    with pytest.raises(error_type):
+        prj = Project(**project_data)
+        prj.level
+
+
+def test_project_repo_path_property():
+    "Test the repo_path property"
     prj = Project(
         alias="prj",
         repo="https://hg.mozilla.org/a/b/c",
@@ -142,11 +309,11 @@ def test_project_hmgo_path_property():
         access="scm_level_3",
         trust_domain="gecko",
     )
-    assert prj.hgmo_path == "a/b/c"
+    assert prj.repo_path == "a/b/c"
 
 
-def test_project_hmgo_path_property_trailing_slash():
-    "Test the hgmo_path property stripping trialing slashes"
+def test_project_repo_path_property_trailing_slash():
+    "Test the repo_path property stripping trialing slashes"
     prj = Project(
         alias="prj",
         repo="https://hg.mozilla.org/a/b/c/",
@@ -154,17 +321,17 @@ def test_project_hmgo_path_property_trailing_slash():
         access="scm_level_3",
         trust_domain="gecko",
     )
-    assert prj.hgmo_path == "a/b/c"
+    assert prj.repo_path == "a/b/c"
 
 
-def test_project_hmgo_path_property_not_hg():
-    "Test the hgmo_path property for non-hg projects"
+def test_project_repo_path_property_not_hg():
+    "Test the repo_path property for non-{hg,git} projects"
     prj = Project(
         alias="prj",
-        repo="https://github.com/a/b/c/",
-        repo_type="git",
-        access="scm_level_3",
+        repo="https://subversionhub.com/a/b/c/",
+        repo_type="svn",
+        level=3,
         trust_domain="gecko",
     )
     with pytest.raises(AttributeError):
-        prj.hgmo_path
+        prj.repo_path

@@ -49,7 +49,10 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
 
         # ok, this project matches!
         for job in grantee.job:
-            roleId = "repo:hg.mozilla.org/{}:{}".format(project.hgmo_path, job)
+            if project.repo_type == "hg":
+                roleId = "repo:hg.mozilla.org/{}:{}".format(project.repo_path, job)
+            elif project.repo_type == "git":
+                roleId = "repo:github.com/{}:{}".format(project.repo_path, job)
 
             # perform substitutions as grants.yml describes
             subs = {}
@@ -59,11 +62,15 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
             level = project.get_level()
             if level is not None:
                 subs["level"] = project.level
+                # In order to avoid granting pull-requests graphs
+                # access to the level-3 workers, we overwrite their value here
+                if job == "pull-request":
+                    subs["level"] = 1
                 subs["priority"] = LEVEL_PRIORITIES[project.level]
             try:
-                subs["hgmo_path"] = project.hgmo_path
+                subs["repo_path"] = project.repo_path
             except AttributeError:
-                pass  # not an hg.mozilla.org repo..
+                pass  # not an known supported repo..
 
             for scope in grant.scopes:
                 add_scope(roleId, scope.format(**subs))
@@ -80,7 +87,7 @@ def add_scopes_for_groups(grant, grantee, add_scope):
 async def update_resources(resources, environment):
     """
     Manage the scopes granted to projects.  This file interprets `grants.yml` in ci-configuration.
-    Its behavior is largely documentd in the comment in that file.
+    Its behavior is largely documented in the comment in that file.
     """
 
     grants = await Grant.fetch_all()
@@ -89,6 +96,11 @@ async def update_resources(resources, environment):
     # manage our resources..
     resources.manage("Role=project:releng:ci-group:*")
     resources.manage("Role=repo:hg.mozilla.org/*")
+    # TODO: once we stabilize ci-admin in the github world, we should be
+    # authorative for various github *org/users* vs. individual repos.
+    for project in projects:
+        if project.repo_type == "git":
+            resources.manage("Role=repo:github.com/{}:*".format(project.repo_path))
 
     # calculate scopes..
     roles = {}
