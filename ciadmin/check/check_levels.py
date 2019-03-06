@@ -12,9 +12,16 @@ from ciadmin.generate.ciconfig.projects import Project
 from ciadmin.util.sessions import with_aiohttp_session, aiohttp_session
 
 
-async def get_repo_owner(repo):
+async def get_hg_repo_owner(project):
+    """
+    Fetches the repo owner, in the form of unix group, from the
+    hg.mozilla.org metadata
+    """
+
+    assert project.repo_type == "hg", "Only hg repos can be queried for group_owner metadata"
+
     session = aiohttp_session()
-    async with session.get("{}/json-repoinfo".format(repo)) as response:
+    async with session.get("{}/json-repoinfo".format(project.repo)) as response:
         response.raise_for_status()
         result = await response.read()
     owner = json.loads(result)["group_owner"]
@@ -22,16 +29,25 @@ async def get_repo_owner(repo):
     # Once that is retired (Bug 1204891), this can be removed.
     if owner == "scm_autoland":
         owner = "scm_level_3"
+
     return owner
 
 
 @pytest.mark.asyncio
 @with_aiohttp_session
-async def check_scopes():
+async def check_scopes_for_hg_repos():
+    """
+    Ensures that the access levels present in the ci-configuration's
+    `projects.yml` match the ones from hg.mozilla.org metadata
+    """
 
     projects = await Project.fetch_all()
-    tc_levels = {project.alias: project.access for project in projects}
+    tc_levels = {
+        project.alias: project.access for project in projects if project.access
+    }
     hgmo_levels = {
-        project.alias: await get_repo_owner(project.repo) for project in projects
+        project.alias: await get_hg_repo_owner(project)
+        for project in projects
+        if project.repo_type == "hg"
     }
     assert tc_levels == hgmo_levels
