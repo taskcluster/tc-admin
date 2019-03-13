@@ -8,6 +8,11 @@ import attr
 
 from .get import get_ciconfig_file
 
+SYMBOLIC_GROUP_LEVELS = {
+    'scm_versioncontrol': 3,
+    'scm_autoland': 3,
+    'scm_nss': 3,
+}
 
 @attr.s(frozen=True)
 class Project:
@@ -88,8 +93,8 @@ class Project:
         "Get the level, or None if the access level does not define a level"
         if self.access and self.access.startswith("scm_level_"):
             return int(self.access[-1])
-        elif self.access and self.access == "scm_autoland":
-            return 3
+        elif self.access and self.access in SYMBOLIC_GROUP_LEVELS:
+            return SYMBOLIC_GROUP_LEVELS[self.access]
         elif self._level:
             return self._level
         else:
