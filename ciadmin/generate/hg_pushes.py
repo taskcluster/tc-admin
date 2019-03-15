@@ -132,7 +132,7 @@ async def update_resources(resources, environment):
     Manage the hooks and roles for cron tasks
     """
     projects = await Project.fetch_all()
-    projects = [p for p in projects if p.feature("taskcluster-push-via-hooks")]
+    projects = [p for p in projects if p.feature("taskcluster-push")]
     trust_domains = set(project.trust_domain for project in projects)
 
     # manage the hg-push/* hooks, and corresponding roles
