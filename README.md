@@ -33,7 +33,7 @@ See `ciadmin <command> --help` for more useful options.
 To install for development, in a virtualenv:
 
 ```
-pip install -e
+pip install -e [path]
 ```
 
 And to run flake8 and tests:

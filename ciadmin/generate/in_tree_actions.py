@@ -70,16 +70,27 @@ async def hash_taskcluster_ymls():
         # the expected {tasks: [{$let: .., in: ..}]}.  Those can be ignored too.
         if not isinstance(parsed["tasks"], list):
             continue
-
-        rv[project.alias] = parsed, hash(tcy)
+        rv[project.alias] = {
+            'parsed' : parsed,
+            'hash'   : hash(tcy),
+            'level'  : project.level,
+            'alias'  : project.alias
+        }
     return rv
 
 
-def make_hook(action, tcyml_content, tcyml_hash):
+def make_hook(action, tcyml_content, tcyml_hash, projects):
     hookGroupId = "project-{}".format(action.trust_domain)
     hookId = "in-tree-action-{}-{}/{}".format(
         action.level, action.action_perm, tcyml_hash
     )
+
+    # making matching project list for description field
+
+    matching_projects = []
+    for project in projects.values():
+        if project['hash'] == tcyml_hash and str(action.level) == str(project['level']):
+            matching_projects.append(project['alias'])
 
     # schema-generation utilities
 
@@ -211,9 +222,11 @@ def make_hook(action, tcyml_content, tcyml_hash):
             """\
             Action task {} at level {}, with `.taskcluster.yml` hash {}.
 
+            For project(s) {}
+
             This hook is fired in response to actions defined in a Gecko decision task's `actions.json`.
             """
-        ).format(action.action_perm, action.level, tcyml_hash),
+        ).format(action.action_perm, action.level, tcyml_hash, ', '.join(matching_projects)),
         owner="taskcluster-notifications@mozilla.com",
         emailOnError=True,
         schedule=[],
@@ -254,11 +267,11 @@ async def update_resources(resources, environment):
                 continue
             if project.trust_domain != action.trust_domain:
                 continue
-            content, hash = hashed_tcymls[project.alias]
+            content, hash = hashed_tcymls[project.alias]['parsed'], hashed_tcymls[project.alias]['hash']
             hooks_to_make[hash] = content
 
         for hash, content in hooks_to_make.items():
-            hook = make_hook(action, content, hash)
+            hook = make_hook(action, content, hash, hashed_tcymls)
             resources.add(hook)
             added_hooks.add(hook.id)
 
