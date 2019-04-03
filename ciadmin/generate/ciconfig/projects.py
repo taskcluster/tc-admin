@@ -8,11 +8,8 @@ import attr
 
 from .get import get_ciconfig_file
 
-SYMBOLIC_GROUP_LEVELS = {
-    'scm_versioncontrol': 3,
-    'scm_autoland': 3,
-    'scm_nss': 3,
-}
+SYMBOLIC_GROUP_LEVELS = {"scm_versioncontrol": 3, "scm_autoland": 3, "scm_nss": 3}
+
 
 @attr.s(frozen=True)
 class Project:

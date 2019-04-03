@@ -71,10 +71,10 @@ async def hash_taskcluster_ymls():
         if not isinstance(parsed["tasks"], list):
             continue
         rv[project.alias] = {
-            'parsed' : parsed,
-            'hash'   : hash(tcy),
-            'level'  : project.level,
-            'alias'  : project.alias
+            "parsed": parsed,
+            "hash": hash(tcy),
+            "level": project.level,
+            "alias": project.alias,
         }
     return rv
 
@@ -89,8 +89,8 @@ def make_hook(action, tcyml_content, tcyml_hash, projects):
 
     matching_projects = []
     for project in projects.values():
-        if project['hash'] == tcyml_hash and str(action.level) == str(project['level']):
-            matching_projects.append(project['alias'])
+        if project["hash"] == tcyml_hash and str(action.level) == str(project["level"]):
+            matching_projects.append(project["alias"])
 
     # schema-generation utilities
 
@@ -226,7 +226,9 @@ def make_hook(action, tcyml_content, tcyml_hash, projects):
 
             This hook is fired in response to actions defined in a Gecko decision task's `actions.json`.
             """
-        ).format(action.action_perm, action.level, tcyml_hash, ', '.join(matching_projects)),
+        ).format(
+            action.action_perm, action.level, tcyml_hash, ", ".join(matching_projects)
+        ),
         owner="taskcluster-notifications@mozilla.com",
         emailOnError=True,
         schedule=[],
@@ -267,7 +269,10 @@ async def update_resources(resources, environment):
                 continue
             if project.trust_domain != action.trust_domain:
                 continue
-            content, hash = hashed_tcymls[project.alias]['parsed'], hashed_tcymls[project.alias]['hash']
+            content, hash = (
+                hashed_tcymls[project.alias]["parsed"],
+                hashed_tcymls[project.alias]["hash"],
+            )
             hooks_to_make[hash] = content
 
         for hash, content in hooks_to_make.items():
