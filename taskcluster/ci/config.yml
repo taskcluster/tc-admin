@@ -5,3 +5,16 @@ treeherder:
         'I': 'Docker Image Builds'
 
 task-priority: low
+
+workers:
+    aliases:
+        images:
+            provisioner: aws-provisioner-v1
+            implementation: docker-worker
+            os: linux
+            worker-type: 'gecko-{level}-{alias}'
+        misc:
+            provisioner: aws-provisioner-v1
+            implementation: docker-worker
+            os: linux
+            worker-type: 'gecko-{alias}'

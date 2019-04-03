@@ -10,7 +10,7 @@ tasks:
     - $let:
           taskgraph:
               branch: taskgraph
-              revision: 86a61bb78c74551084f7d975683329b2a1f6587b
+              revision: 3eefedc491721972e5889cb12c2698331efc40d6
           trustDomain: ci
       in:
           $if: 'tasks_for in ["hg-push", "action", "cron"]'
