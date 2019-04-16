@@ -158,6 +158,7 @@ class TestAddScopesForProjects:
         )
         assert add_scope.added == [
             ("repo:hg.mozilla.org/foo/proj1:*", "foo:gecko:level:1:proj1:low"),
+            ("repo:hg.mozilla.org/foo/proj2:*", "foo:nss:level:3:proj2:highest"),
             ("repo:hg.mozilla.org/foo/proj3:*", "foo:comm:level:3:proj3:highest"),
         ]
 
@@ -174,20 +175,31 @@ class TestAddScopesForProjects:
 
     def test_scope_substitution_no_level(self, add_scope):
         "A project without a level does not substitute {level} (fails)"
-        grantee = ProjectGrantee(access="scm_nss")
+        grantee = ProjectGrantee(access="scm_unknown")
+        projects = [
+            Project(
+                alias="proj1",
+                repo="https://hg.mozilla.org/foo/proj1",
+                repo_type="hg",
+                access="scm_unknown",
+                trust_domain="crazy",
+                features={},
+            )
+        ]
+
         with pytest.raises(KeyError):
             grants.add_scopes_for_projects(
                 Grant(scopes=["foo:{level}"], grantees=[grantee]),
                 grantee,
                 add_scope,
-                self.projects,
+                projects,
             )
         with pytest.raises(KeyError):
             grants.add_scopes_for_projects(
                 Grant(scopes=["foo:{priority}"], grantees=[grantee]),
                 grantee,
                 add_scope,
-                self.projects,
+                projects,
             )
 
 
