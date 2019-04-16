@@ -142,16 +142,22 @@ six==1.11.0 \
     --hash=sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9 \
     --hash=sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb \
     # via blessings, mohawk, more-itertools, pytest, taskcluster
-slugid==1.0.7 \
-    --hash=sha256:6dab3c7eef0bb423fb54cb7752e0f466ddd0ee495b78b763be60e8a27f69e779 \
+slugid==2.0.0 \
+    --hash=sha256:a950d98b72691178bdd4d6c52743c4a2aa039207cf7a97d71060a111ff9ba297 \
+    --hash=sha256:aec8b0e01c4ad32e38e12d609eab3ec912fd129aaf6b2ded0199b56a5f8fd67c \
     # via taskcluster
 sortedcontainers==2.0.5 \
     --hash=sha256:220bb2e3e1886297fd7cdd6d164cb5cf237be1cfae1a3a3e526d149c52816682 \
     --hash=sha256:b74f2756fb5e23512572cc76f0fe0832fd86310f77dfee54335a35fb33f6b950
-taskcluster==4.0.1 \
-    --hash=sha256:27256511044346ac71a495d3c636f2add95c102b9b09f90d6fb1ea3e9949d311 \
-    --hash=sha256:99dd90bc1c566968868c8b07ede32f8e031cbccd52c7195a61e802679d461447 \
-    --hash=sha256:d0360063c1a3fcaaa514bb31c03954ba573d2b671df40a2ecfdfd9339cc8e93e
+taskcluster-urls==11.0.0 \
+    --hash=sha256:18dcaa9c2412d34ff6c78faca33f0dd8f2384e3f00a98d5832c62d6d664741f0 \
+    --hash=sha256:2aceab7cf5b1948bc197f2e5e50c371aa48181ccd490b8bada00f1e3baf0c5cc \
+    --hash=sha256:74bd2110b5daaebcec5e1d287bf137b61cb8cf6b2d8f5f2b74183e32bc4e7c87 \
+    # via taskcluster
+taskcluster==7.0.1 \
+    --hash=sha256:93027ec6949289d8267595c5770c3d3f0902d9461d98081544dce60764f94f46 \
+    --hash=sha256:97e19674738515e6891f4d7928280aecb2686def8b9d72a15477d7297f34c18c \
+    --hash=sha256:c24a8a67db9306e5ff0fd140e5bb6489ba3dcaf0632b6a2052b2d649a30e7617
 urllib3==1.23 \
     --hash=sha256:a68ac5e15e76e7e5dd2b8f94007233e01effe3e50e8daddf69acfd81cb686baf \
     --hash=sha256:b5725a0bd4ba422ab0e66e89e030c806576753ea3ee08554382c14e685d117b5 \

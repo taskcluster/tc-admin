@@ -8,6 +8,7 @@ import re
 import click
 import blessings
 from taskcluster.aio import Auth, Hooks
+from taskcluster import optionsFromEnvironment
 
 from ..util.ansi import strip_ansi
 from ..util.sessions import aiohttp_session
@@ -30,8 +31,8 @@ class Modifier:
     """
 
     def __init__(self):
-        self.auth = Auth(session=aiohttp_session())
-        self.hooks = Hooks(session=aiohttp_session())
+        self.auth = Auth(optionsFromEnvironment(), session=aiohttp_session())
+        self.hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
 
     async def create_role(self, role):
         await self.auth.createRole(role.roleId, role.to_api())

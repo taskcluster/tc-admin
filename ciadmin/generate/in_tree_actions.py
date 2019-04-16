@@ -11,6 +11,8 @@ import yaml
 import datetime
 import iso8601
 from taskcluster.aio import Hooks
+from taskcluster import optionsFromEnvironment
+from taskcluster.exceptions import TaskclusterRestFailure
 
 from ..resources import Role, Hook
 from .ciconfig.projects import Project
@@ -298,14 +300,22 @@ async def update_resources(resources, environment):
         resources.add(role)
 
     # download all existing hooks and check the last time they were used
-    hooks = Hooks(session=aiohttp_session())
+    hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
     interesting = MatchList(
         "Hook=project-{}/in-tree-action-*".format(trust_domain)
         for trust_domain in trust_domains
     )
     for trust_domain in trust_domains:
         hookGroupId = "project-{}".format(trust_domain)
-        for hook in (await hooks.listHooks(hookGroupId))["hooks"]:
+        try:
+            res = await hooks.listHooks(hookGroupId)
+        except TaskclusterRestFailure as e:
+            if e.status_code != 404:
+                raise e
+            # if the group doesn't exist, that's OK, it just means there are no hooks.
+            continue
+
+        for hook in res["hooks"]:
             hook = Hook.from_api(hook)
             # ignore if this is not an in-tree-action hook
             if not interesting.matches(hook.id):

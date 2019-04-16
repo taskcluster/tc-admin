@@ -225,7 +225,7 @@ def test_normalizeScopes_with_stars():
 
 @pytest.fixture(scope="module")
 def auth():
-    return taskcluster.Auth()
+    return taskcluster.Auth(taskcluster.optionsFromEnvironment())
 
 
 @pytest.fixture(scope="module")

@@ -5,13 +5,14 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 from taskcluster.aio import Hooks
+from taskcluster import optionsFromEnvironment
 
 from ..resources import Hook
 from ..util.sessions import aiohttp_session
 
 
 async def fetch_hooks(resources):
-    hooks = Hooks(session=aiohttp_session())
+    hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
     for hookGroupId in (await hooks.listHookGroups())["groups"]:
         idPrefix = "Hook={}/".format(hookGroupId)
         # if no hook with this hookGroupId is managed, skip it
