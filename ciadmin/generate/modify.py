@@ -28,6 +28,23 @@ def remove_hook_schedules(resources):
     return resources.map(modify)
 
 
+@modifier
+def remove_hook_bindings(resources):
+    """
+    Remove bindings from all managed hooks, so that they do not try to listen
+    to exchanges that do not exist.
+    """
+
+    def modify(resource):
+        if resource.kind != "Hook":
+            return resource
+        if not resource.bindings:
+            return resource
+        return resource.evolve(bindings=[])
+
+    return resources.map(modify)
+
+
 async def modify_resources(resources, environment):
     """
     Apply any `modify_resources` functions to the given resources, and return
