@@ -17,6 +17,7 @@ from . import (
     cron_tasks,
     hg_pushes,
     grants,
+    worker_pools,
 )
 from .ciconfig.environments import Environment
 from ..options import decorate, with_click_options
@@ -73,6 +74,7 @@ async def resources():
         cron_tasks.update_resources(resources, environment),
         hg_pushes.update_resources(resources, environment),
         grants.update_resources(resources, environment),
+        worker_pools.update_resources(resources, environment),
     )
 
     resources = await modify.modify_resources(resources, environment)
