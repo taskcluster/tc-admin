@@ -7,5 +7,6 @@
 from .resources import Resources
 from .role import Role
 from .hook import Hook, Binding
+from .aws_provisioner_workertype import AwsProvisionerWorkerType
 
-__all__ = ["Resources", "Role", "Hook", "Binding"]
+__all__ = ["Resources", "Role", "Hook", "Binding", "AwsProvisionerWorkerType"]
