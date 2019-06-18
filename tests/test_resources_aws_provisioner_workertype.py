@@ -174,3 +174,100 @@ def test_role_from_api():
         },
     ]
     assert apwt.availabilityZones == []
+
+
+def test_role_to_api():
+    "Worker Types are properly converted to a Taskcluster API result"
+    api_result = {
+        "launchSpec": {"SecurityGroups": ["docker-worker"]},
+        "description": textwrap.dedent(
+            """\
+            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+
+            ** WRITE THIS**"""
+        ),
+        "owner": "** WRITE THIS **",
+        "secrets": {},
+        "userData": {"dockerConfig": {"allowPrivileged": False}},
+        "minCapacity": 0,
+        "maxCapacity": 200,
+        "scalingRatio": 0,
+        "minPrice": 8,
+        "maxPrice": 8,
+        "instanceTypes": [
+            {
+                "capacity": 1,
+                "instanceType": "m1.medium",
+                "launchSpec": {},
+                "scopes": [],
+                "secrets": {},
+                "userData": {"capacityManagement": {"diskspaceThreshold": 2000000000}},
+                "utility": 1,
+            }
+        ],
+        "regions": [
+            {
+                "launchSpec": {"ImageId": "ami-d34268a9"},
+                "region": "us-east-1",
+                "scopes": [],
+                "secrets": {},
+                "userData": {},
+            },
+            {
+                "launchSpec": {"ImageId": "ami-0c474a6c"},
+                "region": "us-west-1",
+                "scopes": [],
+                "secrets": {},
+                "userData": {},
+            },
+            {
+                "launchSpec": {"ImageId": "ami-60d46918"},
+                "region": "us-west-2",
+                "scopes": [],
+                "secrets": {},
+                "userData": {},
+            },
+        ],
+        "availabilityZones": [],
+        "scopes": [],
+    }
+
+    apwt = AwsProvisionerWorkerType(
+        workerType="ami-test-pv",
+        launchSpec={"SecurityGroups": ["docker-worker"]},
+        description="** WRITE THIS**",
+        owner="** WRITE THIS **",
+        userData={"dockerConfig": {"allowPrivileged": False}},
+        minCapacity=0,
+        maxCapacity=200,
+        scalingRatio=0,
+        instanceTypes=[
+            {
+                "capacity": 1,
+                "instanceType": "m1.medium",
+                "launchSpec": {},
+                "userData": {"capacityManagement": {"diskspaceThreshold": 2000000000}},
+                "utility": 1,
+            }
+        ],
+        regions=[
+            {
+                "launchSpec": {"ImageId": "ami-d34268a9"},
+                "region": "us-east-1",
+                "userData": {},
+            },
+            {
+                "launchSpec": {"ImageId": "ami-0c474a6c"},
+                "region": "us-west-1",
+                "userData": {},
+            },
+            {
+                "launchSpec": {"ImageId": "ami-60d46918"},
+                "region": "us-west-2",
+                "userData": {},
+            },
+        ],
+        availabilityZones=[],
+    )
+
+    assert apwt.to_api() == api_result

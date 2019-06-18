@@ -85,7 +85,6 @@ class AwsProvisionerWorkerType(Resource):
             return d
 
         return {
-            "workerType": self.workerType,
             "launchSpec": self.launchSpec,
             "description": self.description,
             "owner": self.owner,
@@ -98,5 +97,6 @@ class AwsProvisionerWorkerType(Resource):
             "maxPrice": 8,  # value ignored by provisioner
             "instanceTypes": [add_fields(i) for i in self.instanceTypes],
             "regions": [add_fields(r) for r in self.regions],
-            "availabiltyZones": [add_az_fields(a) for a in self.availabiltyZones],
+            "availabilityZones": [add_az_fields(a) for a in self.availabilityZones],
+            "scopes": [],
         }
