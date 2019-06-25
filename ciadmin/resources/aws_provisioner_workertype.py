@@ -7,7 +7,7 @@
 import attr
 
 from .resources import Resource
-from .util import description_converter, list_formatter, json_formatter
+from .util import description_converter, json_formatter
 
 
 @attr.s

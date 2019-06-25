@@ -6,7 +6,7 @@
 
 import pytest
 
-from ciadmin.resources import Resources, AwsProvisionerWorkerType
+from ciadmin.resources import Resources
 from ciadmin.current.aws_provisioner_workertypes import (
     fetch_aws_provisioner_workertypes,
 )

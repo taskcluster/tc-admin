@@ -4,11 +4,9 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
-import textwrap
-import jsone
 import copy
 
-from ..resources import Role, AwsProvisionerWorkerType
+from ..resources import AwsProvisionerWorkerType
 from .ciconfig.worker_pools import WorkerPool
 from .ciconfig.worker_images import WorkerImage
 

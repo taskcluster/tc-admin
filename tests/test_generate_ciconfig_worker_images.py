@@ -57,4 +57,4 @@ def test_worker_images_get():
     assert imgs.get("image-2").clouds == {"packet": {}}
     assert imgs["image-1"].clouds == {"packet": {}}
     assert imgs.get("image-2").clouds == {"packet": {}}
-    assert imgs.get("image-3") == None
+    assert imgs.get("image-3") is None
