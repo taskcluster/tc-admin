@@ -1,3 +1,6 @@
 .pytest_cache
 sandbox
 TODO.txt
+.eggs
+ci_admin.egg-info
+__pycache__
