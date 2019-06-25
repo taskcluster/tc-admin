@@ -6,17 +6,27 @@
 
 import pytest
 
+from ciadmin.generate.ciconfig.projects import Project
 from ciadmin.util.scopes import satisfies
 
 
-@pytest.fixture(scope="module")
-def l1_scopes(generated_resolver):
-    return generated_resolver.expandScopes(["assume:mozilla-group:active_scm_level_1"])
+async def project_scopes(resolver, level):
+    projects = await Project.fetch_all()
+    scopes = ["assume:mozilla-group:active_scm_level_{}".format(level)]
+    for project in projects:
+        if project.level == level:
+            scopes.append("assume:repo:hg.mozilla.org/{}:*".format(project.repo_path))
+    return resolver.expandScopes(scopes)
 
 
 @pytest.fixture(scope="module")
-def l3_scopes(generated_resolver):
-    return generated_resolver.expandScopes(["assume:mozilla-group:active_scm_level_3"])
+async def l1_scopes(generated_resolver):
+    return await project_scopes(generated_resolver, level=1)
+
+
+@pytest.fixture(scope="module")
+async def l3_scopes(generated_resolver):
+    return await project_scopes(generated_resolver, level=3)
 
 
 @pytest.mark.parametrize(

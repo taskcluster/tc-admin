@@ -30,9 +30,9 @@ async def update_resources(resources, environment):
         )
         scopes = ["assume:project:releng:ci-group:{}".format(group)]
 
-        # include an `assume:` scope for each project at this level
+        # include an `assume:` scope for each project at level 1
         for project in projects:
-            if project.access == "scm_level_{}".format(level):
+            if project.level == 1 and project.repo_type == "hg":
                 scopes.append(
                     "assume:repo:hg.mozilla.org/{}:*".format(project.repo_path)
                 )
