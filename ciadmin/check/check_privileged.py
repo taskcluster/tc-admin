@@ -23,5 +23,11 @@ async def check_privileged_is_untrusted():
     worker_pools = await WorkerPool.fetch_all()
     for pool in worker_pools:
         trusted = "trusted" in pool.config["image"]
-        privileged = pool.config.get("userData", {}).get("dockerConfig", {}).get("allowPrivileged", False)
-        assert not all([trusted, privileged]), f"{pool.worker_pool_id} has trusted CoT keys, but permits privileged (host-root-equivalent) tasks."
+        privileged = (
+            pool.config.get("userData", {})
+            .get("dockerConfig", {})
+            .get("allowPrivileged", False)
+        )
+        assert not all(
+            [trusted, privileged]
+        ), f"{pool.worker_pool_id} has trusted CoT keys, but permits privileged (host-root-equivalent) tasks."
