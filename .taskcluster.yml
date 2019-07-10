@@ -132,7 +132,6 @@ tasks:
                                     ACTION_TASK_ID: {$json: {$eval: 'taskId'}}  # taskId of the target task (JSON-encoded)
                                     ACTION_INPUT: {$json: {$eval: 'input'}}
                                     ACTION_CALLBACK: '${action.cb_name}'
-                                    ACTION_PARAMETERS: {$json: {$eval: 'parameters'}}
 
                       cache:
                           ${trustDomain}-level-${repository.level}-checkouts-sparse-v2: /builds/worker/checkouts
@@ -216,7 +215,6 @@ tasks:
                                         taskGroupId: '${action.taskGroupId}'
                                         taskId: {$eval: 'taskId'}
                                         input: {$eval: 'input'}
-                                        parameters: {$eval: 'parameters'}
                           - $if: 'tasks_for == "cron"'
                             then:
                                 cron: {$json: {$eval: 'cron'}}

@@ -96,11 +96,11 @@ def make_hook(action, tcyml_content, tcyml_hash, projects):
 
     # schema-generation utilities
 
-    def obj(_description=None, **properties):
+    def obj(_description=None, *, optional=(), **properties):
         schema = {
             "type": "object",
             "additionalProperties": False,
-            "required": sorted(properties.keys()),
+            "required": sorted(properties.keys() - optional),
             "properties": properties,
         }
         if _description:
@@ -150,6 +150,7 @@ def make_hook(action, tcyml_content, tcyml_hash, projects):
                 "description": "decision task parameters",
                 "additionalProperties": True,
             },
+            optional={"parameters"},
         ),
         user=obj(
             "Information provided by the user or user interface",
@@ -205,7 +206,7 @@ def make_hook(action, tcyml_content, tcyml_hash, projects):
             "push": {"$eval": "payload.decision.push"},
             "repository": {"$eval": "payload.decision.repository"},
             "input": {"$eval": "payload.user.input"},
-            "parameters": {"$eval": "payload.decision.parameters"},
+            "parameters": {"$eval": "payload.decision['parameters']"},
             # taskId and taskGroupId represent the task and/or task group the user has targetted
             # with this action
             "taskId": {"$eval": "payload.user.taskId"},
