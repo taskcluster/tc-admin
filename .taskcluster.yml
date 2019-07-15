@@ -10,7 +10,7 @@ tasks:
     - $let:
           taskgraph:
               branch: taskgraph
-              revision: 3eefedc491721972e5889cb12c2698331efc40d6
+              revision: 3382f811e3ff446fc4e07b8d3747b6f7d127be8d
           trustDomain: ci
       in:
           $if: 'tasks_for in ["hg-push", "action", "cron"]'
@@ -125,6 +125,7 @@ tasks:
                                 VCS_HEAD_REPOSITORY: '${repoUrl}'
                                 VCS_HEAD_REF: '${push.revision}'
                                 VCS_HEAD_REV: '${push.revision}'
+                                VCS_REPOSITORY_TYPE: hg
                                 HG_STORE_PATH: /builds/worker/checkouts/hg-store
                               - $if: 'tasks_for == "action"'
                                 then:
@@ -180,6 +181,8 @@ tasks:
                                     --head-repository="${repoUrl}"
                                     --head-ref="${push.revision}"
                                     --head-rev="${push.revision}"
+                                    --repository-type=hg
+                                    --tasks-for='${tasks_for}'
                                     ${extraArgs}
 
                       artifacts:
