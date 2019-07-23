@@ -95,6 +95,8 @@ class AwsProvisionerWorkerType(Resource):
             "scalingRatio": self.scalingRatio,
             "minPrice": 8,  # value ignored by provisioner
             "maxPrice": 8,  # value ignored by provisioner
+            "canUseOndemand": True, # value ignored by provisioner
+            "canUseSpot": True, # value ignored by provisioner
             "instanceTypes": [add_fields(i) for i in self.instanceTypes],
             "regions": [add_fields(r) for r in self.regions],
             "availabilityZones": [add_az_fields(a) for a in self.availabilityZones],
