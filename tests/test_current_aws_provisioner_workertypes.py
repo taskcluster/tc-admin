@@ -39,7 +39,8 @@ def AwsProvisioner(mocker):
 
 
 @pytest.mark.asyncio
-async def test_fetch_aws_provisioner_workertypes(AwsProvisioner):
+async def test_fetch_aws_provisioner_workertypes(AwsProvisioner, monkeypatch):
+    monkeypatch.setenv("TASKCLUSTER_ROOT_URL", "https://taskcluster.net")
     resources = Resources([], ["AwsProvisionerWorkerType=managed*"])
     AwsProvisioner.workerTypes = [
         {

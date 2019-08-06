@@ -176,8 +176,9 @@ def test_role_from_api():
     assert apwt.availabilityZones == []
 
 
-def test_role_to_api():
+def test_role_to_api(monkeypatch):
     "Worker Types are properly converted to a Taskcluster API result"
+    monkeypatch.setenv("TASKCLUSTER_ROOT_URL", "https://taskcluster.net")
     api_result = {
         "launchSpec": {"SecurityGroups": ["docker-worker"]},
         "description": textwrap.dedent(
@@ -194,6 +195,8 @@ def test_role_to_api():
         "scalingRatio": 0,
         "minPrice": 8,
         "maxPrice": 8,
+        "canUseOndemand": True,
+        "canUseSpot": True,
         "instanceTypes": [
             {
                 "capacity": 1,

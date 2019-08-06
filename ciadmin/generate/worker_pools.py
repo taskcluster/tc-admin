@@ -101,4 +101,5 @@ async def update_resources(resources, environment):
 
     for wp in worker_pools:
         apwt = await make_worker_pool(resources, environment, wp, worker_images)
-        resources.add(apwt)
+        if apwt:
+            resources.add(apwt)
