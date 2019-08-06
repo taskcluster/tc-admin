@@ -6,8 +6,8 @@
 
 import copy
 
-from ..resources import AwsProvisionerWorkerType
-from .ciconfig.worker_pools import WorkerPool
+from ..resources import AwsProvisionerWorkerType, WorkerPool
+from .ciconfig.worker_pools import WorkerPool as ConfigWorkerPool
 from .ciconfig.worker_images import WorkerImage
 
 
@@ -53,14 +53,26 @@ async def make_worker_pool(resources, environment, wp, worker_images):
     legacy_env = environment.root_url == "https://taskcluster.net"
     legacy_wt = wp.provider_id == "legacy-aws-provisioner-v1"
 
-    # do not try to provision legacy worker pools in a non-legacy environment,
-    # nor non-legacy worker pools in the legacy environment
-    if not legacy_env and legacy_wt or legacy_env and not legacy_wt:
+    # do not try to provision legacy worker pools in a non-legacy environment.
+    if not legacy_env and legacy_wt:
         return
 
-    if not legacy_wt:
-        raise RuntimeError("Worker-manager-managed worker-pools are not supported yet")
+    if legacy_wt:
+        return await make_aws_provisioner_worker_type(
+            resources, environment, wp, worker_images
+        )
 
+    return WorkerPool(
+        workerPoolId=wp.worker_pool_id,
+        description=wp.description,
+        owner=wp.owner,
+        providerId=wp.provider_id,
+        config=wp.config,
+        emailOnError=wp.email_on_error,
+    )
+
+
+async def make_aws_provisioner_worker_type(resources, environment, wp, worker_images):
     if wp.email_on_error:
         raise RuntimeError(
             "email_on_error is not supported for legacy-aws-provisioner-v1"
@@ -74,7 +86,7 @@ async def make_worker_pool(resources, environment, wp, worker_images):
 
     # Fill out the config more fully to feed to aws provisioner
     config = set_ec2_worker_images(wp.config, worker_images)
-    apwt = AwsProvisionerWorkerType(
+    return AwsProvisionerWorkerType(
         workerType=workerType,
         description=wp.description,
         owner=wp.owner,
@@ -89,15 +101,16 @@ async def make_worker_pool(resources, environment, wp, worker_images):
             full_availability_zone(a) for a in config.get("availabilityZones", [])
         ],
     )
-    return apwt
 
 
 async def update_resources(resources, environment):
     """
     Manage the worker-pool configurations
     """
-    worker_pools = await WorkerPool.fetch_all()
+    worker_pools = await ConfigWorkerPool.fetch_all()
     worker_images = await WorkerImage.fetch_all()
+
+    resources.manage("WorkerPool=*")
 
     for wp in worker_pools:
         apwt = await make_worker_pool(resources, environment, wp, worker_images)

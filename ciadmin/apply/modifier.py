@@ -9,8 +9,8 @@ import blessings
 from ..util.ansi import strip_ansi
 from ..util.sessions import aiohttp_session
 
-from taskcluster.aio import Auth, Hooks, AwsProvisioner
-from taskcluster import optionsFromEnvironment
+from taskcluster.aio import Auth, Hooks, AwsProvisioner, WorkerManager
+from taskcluster import optionsFromEnvironment, TaskclusterRestFailure
 
 t = blessings.Terminal()
 
@@ -24,6 +24,9 @@ class Modifier:
         self.auth = Auth(optionsFromEnvironment(), session=aiohttp_session())
         self.hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
         self.awsprovisioner = AwsProvisioner(
+            optionsFromEnvironment(), session=aiohttp_session()
+        )
+        self.worker_manager = WorkerManager(
             optionsFromEnvironment(), session=aiohttp_session()
         )
 
@@ -53,6 +56,30 @@ class Modifier:
 
     async def delete_awsprovisionerworkertype(self, wt):
         await self.awsprovisioner.removeWorkerType(wt.workerType)
+
+    async def create_workerpool(self, wp):
+        try:
+            await self.worker_manager.createWorkerPool(wp.workerPoolId, wp.to_api())
+        except TaskclusterRestFailure as e:
+            # A 409 Conflict error indicates this worker pool already exists,
+            # and in most cases this means it's still in the process of being
+            # deleted (that is, has providerId = "null-provider" as set below in
+            # delete_workerpool).  In this case, we just update the worker pool
+            # in-place.
+            if e.status_code == 409:
+                return await self.update_workerpool(wp)
+            raise
+
+    async def update_workerpool(self, wp):
+        await self.worker_manager.updateWorkerPool(wp.workerPoolId, wp.to_api())
+
+    async def delete_workerpool(self, wp):
+        # worker-manager doesn't support deleting directly; instead we set the
+        # providerId to "null-provider".  Once the pool has no workers, the
+        # worker-manager will delete it.
+        as_api = wp.to_api()
+        as_api["providerId"] = "null-provider"
+        await self.worker_manager.updateWorkerPool(wp.workerPoolId, as_api)
 
     async def modify_resource(self, verb, resource):
         msg = {

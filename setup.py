@@ -10,7 +10,7 @@ setup(
     packages=find_packages("."),
     package_data={"ciadmin.check": ["pytest.ini"]},
     install_requires=[
-        "taskcluster<8",
+        "taskcluster~=16.0.0",
         "click<7",
         "blessings<2",
         "attrs",  # http://www.attrs.org/en/stable/backward-compatibility.html
