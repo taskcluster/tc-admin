@@ -71,7 +71,7 @@ def test_role_from_api():
             descr"""
     )
     assert apwt.owner == "owner"
-    assert apwt.emailOnError == True
+    assert apwt.emailOnError is True
     assert apwt.providerId == "cirrus"
 
 
