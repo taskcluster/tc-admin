@@ -20,6 +20,7 @@ job-defaults:
         platform: tests/opt
         tier: 1
     run:
+        cwd: '{checkout}'
         using: run-task
 
 jobs:
@@ -28,60 +29,38 @@ jobs:
         treeherder:
             symbol: check
         run:
-            command:
-                - /bin/bash
-                - '-c'
-                # TODO: use virtualenv
-                - >-
-                    cd /builds/worker/checkouts/src &&
-                    pip install --user -r requirements.txt &&
-                    pip install --user . &&
-                    ci-admin check --environment production
+            command: >-
+                pip install --user -r requirements.txt &&
+                pip install --user . &&
+                ci-admin check --environment production
     unit:
         description: "Run `unit tests` to validate the latest changes"
         treeherder:
             symbol: unit
         run:
-            command:
-                - /bin/bash
-                - '-c'
-                - >-
-                    cd /builds/worker/checkouts/src &&
-                    python setup.py test
+            command: [python, setup.py, test]
     flake8:
         description: "Run `flake8` to validate the latest changes"
         treeherder:
             symbol: f8
         run:
-            command:
-                - /bin/bash
-                - '-c'
-                - >-
-                    cd /builds/worker/checkouts/src &&
-                    pip install --user flake8 &&
-                    flake8
+            command: >-
+                pip install --user flake8 &&
+                flake8
     black:
         description: "Run `black` to validate the latest changes"
         treeherder:
             symbol: black
         run:
-            command:
-                - /bin/bash
-                - '-c'
-                - >-
-                    cd /builds/worker/checkouts/src &&
-                    pip install --user black &&
-                    black --check .
+            command: >-
+                pip install --user black &&
+                black --check .
 
     yamllint:
         description: "Run `yamllint` to validate the latest changes"
         treeherder:
             symbol: yaml
         run:
-            command:
-                - /bin/bash
-                - '-c'
-                - >-
-                    cd /builds/worker/checkouts/src &&
-                    pip install --user yamllint &&
-                    yamllint .
+            command: >-
+                pip install --user yamllint &&
+                yamllint .

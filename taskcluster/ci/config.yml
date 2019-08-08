@@ -6,6 +6,8 @@ treeherder:
 
 task-priority: low
 
+taskgraph: {}
+
 workers:
     aliases:
         images:
