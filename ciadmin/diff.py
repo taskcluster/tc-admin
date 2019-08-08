@@ -26,6 +26,14 @@ def options(fn):
         ),
         click.option("--grep", help="regular expression limiting resources displayed"),
         click.option(
+            "--unified",
+            "-U",
+            "context",
+            type=int,
+            default=8,
+            help="number of lines of context to show",
+        ),
+        click.option(
             "--ids-only",
             is_flag=True,
             help="only show resource IDs added (+), removed (-), or changed (@)",
@@ -59,7 +67,7 @@ def id_diff(generated, current):
     return "\n".join(rv)
 
 
-def textual_diff(generated, current):
+def textual_diff(generated, current, context):
     """
     Compare changes from Resources instances geneated and current, returning a
     string.
@@ -84,7 +92,7 @@ def textual_diff(generated, current):
         return ""
 
     lines = difflib.unified_diff(
-        left, right, lineterm="", fromfile="current", tofile="generated", n=8
+        left, right, lineterm="", fromfile="current", tofile="generated", n=context
     )
     colors = {
         "-": lambda s: t.red(strip_ansi(s)),
@@ -99,8 +107,8 @@ def textual_diff(generated, current):
     return "\n".join(lines)
 
 
-@with_click_options("ignore_descriptions", "grep", "ids_only")
-def show_diff(generated, current, ignore_descriptions, grep, ids_only):
+@with_click_options("ignore_descriptions", "grep", "ids_only", "context")
+def show_diff(generated, current, ignore_descriptions, grep, ids_only, context):
     # limit the resources considered if --grep
     if grep:
         generated = generated.filter(grep)
@@ -120,6 +128,6 @@ def show_diff(generated, current, ignore_descriptions, grep, ids_only):
     if ids_only:
         result = id_diff(generated, current)
     else:
-        result = textual_diff(generated, current)
+        result = textual_diff(generated, current, context)
     print(result)
     return result.strip() != ""
