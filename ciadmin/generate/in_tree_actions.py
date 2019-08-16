@@ -38,9 +38,7 @@ async def hash_taskcluster_ymls():
     def should_hash(project):
         if not project.feature("gecko-actions"):
             return False
-        if not project.feature("taskcluster-push") and not project.feature(
-            "taskcluster-cron"
-        ):
+        if not project.feature("hg-push") and not project.feature("gecko-cron"):
             return False
         if project.is_try:
             return False

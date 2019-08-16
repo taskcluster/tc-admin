@@ -102,9 +102,9 @@ async def update_resources(resources, environment):
     resources.manage("Role=hook-id:project-releng/cron-task-*")
 
     for project in projects:
-        # if this project does not thave the `taskcluster-cron` feature, it does not get
+        # if this project does not thave the `gecko-cron` feature, it does not get
         # a hook.
-        if not project.feature("taskcluster-cron"):
+        if not project.feature("gecko-cron"):
             continue
 
         hook = await make_hook(project, environment)

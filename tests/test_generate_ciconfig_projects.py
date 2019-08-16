@@ -85,7 +85,7 @@ async def test_fetch_defaults(
                 "trust_domain": "gecko",
                 "parent_repo": "https://hg.mozilla.org/mozilla-unified",
                 "is_try": True,
-                "features": {"taskcluster-push": True, "taskcluster-cron": False},
+                "features": {"hg-push": True, "gecko-cron": False},
             },
             {
                 # alias
@@ -98,7 +98,7 @@ async def test_fetch_defaults(
                 "_level": None,
                 "is_try": True,
                 "parent_repo": "https://hg.mozilla.org/mozilla-unified",
-                "features": {"taskcluster-push": True, "taskcluster-cron": False},
+                "features": {"hg-push": True, "gecko-cron": False},
             },
         ),
         (
@@ -110,7 +110,7 @@ async def test_fetch_defaults(
                 "trust_domain": "beet",
                 "parent_repo": "https://github.com/mozilla-releng/",
                 "is_try": False,
-                "features": {"taskcluster-push": True, "taskcluster-cron": False},
+                "features": {"hg-push": True, "gecko-cron": False},
             },
             {
                 # alias
@@ -123,7 +123,7 @@ async def test_fetch_defaults(
                 "_level": 3,
                 "is_try": False,
                 "parent_repo": "https://github.com/mozilla-releng/",
-                "features": {"taskcluster-push": True, "taskcluster-cron": False},
+                "features": {"hg-push": True, "gecko-cron": False},
             },
         ),
     ),
@@ -147,11 +147,11 @@ def test_project_feature():
         repo_type="hg",
         access="scm_level_3",
         trust_domain="gecko",
-        features={"taskcluster-pull": True, "taskcluster-cron": False},
+        features={"taskcluster-pull": True, "gecko-cron": False},
     )
     assert prj.feature("taskcluster-pull")
-    assert not prj.feature("taskcluster-cron")
-    assert not prj.feature("taskcluster-cron")
+    assert not prj.feature("gecko-cron")
+    assert not prj.feature("gecko-cron")
     assert not prj.feature("buildbot")
 
 
@@ -163,7 +163,7 @@ def test_project_enabled_features():
         repo_type="hg",
         access="scm_level_3",
         trust_domain="gecko",
-        features={"taskcluster-pull": True, "taskcluster-cron": False},
+        features={"taskcluster-pull": True, "gecko-cron": False},
     )
     assert prj.enabled_features == ["taskcluster-pull"]
 
