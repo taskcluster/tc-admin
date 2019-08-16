@@ -109,10 +109,19 @@ class Project:
     @property
     def repo_path(self):
         if self.repo_type == "hg" and self.repo.startswith("https://hg.mozilla.org/"):
-            return self.repo.replace("https://hg.mozilla.org/", "").rstrip("/")
+            return self.repo.replace("https://hg.mozilla.org/", "", 1).rstrip("/")
         elif self.repo_type == "git" and self.repo.startswith("https://github.com/"):
-            return self.repo.replace("https://github.com/", "").rstrip("/")
+            return self.repo.replace("https://github.com/", "", 1).rstrip("/")
         else:
             raise AttributeError(
                 "no repo_path available for project {}".format(self.alias)
+            )
+
+    @property
+    def role_prefix(self):
+        if self.repo.startswith(("https://hg.mozilla.org/", "https://github.com")):
+            return self.repo.replace("https://", "repo:", 1).rstrip("/")
+        else:
+            raise AttributeError(
+                "no role_prefix available for project {}".format(self.alias)
             )

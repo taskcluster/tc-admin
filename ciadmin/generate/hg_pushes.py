@@ -27,7 +27,7 @@ async def make_hook(project, environment):
             "hookGroupId": hookGroupId,
             "hookId": hookId,
             "project_repo": project.repo,
-            "project_repo_path": project.repo_path,
+            "project_role_prefix": project.role_prefix,
             "alias": project.alias,
         },
     )
@@ -132,7 +132,7 @@ async def update_resources(resources, environment):
     Manage the hooks and roles for cron tasks
     """
     projects = await Project.fetch_all()
-    projects = [p for p in projects if p.feature("taskcluster-push")]
+    projects = [p for p in projects if p.feature("hg-push")]
     trust_domains = set(project.trust_domain for project in projects)
 
     # manage the hg-push/* hooks, and corresponding roles
@@ -150,9 +150,7 @@ async def update_resources(resources, environment):
                 project.alias
             ),
             scopes=[
-                "assume:repo:hg.mozilla.org/{}:branch:default".format(
-                    project.repo_path
-                ),
+                "assume:{}:branch:default".format(project.role_prefix),
                 # all hg-push tasks use the same workerType, and branches do not have permission
                 # to create tasks on that workerType
                 "queue:create-task:highest:aws-provisioner-v1/hg-push",

@@ -15,7 +15,7 @@ async def project_scopes(resolver, level):
     scopes = ["assume:mozilla-group:active_scm_level_{}".format(level)]
     for project in projects:
         if project.level == level:
-            scopes.append("assume:repo:hg.mozilla.org/{}:*".format(project.repo_path))
+            scopes.append("assume:{}:*".format(project.role_prefix))
     return resolver.expandScopes(scopes)
 
 

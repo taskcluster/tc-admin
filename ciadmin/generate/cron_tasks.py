@@ -117,6 +117,6 @@ async def update_resources(resources, environment):
             ),
             # this task has the scopes of *all* cron tasks in this project; the tasks it creates will have
             # the scopes for a specific cron task (replacing * with the task name)
-            scopes=["assume:repo:hg.mozilla.org/{}:cron:*".format(project.repo_path)],
+            scopes=["assume:{}:cron:*".format(project.role_prefix)],
         )
         resources.add(role)

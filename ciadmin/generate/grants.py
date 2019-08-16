@@ -49,10 +49,7 @@ def add_scopes_for_projects(grant, grantee, add_scope, projects):
 
         # ok, this project matches!
         for job in grantee.job:
-            if project.repo_type == "hg":
-                roleId = "repo:hg.mozilla.org/{}:{}".format(project.repo_path, job)
-            elif project.repo_type == "git":
-                roleId = "repo:github.com/{}:{}".format(project.repo_path, job)
+            roleId = "{}:{}".format(project.role_prefix, job)
 
             # perform substitutions as grants.yml describes
             subs = {}
@@ -100,7 +97,7 @@ async def update_resources(resources, environment):
     # authorative for various github *org/users* vs. individual repos.
     for project in projects:
         if project.repo_type == "git":
-            resources.manage("Role=repo:github.com/{}:*".format(project.repo_path))
+            resources.manage("Role={}:*".format(project.role_prefix))
 
     # calculate scopes..
     roles = {}
