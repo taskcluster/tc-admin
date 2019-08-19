@@ -110,6 +110,14 @@ class Resources:
         self.resources.add(resource)
         self._verify()
 
+    def update(self, resources):
+        "Add the given resources to the collection"
+        for resource in resources:
+            if not self.is_managed(resource.id):
+                raise RuntimeError("unmanaged resource: " + resource.id)
+        self.resources.update(resources)
+        self._verify()
+
     def manage(self, pattern):
         "Add the given pattern to the list of managed resources"
         self.managed.add(pattern)

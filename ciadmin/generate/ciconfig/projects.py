@@ -33,6 +33,7 @@ class Project:
     parent_repo = attr.ib(type=str, default=None)
     is_try = attr.ib(type=bool, default=False)
     features = attr.ib(type=dict, factory=lambda: {})
+    cron_targets = attr.ib(type=list, factory=lambda: [])
 
     def __attrs_post_init__(self):
         """Once the object is initialised, perform more sanity checks to ensure

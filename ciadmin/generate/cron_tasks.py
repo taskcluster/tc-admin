@@ -65,7 +65,7 @@ async def _make_taskgraph_context(project, environment):
     return task_template, context
 
 
-async def make_hook(project, environment):
+async def make_hooks(project, environment):
     hookGroupId = "project-releng"
     hookId = "cron-task-{}".format(project.repo_path.replace("/", "-"))
 
@@ -94,30 +94,79 @@ async def make_hook(project, environment):
     context.update(extra_context)
     task = jsone.render(task_template, context)
 
-    return Hook(
-        hookGroupId=hookGroupId,
-        hookId=hookId,
-        name="{}/{}".format(hookGroupId, hookId),
-        description=textwrap.dedent(
-            """\
+    resources = [
+        Hook(
+            hookGroupId=hookGroupId,
+            hookId=hookId,
+            name="{}/{}".format(hookGroupId, hookId),
+            description=textwrap.dedent(
+                """\
             Cron task for repository {}.
 
             This hook is fired every 15 minutes, creating a task that consults .cron.yml in
             the corresponding repository.
             """
-        ).format(project.repo),
-        owner="taskcluster-notifications@mozilla.com",
-        emailOnError=True,
-        schedule=["0 0,15,30,45 * * * *"],  # every 15 minutes
-        bindings=[],
-        task=task,
-        # this schema simply requires an empty object (the default)
-        triggerSchema={
-            "type": "object",
-            "properties": {},
-            "additionalProperties": False,
-        },
-    )
+            ).format(project.repo),
+            owner="taskcluster-notifications@mozilla.com",
+            emailOnError=True,
+            schedule=["0 0,15,30,45 * * * *"],  # every 15 minutes
+            bindings=[],
+            task=task,
+            # this schema simply requires an empty object (the default)
+            triggerSchema={
+                "type": "object",
+                "properties": {},
+                "additionalProperties": False,
+            },
+        ),
+        Role(
+            roleId="hook-id:{}/{}".format(hookGroupId, hookId),
+            description="Scopes associated with cron tasks for project `{}`".format(
+                project.alias
+            ),
+            # this task has the scopes of *all* cron tasks in this project; the tasks it creates will have
+            # the scopes for a specific cron task (replacing * with the task name)
+            scopes=["assume:{}:cron:*".format(project.role_prefix)],
+        ),
+    ]
+
+    for cron_target in project.cron_targets:
+        target_context = context.copy()
+        target_context["cron_options"] += " --force-run={}".format(cron_target)
+        target_context["hookId"] = "{}/{}".format(hookId, cron_target)
+        task = jsone.render(task_template, target_context)
+        resources.extend(
+            [
+                Hook(
+                    hookGroupId=hookGroupId,
+                    hookId="{}/{}".format(hookId, cron_target),
+                    name="{}/{}/{}".format(hookGroupId, hookId, cron_target),
+                    description="""FIXME""",
+                    owner="taskcluster-notifications@mozilla.com",
+                    emailOnError=True,
+                    schedule=[],
+                    bindings=[],
+                    task=task,
+                    # this schema simply requires an empty object (the default)
+                    triggerSchema={
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": False,
+                    },
+                ),
+                Role(
+                    roleId="hook-id:{}/{}/{}".format(hookGroupId, hookId, cron_target),
+                    description="Scopes associated with cron tasks for project `{}`".format(
+                        project.alias
+                    ),
+                    scopes=[
+                        "assume:{}:cron:{}".format(project.role_prefix, cron_target)
+                    ],
+                ),
+            ]
+        )
+
+    return resources
 
 
 async def update_resources(resources, environment):
@@ -137,17 +186,4 @@ async def update_resources(resources, environment):
         if not project.feature("gecko-cron") and not project.feature("taskgraph-cron"):
             continue
 
-        hook = await make_hook(project, environment)
-
-        resources.add(hook)
-
-        role = Role(
-            roleId="hook-id:{}/{}".format(hook.hookGroupId, hook.hookId),
-            description="Scopes associated with cron tasks for project `{}`".format(
-                project.alias
-            ),
-            # this task has the scopes of *all* cron tasks in this project; the tasks it creates will have
-            # the scopes for a specific cron task (replacing * with the task name)
-            scopes=["assume:{}:cron:*".format(project.role_prefix)],
-        )
-        resources.add(role)
+        resources.update(await make_hooks(project, environment))
