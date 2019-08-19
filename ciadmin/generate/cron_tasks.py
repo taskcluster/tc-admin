@@ -13,56 +13,86 @@ from .ciconfig.projects import Project
 from .ciconfig.get import get_ciconfig_file
 
 
+async def _make_gecko_context(project, environment):
+    # set up some options that differ for comm-central checkouts (which must
+    # clone two repositories) and gecko checkouts (which only clone one)
+    task_template = await get_ciconfig_file("gecko-cron-task-template.yml")
+
+    if not project.parent_repo:
+        # There is no `parent_repo` for this project, so it is itself a regular gecko source repo
+        context = {
+            "repo_env": {
+                "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
+                "GECKO_HEAD_REPOSITORY": project.repo,
+                "GECKO_HEAD_REF": "default",
+            },
+            "checkout_options": ["--vcs-checkout=/builds/worker/checkouts/gecko"],
+            "cron_options": "",
+        }
+    else:
+        # This project's configuration points to a separate parent_repo, and should be checked
+        # out as a subdirectory of that repo
+        context = {
+            "repo_env": {
+                "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
+                "GECKO_HEAD_REPOSITORY": project.parent_repo,
+                "GECKO_HEAD_REF": "default",
+                "COMM_BASE_REPOSITORY": "https://hg.mozilla.org/comm-central",
+                "COMM_HEAD_REPOSITORY": project.repo,
+                "COMM_HEAD_REF": "default",
+            },
+            "checkout_options": [
+                "--vcs-checkout=/builds/worker/checkouts/gecko",
+                "--comm-checkout=/builds/worker/checkouts/gecko/comm",
+            ],
+            "cron_options": "--root=comm/",
+        }
+
+    return task_template, context
+
+
+async def _make_taskgraph_context(project, environment):
+    task_template = await get_ciconfig_file("taskgraph-cron-task-template.yml")
+    context = {
+        "repo_env": {
+            "VCS_HEAD_REPOSITORY": project.repo,
+            "VCS_HEAD_REF": "default" if project.repo_type == "hg" else "master",
+            "VCS_REPOSITORY_TYPE": project.repo_type,
+        },
+        "checkout_options": ["--vcs-checkout=/builds/worker/checkouts/src"],
+        "cron_options": "",
+    }
+    return task_template, context
+
+
 async def make_hook(project, environment):
     hookGroupId = "project-releng"
     hookId = "cron-task-{}".format(project.repo_path.replace("/", "-"))
 
-    # set up some options that differ for comm-central checkouts (which must
-    # clone two repositories) and gecko checkouts (which only clone one)
-    if not project.parent_repo:
-        # There is no `parent_repo` for this project, so it is itself a regular gecko source repo
-        repo_env = {
-            "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
-            "GECKO_HEAD_REPOSITORY": project.repo,
-            "GECKO_HEAD_REF": "default",
-        }
-        checkout_options = ["--vcs-checkout=/builds/worker/checkouts/gecko"]
-        mach_cron_options = ""
+    context = {
+        "level": project.level,
+        "trust_domain": project.trust_domain,
+        "hookGroupId": hookGroupId,
+        "hookId": hookId,
+        "taskcluster_root_url": environment.root_url,
+        "project_repo": project.repo,
+        "alias": project.alias,
+        "trim_whitespace": lambda s: re.sub(r"\s+", " ", s).strip(),
+    }
+
+    if project.feature("gecko-cron"):
+        task_template, extra_context = await _make_gecko_context(project, environment)
+    elif project.feature("taskgraph-cron"):
+        task_template, extra_context = await _make_taskgraph_context(
+            project, environment
+        )
     else:
-        # This project's configuration points to a separate parent_repo, and should be checked
-        # out as a subdirectory of that repo
-        repo_env = {
-            "GECKO_BASE_REPOSITORY": "https://hg.mozilla.org/mozilla-unified",
-            "GECKO_HEAD_REPOSITORY": project.parent_repo,
-            "GECKO_HEAD_REF": "default",
-            "COMM_BASE_REPOSITORY": "https://hg.mozilla.org/comm-central",
-            "COMM_HEAD_REPOSITORY": project.repo,
-            "COMM_HEAD_REF": "default",
-        }
-        checkout_options = [
-            "--vcs-checkout=/builds/worker/checkouts/gecko",
-            "--comm-checkout=/builds/worker/checkouts/gecko/comm",
-        ]
-        mach_cron_options = "--root=comm/"
+        raise Exception("Unknown cron task type.")
 
     # use the cron-task-template.yml from the ci-configuration repository, rendering it
     # with the context values described there
-    task_template = await get_ciconfig_file("cron-task-template.yml")
-    task = jsone.render(
-        task_template,
-        {
-            "level": project.level,
-            "hookGroupId": hookGroupId,
-            "hookId": hookId,
-            "taskcluster_root_url": environment.root_url,
-            "repo_env": repo_env,
-            "checkout_options": checkout_options,
-            "project_repo": project.repo,
-            "alias": project.alias,
-            "mach_cron_options": mach_cron_options,
-            "trim_whitespace": lambda s: re.sub(r"\s+", " ", s).strip(),
-        },
-    )
+    context.update(extra_context)
+    task = jsone.render(task_template, context)
 
     return Hook(
         hookGroupId=hookGroupId,
@@ -104,10 +134,11 @@ async def update_resources(resources, environment):
     for project in projects:
         # if this project does not thave the `gecko-cron` feature, it does not get
         # a hook.
-        if not project.feature("gecko-cron"):
+        if not project.feature("gecko-cron") and not project.feature("taskgraph-cron"):
             continue
 
         hook = await make_hook(project, environment)
+
         resources.add(hook)
 
         role = Role(
