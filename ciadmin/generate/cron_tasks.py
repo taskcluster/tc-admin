@@ -177,8 +177,8 @@ async def update_resources(resources, environment):
 
     # manage the cron-task-* hooks, and corresponding roles; these are all nested under project-releng
     # but should probably move to project-{gecko,comm} someday..
-    resources.manage("Hook=project-releng/cron-task-*")
-    resources.manage("Role=hook-id:project-releng/cron-task-*")
+    resources.manage("Hook=project-releng/cron-task-.*")
+    resources.manage("Role=hook-id:project-releng/cron-task-.*")
 
     for project in projects:
         # if this project does not thave the `gecko-cron` feature, it does not get

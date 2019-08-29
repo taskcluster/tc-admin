@@ -259,7 +259,7 @@ async def test_update_resources(mock_ciconfig_file):
     )
 
     resources = Resources()
-    resources.manage("Role=*")
+    resources.manage("Role=.*")
     await grants.update_resources(resources, "dev")
     for resource in resources:
         if resource.id == "Role=repo:hg.mozilla.org/foo/proj1:*":

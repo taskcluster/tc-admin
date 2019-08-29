@@ -58,7 +58,7 @@ def make_hook():
 
 @pytest.mark.asyncio
 async def test_fetch_hook(Hooks, make_hook):
-    resources = Resources([], ["*"])
+    resources = Resources([], [".*"])
     api_hook = make_hook()
     Hooks.hooks.append(api_hook)
     await fetch_hooks(resources)
@@ -68,7 +68,9 @@ async def test_fetch_hook(Hooks, make_hook):
 @pytest.mark.asyncio
 async def test_fetch_hook_managed_filter(Hooks, make_hook):
     "The managed resource dictate which hooks are fetched, including which groups"
-    resources = Resources([], ["Hook=garbage/*", "Hook=proj*", "Hook=imbstack/test4*"])
+    resources = Resources(
+        [], ["Hook=garbage/.*", "Hook=proj.*", "Hook=imbstack/test4.*"]
+    )
     hooks = [
         # managed:
         make_hook(hookGroupId="garbage", hookId="test1"),

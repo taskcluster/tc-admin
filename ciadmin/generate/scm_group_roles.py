@@ -18,7 +18,7 @@ async def update_resources(resources, environment):
     at level L.  In the current arrangement, they are granted all scopes available to all repos at
     level L or lower.  That is a lot, and there is work afoot to change it in bug 1470625.
     """
-    resources.manage("Role=mozilla-group:active_scm_level_*")
+    resources.manage("Role=mozilla-group:active_scm_level_[123]")
 
     projects = await Project.fetch_all()
 

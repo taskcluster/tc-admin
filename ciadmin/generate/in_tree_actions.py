@@ -5,6 +5,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import asyncio
+import re
 import hashlib
 import textwrap
 import yaml
@@ -251,9 +252,11 @@ async def update_resources(resources, environment):
     # manage the in-tree-action-* hooks, and corresponding roles, for each trust domain
     trust_domains = set(action.trust_domain for action in actions)
     for trust_domain in trust_domains:
-        resources.manage("Hook=project-{}/in-tree-action-*".format(trust_domain))
         resources.manage(
-            "Role=hook-id:project-{}/in-tree-action-*".format(trust_domain)
+            "Hook=project-{}/in-tree-action-.*".format(re.escape(trust_domain))
+        )
+        resources.manage(
+            "Role=hook-id:project-{}/in-tree-action-.*".format(re.escape(trust_domain))
         )
 
     projects_by_level = {l: [p for p in projects if p.level == l] for l in (1, 2, 3)}

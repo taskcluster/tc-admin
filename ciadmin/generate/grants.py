@@ -91,13 +91,13 @@ async def update_resources(resources, environment):
     projects = await Project.fetch_all()
 
     # manage our resources..
-    resources.manage("Role=project:releng:ci-group:*")
-    resources.manage("Role=repo:hg.mozilla.org/*")
+    resources.manage("Role=project:releng:ci-group:.*")
+    resources.manage("Role=repo:hg.mozilla.org/.*")
     # TODO: once we stabilize ci-admin in the github world, we should be
     # authorative for various github *org/users* vs. individual repos.
     for project in projects:
         if project.repo_type == "git":
-            resources.manage("Role={}:*".format(project.role_prefix))
+            resources.manage("Role={}:.*".format(project.role_prefix))
 
     # calculate scopes..
     roles = {}

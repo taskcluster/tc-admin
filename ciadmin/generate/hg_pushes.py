@@ -137,8 +137,8 @@ async def update_resources(resources, environment):
 
     # manage the hg-push/* hooks, and corresponding roles
     for trust_domain in trust_domains:
-        resources.manage("Hook=hg-push/*")
-        resources.manage("Role=hook-id:hg-push/*")
+        resources.manage("Hook=hg-push/.*")
+        resources.manage("Role=hook-id:hg-push/.*")
 
     for project in projects:
         hook = await make_hook(project, environment)

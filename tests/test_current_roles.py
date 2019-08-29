@@ -42,7 +42,7 @@ def make_role():
 @pytest.mark.asyncio
 async def test_fetch_roles_empty(Auth):
     "When there are no roles, nothing happens"
-    resources = Resources([], ["*"])
+    resources = Resources([], [".*"])
     await fetch_roles(resources)
     assert list(resources) == []
 
@@ -50,7 +50,7 @@ async def test_fetch_roles_empty(Auth):
 @pytest.mark.asyncio
 async def test_fetch_roles_managed(Auth, make_role):
     "When a role is present and managed, it is included"
-    resources = Resources([], ["*"])
+    resources = Resources([], [".*"])
     api_role = make_role()
     Auth.roles.append(api_role)
     await fetch_roles(resources)

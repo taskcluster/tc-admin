@@ -7,7 +7,6 @@
 import re
 
 from ciadmin.resources import Role
-from .matchlist import MatchList
 
 
 class Resolver:
@@ -114,6 +113,14 @@ def satisfies(have, require):
 def normalizeScopes(scopes):
     """Return a "normalized" version of the given scopes, such that no scope
     satisfies any other.  """
-    # happily, MatchList does exactly this!
-    scopes = MatchList(scopes)
-    return list(scopes)
+    # this is O(n^2) but we don't manage 1000's of scopes, so it's OK for now
+    scopes = set(scopes)  # remove duplicates
+    scopes = sorted(
+        p1
+        for p1 in scopes
+        if all(
+            p1 == p2 or not (p2.endswith("*") and p1.startswith(p2[:-1]))
+            for p2 in scopes
+        )
+    )
+    return scopes

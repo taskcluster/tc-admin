@@ -5,6 +5,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import copy
+import re
 
 from ..resources import AwsProvisionerWorkerType, WorkerPool
 from .ciconfig.worker_pools import WorkerPool as ConfigWorkerPool
@@ -82,7 +83,7 @@ async def make_aws_provisioner_worker_type(resources, environment, wp, worker_im
 
     # TODO: once all worker-pools are managed (including generic-worker), we can just manage
     # AwsProvisionerWorkerType=*
-    resources.manage("AwsProvisionerWorkerType={}".format(workerType))
+    resources.manage("AwsProvisionerWorkerType={}".format(re.escape(workerType)))
 
     # Fill out the config more fully to feed to aws provisioner
     config = set_ec2_worker_images(wp.config, worker_images)
@@ -110,7 +111,7 @@ async def update_resources(resources, environment):
     worker_pools = await ConfigWorkerPool.fetch_all()
     worker_images = await WorkerImage.fetch_all()
 
-    resources.manage("WorkerPool=*")
+    resources.manage("WorkerPool=.*")
 
     for wp in worker_pools:
         apwt = await make_worker_pool(resources, environment, wp, worker_images)

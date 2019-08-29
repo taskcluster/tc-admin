@@ -143,7 +143,7 @@ def test_resources_to_json():
         ["Thing=*", "ListThing=*"],
     )
     assert rsrcs.to_json() == {
-        "managed": ["ListThing=*", "Thing=*"],
+        "managed": ["Thing=*", "ListThing=*"],
         "resources": [
             {"kind": "ListThing", "listThingId": "lt", "things": ["1", "2"]},
             {"kind": "Thing", "thingId": "x", "value": "1"},
@@ -179,26 +179,14 @@ def test_resources_manages():
     "Managing a resource adds it to the list of managed resources"
     rsrcs = Resources([], [])
     rsrcs.manage("Thing=x")
-    assert list(rsrcs.managed) == ["Thing=x"]
-
-
-def test_resources_manages_minimal():
-    "The list of managed resources is kept minimal (normalized)"
-    rsrcs = Resources([], ["Thing=*", "Other=x"])
-    rsrcs.manage("Thing=x")
-    assert list(rsrcs.managed) == ["Other=x", "Thing=*"]
-    rsrcs.manage("Other=x")
-    assert list(rsrcs.managed) == ["Other=x", "Thing=*"]
-    rsrcs.manage("Othe*")
-    assert list(rsrcs.managed) == ["Othe*", "Thing=*"]
-    rsrcs.manage("*")
-    assert list(rsrcs.managed) == ["*"]
+    assert rsrcs.managed.matches("Thing=x")
+    assert not rsrcs.managed.matches("Thing=y")
 
 
 def test_resources_verify_duplicates_prohibited():
     "Duplicate resources are not allowed"
     with pytest.raises(RuntimeError, message="duplicate resources: Thing=x"):
-        Resources([Thing("x", "1"), Thing("x", "1")], ["*"])
+        Resources([Thing("x", "1"), Thing("x", "1")], [".*"])
 
 
 def test_resources_verify_unmanaged_prohibited():
@@ -210,13 +198,13 @@ def test_resources_verify_unmanaged_prohibited():
 def test_resources_str():
     "Resources are stringified in order"
     resources = Resources(
-        [Thing("x", "1"), Thing("y", "1")], ["Thing=*", "OtherStuff=*"]
+        [Thing("x", "1"), Thing("y", "1")], ["Thing=*", "OtherStuff=.*"]
     )
     assert str(resources) == textwrap.dedent(
         """\
       managed:
-        - OtherStuff=*
         - Thing=*
+        - OtherStuff=.*
 
       resources:
         Thing=x:
@@ -231,12 +219,12 @@ def test_resources_str():
 
 def test_resources_repr():
     "Resources repr is pretty JSON"
-    resources = Resources([Thing("x", "1"), Thing("y", "1")], ["*"])
+    resources = Resources([Thing("x", "1"), Thing("y", "1")], [".*"])
     assert json.loads(repr(resources)) == json.loads(
         """\
         {
             "managed": [
-                "*"
+                ".*"
             ],
             "resources": [
                 {

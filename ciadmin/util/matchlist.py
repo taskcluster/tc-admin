@@ -4,54 +4,31 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
+import re
 import attr
+
+
+def make_regular_expressions(patterns):
+    return [re.compile(p) for p in patterns]
 
 
 @attr.s
 class MatchList:
     """
-    A sorted list of patterns.  If you're familiar with Taskcluster scopes and
-    scopesets, this is the same thing.
-
-    Each pattern matches itself and, if it ends in '*', any string ending with
-    the remainder of the pattern before the '*'.
-
-    A MatchList is a list of patterns that automatically keeps itself
-    "minimized" such that no pattern matches any other pattern.
-
-    Empty strings are prohibited.
+    A MatchList is a list of regular expressions that can determine whether a
+    given string matches one of those patterns.  Patterns are rooted at the
+    left, but should use `$` where required to match the end of the string.
     """
 
-    _patterns = attr.ib(type=list)
+    _patterns = attr.ib(type=list, converter=make_regular_expressions)
 
-    def __attrs_post_init__(self):
-        self._minimize()
+    def add(self, expr):
+        "Add `expr` to the set of patterns"
+        self._patterns.append(re.compile(expr))
 
-    def add(self, item):
-        "Add `item` to the set of patterns"
-        if not self.matches(item):
-            self._patterns.append(item)
-            self._minimize()
+    def __iter__(self):
+        return (p.pattern for p in self._patterns)
 
     def matches(self, item):
         "Return True if this item is matched by one of the patterns in the list"
-        return any(
-            item.startswith(pat[:-1]) if pat[-1] == "*" else item == pat for pat in self
-        )
-
-    def __iter__(self):
-        return self._patterns.__iter__()
-
-    def _minimize(self):
-        # this is O(n^2) but we don't manage 1000's of items, so it's OK for now
-        patterns = set(self._patterns)  # remove duplicates
-        if "" in patterns:
-            raise RuntimeError("Empty strings are not allowed in MatchList")
-        self._patterns = sorted(
-            p1
-            for p1 in patterns
-            if all(
-                p1 == p2 or not (p2.endswith("*") and p1.startswith(p2[:-1]))
-                for p2 in patterns
-            )
-        )
+        return any(pat.match(item) for pat in self._patterns)
