@@ -38,6 +38,7 @@ async def test_fetch_empty(mock_ciconfig_file):
                 "is_try": False,
                 "parent_repo": None,
                 "features": {},
+                "cron_targets": [],
             },
         ),
         (
@@ -58,6 +59,7 @@ async def test_fetch_empty(mock_ciconfig_file):
                 "parent_repo": None,
                 "trust_domain": None,
                 "features": {},
+                "cron_targets": [],
             },
         ),
     ),
@@ -86,6 +88,7 @@ async def test_fetch_defaults(
                 "parent_repo": "https://hg.mozilla.org/mozilla-unified",
                 "is_try": True,
                 "features": {"hg-push": True, "gecko-cron": False},
+                "cron_targets": ['a', 'b'],
             },
             {
                 # alias
@@ -99,6 +102,7 @@ async def test_fetch_defaults(
                 "is_try": True,
                 "parent_repo": "https://hg.mozilla.org/mozilla-unified",
                 "features": {"hg-push": True, "gecko-cron": False},
+                "cron_targets": ['a', 'b'],
             },
         ),
         (
@@ -111,6 +115,7 @@ async def test_fetch_defaults(
                 "parent_repo": "https://github.com/mozilla-releng/",
                 "is_try": False,
                 "features": {"hg-push": True, "gecko-cron": False},
+                "cron_targets": ['a', 'b'],
             },
             {
                 # alias
@@ -124,6 +129,7 @@ async def test_fetch_defaults(
                 "is_try": False,
                 "parent_repo": "https://github.com/mozilla-releng/",
                 "features": {"hg-push": True, "gecko-cron": False},
+                "cron_targets": ['a', 'b'],
             },
         ),
     ),
