@@ -2,5 +2,5 @@
 sandbox
 TODO.txt
 .eggs
-ci_admin.egg-info
+tc_admin.egg-info
 __pycache__
