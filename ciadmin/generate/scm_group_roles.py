@@ -6,11 +6,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from ..resources import Role
+from tcadmin.resources import Role
 from .ciconfig.projects import Project
 
 
-async def update_resources(resources, environment):
+async def update_resources(resources):
     """
     Manage the `mozilla-group:active_scm_level_L` roles.
 

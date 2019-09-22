@@ -8,32 +8,29 @@ import os
 import yaml
 from asyncio import Lock
 
-from ...util.sessions import aiohttp_session
-from ...options import with_click_options
+from tcadmin.util.sessions import aiohttp_session
+from tcadmin.appconfig import AppConfig
 
 _cache = {}
 _lock = {}
 
 
-@with_click_options(
-    "ci_configuration_repository",
-    "ci_configuration_revision",
-    "ci_configuration_directory",
-)
-async def _read_file(
-    filename,
-    ci_configuration_repository,
-    ci_configuration_revision,
-    ci_configuration_directory,
-):
-    if ci_configuration_directory:
-        with open(os.path.join(ci_configuration_directory, filename), "rb") as f:
+async def _read_file(filename, **test_kwargs):
+    def opt(n):
+        if test_kwargs:
+            return test_kwargs[n]
+        return AppConfig.current().options.get("--ci-configuration-" + n)
+
+    repository = opt("repository")
+    revision = opt("revision")
+    directory = opt("directory")
+
+    if directory:
+        with open(os.path.join(directory, filename), "rb") as f:
             result = f.read()
     else:
         url = "{}/raw-file/{}/{}".format(
-            ci_configuration_repository.rstrip("/"),
-            ci_configuration_revision,
-            filename.lstrip("/"),
+            repository.rstrip("/"), revision, filename.lstrip("/")
         )
         async with aiohttp_session().get(url) as response:
             response.raise_for_status()

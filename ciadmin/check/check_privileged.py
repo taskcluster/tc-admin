@@ -7,7 +7,7 @@
 import pytest
 
 from ciadmin.generate.ciconfig.worker_pools import WorkerPool
-from ciadmin.util.sessions import with_aiohttp_session
+from tcadmin.util.sessions import with_aiohttp_session
 
 
 @pytest.mark.asyncio

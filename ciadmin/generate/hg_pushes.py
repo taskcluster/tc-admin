@@ -7,12 +7,12 @@
 import textwrap
 import jsone
 
-from ..resources import Role, Hook, Binding
+from tcadmin.resources import Role, Hook, Binding
 from .ciconfig.projects import Project
 from .ciconfig.get import get_ciconfig_file
 
 
-async def make_hook(project, environment):
+async def make_hook(project):
     hookGroupId = "hg-push"
     hookId = project.alias
 
@@ -127,7 +127,7 @@ async def make_hook(project, environment):
     )
 
 
-async def update_resources(resources, environment):
+async def update_resources(resources):
     """
     Manage the hooks and roles for cron tasks
     """
@@ -141,7 +141,7 @@ async def update_resources(resources, environment):
         resources.manage("Role=hook-id:hg-push/.*")
 
     for project in projects:
-        hook = await make_hook(project, environment)
+        hook = await make_hook(project)
         resources.add(hook)
 
         role = Role(

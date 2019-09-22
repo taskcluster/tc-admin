@@ -2,10 +2,10 @@
 
 # Usage
 
-After installing, run `ci-admin generate` to generate the expected CI configuration (use `--json` to get JSON output)
-Similarly, `ci-admin current` will generate the current CI configuration (optionally with `--json`).
-To compare them, run `ci-admin diff`.
-Run `ci-admin apply` to apply the changes.
+After installing, run `tc-admin generate` to generate the expected CI configuration (use `--json` to get JSON output)
+Similarly, `tc-admin current` will generate the current CI configuration (optionally with `--json`).
+To compare them, run `tc-admin diff`.
+Run `tc-admin apply` to apply the changes.
 Note that the latter will require Taskcluster credentials.
 
 # Quick Guide
@@ -17,10 +17,10 @@ If you are looking to modify the expected resources, look in `ciadmin/generate`.
 Generation is divided by theme into several Python files there.
 Comments and docstrings should guide you from that point.
 
-To test your changes, use `ci-admin diff`.
+To test your changes, use `tc-admin diff`.
 You do not need any Taskcluster credentials to run this command, and it's best that none are configured in your shell -- to avoid accidents.
 
-To test that the changes haven't violated some expectation, run `ci-admin check`.
+To test that the changes haven't violated some expectation, run `tc-admin check`.
 This runs a suite of tests (defined in `ciadmin/check`) against the generated resources.
 
 If you need to make modifications to the `ci-configuration` repository, you can point these tools to a local copy of the repository with `--ci-configuration-directory`.

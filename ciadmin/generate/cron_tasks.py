@@ -7,13 +7,15 @@
 import textwrap
 import jsone
 import re
+import os
 
-from ..resources import Role, Hook
+from tcadmin.resources import Role, Hook
+from tcadmin.util.root_url import root_url
 from .ciconfig.projects import Project
 from .ciconfig.get import get_ciconfig_file
 
 
-async def _make_gecko_context(project, environment):
+async def _make_gecko_context(project):
     # set up some options that differ for comm-central checkouts (which must
     # clone two repositories) and gecko checkouts (which only clone one)
     task_template = await get_ciconfig_file("gecko-cron-task-template.yml")
@@ -51,7 +53,7 @@ async def _make_gecko_context(project, environment):
     return task_template, context
 
 
-async def _make_taskgraph_context(project, environment):
+async def _make_taskgraph_context(project):
     task_template = await get_ciconfig_file("taskgraph-cron-task-template.yml")
     context = {
         "repo_env": {
@@ -65,7 +67,7 @@ async def _make_taskgraph_context(project, environment):
     return task_template, context
 
 
-async def make_hooks(project, environment):
+async def make_hooks(project):
     hookGroupId = "project-releng"
     hookId = "cron-task-{}".format(project.repo_path.replace("/", "-"))
 
@@ -74,18 +76,16 @@ async def make_hooks(project, environment):
         "trust_domain": project.trust_domain,
         "hookGroupId": hookGroupId,
         "hookId": hookId,
-        "taskcluster_root_url": environment.root_url,
+        "taskcluster_root_url": root_url(),
         "project_repo": project.repo,
         "alias": project.alias,
         "trim_whitespace": lambda s: re.sub(r"\s+", " ", s).strip(),
     }
 
     if project.feature("gecko-cron"):
-        task_template, extra_context = await _make_gecko_context(project, environment)
+        task_template, extra_context = await _make_gecko_context(project)
     elif project.feature("taskgraph-cron"):
-        task_template, extra_context = await _make_taskgraph_context(
-            project, environment
-        )
+        task_template, extra_context = await _make_taskgraph_context(project)
     else:
         raise Exception("Unknown cron task type.")
 
@@ -169,7 +169,7 @@ async def make_hooks(project, environment):
     return resources
 
 
-async def update_resources(resources, environment):
+async def update_resources(resources):
     """
     Manage the hooks and roles for cron tasks
     """
@@ -186,4 +186,4 @@ async def update_resources(resources, environment):
         if not project.feature("gecko-cron") and not project.feature("taskgraph-cron"):
             continue
 
-        resources.update(await make_hooks(project, environment))
+        resources.update(await make_hooks(project))

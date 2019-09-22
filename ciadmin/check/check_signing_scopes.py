@@ -7,7 +7,7 @@
 import pytest
 
 from ciadmin.generate.ciconfig.projects import Project
-from ciadmin.util.scopes import satisfies
+from tcadmin.util.scopes import satisfies
 
 
 async def project_scopes(resolver, level):

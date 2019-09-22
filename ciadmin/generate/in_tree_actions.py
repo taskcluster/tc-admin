@@ -15,12 +15,12 @@ from taskcluster.aio import Hooks
 from taskcluster import optionsFromEnvironment
 from taskcluster.exceptions import TaskclusterRestFailure
 
-from ..resources import Role, Hook
+from tcadmin.resources import Role, Hook
 from .ciconfig.projects import Project
 from . import tcyml
 from .ciconfig.actions import Action
-from ..util.sessions import aiohttp_session
-from ..util.matchlist import MatchList
+from tcadmin.util.sessions import aiohttp_session
+from tcadmin.util.matchlist import MatchList
 
 # Any existing hooks that no longer correspond to active .taskcluster.yml files
 # will nonetheless be kept around until this time has passed since they were
@@ -240,7 +240,7 @@ def make_hook(action, tcyml_content, tcyml_hash, projects):
     )
 
 
-async def update_resources(resources, environment):
+async def update_resources(resources):
     """
     Manage the hooks and accompanying hook-id:.. roles for in-tree actions.
     """

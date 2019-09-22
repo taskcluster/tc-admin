@@ -9,7 +9,7 @@ import json
 import pytest
 
 from ciadmin.generate.ciconfig.projects import Project
-from ciadmin.util.sessions import with_aiohttp_session, aiohttp_session
+from tcadmin.util.sessions import with_aiohttp_session, aiohttp_session
 
 
 async def get_hg_repo_owner(project):

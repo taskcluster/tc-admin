@@ -6,8 +6,10 @@
 
 import copy
 import re
+import os
 
-from ..resources import AwsProvisionerWorkerType, WorkerPool
+from tcadmin.resources import AwsProvisionerWorkerType, WorkerPool
+from tcadmin.util.root_url import root_url
 from .ciconfig.worker_pools import WorkerPool as ConfigWorkerPool
 from .ciconfig.worker_images import WorkerImage
 
@@ -50,8 +52,8 @@ def set_ec2_worker_images(config, worker_images):
     return config
 
 
-async def make_worker_pool(resources, environment, wp, worker_images):
-    legacy_env = environment.root_url == "https://taskcluster.net"
+async def make_worker_pool(resources, wp, worker_images):
+    legacy_env = root_url() == "https://taskcluster.net"
     legacy_wt = wp.provider_id == "legacy-aws-provisioner-v1"
 
     # do not try to provision legacy worker pools in a non-legacy environment.
@@ -59,9 +61,7 @@ async def make_worker_pool(resources, environment, wp, worker_images):
         return
 
     if legacy_wt:
-        return await make_aws_provisioner_worker_type(
-            resources, environment, wp, worker_images
-        )
+        return await make_aws_provisioner_worker_type(resources, wp, worker_images)
 
     return WorkerPool(
         workerPoolId=wp.worker_pool_id,
@@ -73,7 +73,7 @@ async def make_worker_pool(resources, environment, wp, worker_images):
     )
 
 
-async def make_aws_provisioner_worker_type(resources, environment, wp, worker_images):
+async def make_aws_provisioner_worker_type(resources, wp, worker_images):
     if wp.email_on_error:
         raise RuntimeError(
             "email_on_error is not supported for legacy-aws-provisioner-v1"
@@ -104,7 +104,7 @@ async def make_aws_provisioner_worker_type(resources, environment, wp, worker_im
     )
 
 
-async def update_resources(resources, environment):
+async def update_resources(resources):
     """
     Manage the worker-pool configurations
     """
@@ -114,6 +114,6 @@ async def update_resources(resources, environment):
     resources.manage("WorkerPool=.*")
 
     for wp in worker_pools:
-        apwt = await make_worker_pool(resources, environment, wp, worker_images)
+        apwt = await make_worker_pool(resources, wp, worker_images)
         if apwt:
             resources.add(apwt)

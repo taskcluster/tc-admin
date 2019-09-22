@@ -6,8 +6,8 @@
 
 import pytest
 
-from ciadmin.util.scopes import satisfies
-from ciadmin.resources import Hook, Role
+from tcadmin.util.scopes import satisfies
+from tcadmin.resources import Hook, Role
 
 
 @pytest.fixture(scope="module")

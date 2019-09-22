@@ -7,10 +7,10 @@
 import pytest
 import asyncio
 
-from ciadmin import current
-from ciadmin import generate
-from ciadmin.util.sessions import with_aiohttp_session
-from ciadmin.util.scopes import Resolver
+from tcadmin import current
+from tcadmin import generate
+from tcadmin.util.sessions import with_aiohttp_session
+from tcadmin.util.scopes import Resolver
 
 
 # Imported from pytest-asyncio, but with scope session

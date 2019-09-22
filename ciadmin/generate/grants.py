@@ -4,8 +4,8 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
-from ..util.scopes import normalizeScopes
-from ..resources import Role
+from tcadmin.util.scopes import normalizeScopes
+from tcadmin.resources import Role
 from .ciconfig.projects import Project
 from .ciconfig.grants import Grant, ProjectGrantee, GroupGrantee
 
@@ -81,7 +81,7 @@ def add_scopes_for_groups(grant, grantee, add_scope):
             add_scope(roleId, scope.format())
 
 
-async def update_resources(resources, environment):
+async def update_resources(resources):
     """
     Manage the scopes granted to projects.  This file interprets `grants.yml` in ci-configuration.
     Its behavior is largely documented in the comment in that file.
