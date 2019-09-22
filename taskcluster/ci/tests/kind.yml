@@ -37,6 +37,10 @@ jobs:
         description: "Run `unit tests` to validate the latest changes"
         treeherder:
             symbol: unit
+        worker:
+            env:
+                # fail instead of skipping tests due to missing information
+                NO_TEST_SKIP: 1
         run:
             command: [python, setup.py, test]
     flake8:

@@ -6,6 +6,7 @@
 
 import pytest
 import taskcluster
+import os
 
 from tcadmin.util.scopes import Resolver, satisfies
 from tcadmin.resources import Role, Resources
@@ -225,6 +226,14 @@ def test_normalizeScopes_with_stars():
 
 @pytest.fixture(scope="module")
 def auth():
+    # tests using this fixture need *some* auth service, but it actually
+    # doesn't matter which one
+    if "TASKCLUSTER_ROOT_URL" not in os.environ:
+        msg = "TASKCLUSTER_ROOT_URL not set"
+        if "NO_TEST_SKIP" in os.environ:
+            pytest.fail(msg)
+        else:
+            pytest.skip(msg)
     return taskcluster.Auth(taskcluster.optionsFromEnvironment())
 
 
