@@ -13,7 +13,6 @@ from .options import with_options, check_options
 
 
 check_options.add(click.argument("pytest_options", nargs=-1))
-# registry.check_path.set_default(os.path.join(os.getcwd(), "checks"))
 
 
 @with_options("pytest_options")

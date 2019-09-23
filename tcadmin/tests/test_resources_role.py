@@ -18,7 +18,7 @@ def test_role_formatter():
         Role=my:role-id:
           roleId: my:role-id
           description:
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically.
             
             This is my role
           scopes:
@@ -35,8 +35,7 @@ def test_role_json():
     assert role.to_json() == {
         "roleId": "my:role-id",
         "kind": "Role",
-        "description": "*DO NOT EDIT* - This resource is configured automatically by [ci-admin]"
-        "(https://hg.mozilla.org/ci/ci-admin).\n\nThis is my role",
+        "description": "*DO NOT EDIT* - This resource is configured automatically.\n\nThis is my role",
         "scopes": ["a", "b", "c"],
     }
 
@@ -45,8 +44,7 @@ def test_role_from_api():
     "Roles are properly read from a Taskcluster API result"
     api_result = {
         "roleId": "my:role-id",
-        "description": "*DO NOT EDIT* - This resource is configured automatically by [ci-admin]"
-        "(https://hg.mozilla.org/ci/ci-admin).\n\nThis is my role",
+        "description": "*DO NOT EDIT* - This resource is configured automatically.\n\nThis is my role",
         "scopes": ["scope-a", "scope-b"],
     }
     role = Role.from_api(api_result)

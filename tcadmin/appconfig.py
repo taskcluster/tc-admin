@@ -4,7 +4,6 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
-import os
 import attr
 import asyncio
 from contextlib import contextmanager
@@ -87,7 +86,7 @@ class AppConfig:
     """
 
     # The path to the directory containing the check implementations; this will be
-    # treated as relative to the directory containing `tc-admin.py`.
+    # treated as relative to the current directory.
     check_path = attr.ib(type=str, init=False, default="checks")
 
     # Command-line options for the resource-generation process

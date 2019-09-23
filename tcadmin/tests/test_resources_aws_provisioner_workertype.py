@@ -44,7 +44,7 @@ def test_string_formatter(simple_wt):
                 "is": "launchspec"
             }
           description:
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically.
 
             a workertype
           owner: workertyper@example.com
@@ -138,7 +138,7 @@ def test_role_from_api():
     assert apwt.launchSpec == {"SecurityGroups": ["docker-worker"]}
     assert apwt.description == textwrap.dedent(
         """\
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically.
 
             ** WRITE THIS**"""
     )
@@ -183,7 +183,7 @@ def test_role_to_api(monkeypatch):
         "launchSpec": {"SecurityGroups": ["docker-worker"]},
         "description": textwrap.dedent(
             """\
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically.
 
             ** WRITE THIS**"""
         ),

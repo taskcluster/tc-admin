@@ -1,14 +1,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ci-admin",
+    name="tc-admin",
     version="1.0.0",
-    description="Administration of runtime configuration (Taskcluster settings) for Firefox CI",
+    description="Administration of Taskcluster runtime configuration",
     author="Dustin Mitchell",
     author_email="dustin@mozilla.com",
-    url="https://hg.mozilla.org/ci/ci-admin",
+    url="https://github.com/taskcluster/tc-admin",
     packages=find_packages("."),
-    package_data={"ciadmin.check": ["pytest.ini"]},
     install_requires=[
         "taskcluster~=16.0.0",
         "click<7",
@@ -19,17 +18,12 @@ setup(
         "aiohttp<3",
         "pyyaml<4",
         "iso8601==0.1.12",  # no semver..
-        "json-e<3",
-        # These are used at run-time as part of `tc-admin check`
-        "pytest<4",
-        "pytest-asyncio<0.9.0",
     ],
     setup_requires=["pytest-runner", "flake8"],
-    tests_require=["pytest-mock", "pytest-asyncio", "flake8"],
+    tests_require=["pytest<4", "pytest-mock", "pytest-asyncio", "flake8"],
     classifiers=("Programming Language :: Python :: 3",),
     entry_points={
         "console_scripts": [
-            "ci-admin = ciadmin.boot:boot",
             "tc-admin = tcadmin.boot:boot",
         ]},
 )
