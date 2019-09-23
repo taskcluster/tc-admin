@@ -11,7 +11,7 @@ from .main import main
 
 
 def bail(message):
-    print(message, file=syst.stderr)
+    print(message, file=sys.stderr)
     sys.exit(1)
 
 
