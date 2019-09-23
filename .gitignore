@@ -4,3 +4,5 @@ TODO.txt
 .eggs
 tc_admin.egg-info
 __pycache__
+.release/
+dist/

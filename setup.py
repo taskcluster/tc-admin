@@ -1,9 +1,14 @@
 from setuptools import setup, find_packages
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(
     name="tc-admin",
     version="1.0.0",
     description="Administration of Taskcluster runtime configuration",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author="Dustin Mitchell",
     author_email="dustin@mozilla.com",
     url="https://github.com/taskcluster/tc-admin",
