@@ -86,7 +86,7 @@ class AppConfig:
     """
 
     # The path to the directory containing the check implementations; this will be
-    # treated as relative to the directory containing `tc-admin.py`.
+    # treated as relative to the current directory.
     check_path = attr.ib(type=str, init=False, default="checks")
 
     # Command-line options for the resource-generation process

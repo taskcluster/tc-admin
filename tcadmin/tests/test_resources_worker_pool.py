@@ -35,7 +35,7 @@ def test_string_formatter(simple_wp):
         WorkerPool=pp/ww:
           workerPoolId: pp/ww
           description:
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically.
 
             a workertype
           owner: workertyper@example.com
@@ -66,7 +66,7 @@ def test_role_from_api():
     assert apwt.config == {"is": "config"}
     assert apwt.description == textwrap.dedent(
         """\
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically.
 
             descr"""
     )
@@ -81,7 +81,7 @@ def test_to_api(simple_wp):
         "config": {"is": "config"},
         "description": textwrap.dedent(
             """\
-            *DO NOT EDIT* - This resource is configured automatically by [ci-admin](https://hg.mozilla.org/ci/ci-admin).
+            *DO NOT EDIT* - This resource is configured automatically.
 
             a workertype"""
         ),

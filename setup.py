@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="tc-admin",
     version="1.0.0",
-    description="Administration of runtime Taskcluster configuration",
+    description="Administration of Taskcluster runtime configuration",
     author="Dustin Mitchell",
     author_email="dustin@mozilla.com",
     url="https://github.com/taskcluster/tc-admin",
