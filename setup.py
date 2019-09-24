@@ -20,7 +20,7 @@ setup(
         "attrs",  # http://www.attrs.org/en/stable/backward-compatibility.html
         "memoized==0.3",  # no semver..
         "sortedcontainers<3",
-        "aiohttp<3",
+        "aiohttp<4",
         "pyyaml<4",
         "iso8601==0.1.12",  # no semver..
     ],
