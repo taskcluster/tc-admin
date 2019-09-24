@@ -21,8 +21,6 @@ setup(
         "memoized==0.3",  # no semver..
         "sortedcontainers<3",
         "aiohttp<4",
-        "pyyaml<4",
-        "iso8601==0.1.12",  # no semver..
     ],
     setup_requires=["pytest-runner", "flake8"],
     tests_require=["pytest<4", "pytest-mock", "pytest-asyncio", "flake8"],
