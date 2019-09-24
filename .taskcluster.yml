@@ -38,7 +38,7 @@ tasks:
               cd repo &&
               git config advice.detachedHead false &&
               git checkout ${repo.ref} &&
-              pip install --no-use-pep517 -e . &&
+              pip install --no-use-pep517 -r requirements.txt &&
               python setup.py test
         - image: 'python:3.6'
           name: flake
@@ -51,7 +51,8 @@ tasks:
               cd repo &&
               git config advice.detachedHead false &&
               git checkout ${repo.ref} &&
-              pip install --no-use-pep517 -e . flake8 &&
+              pip install --no-use-pep517 -r requirements.txt &&
+              pip install flake8 &&
               flake8 tcadmin
         - image: 'python:3.6'
           name: black
@@ -64,8 +65,28 @@ tasks:
               cd repo &&
               git config advice.detachedHead false &&
               git checkout ${repo.ref} &&
-              pip install --no-use-pep517 -e . black &&
+              pip install --no-use-pep517 -r requirements.txt &&
+              pip install black &&
               black --check tcadmin
+        - image: 'python:3.6'
+          name: pipupdate
+          command:
+            - /bin/bash
+            - '--login'
+            - '-c'
+            - >-
+              git clone ${repo.git_url} repo &&
+              cd repo &&
+              git config advice.detachedHead false &&
+              git checkout ${repo.ref} &&
+              pip install --no-use-pep517 -r requirements.txt &&
+              pip install pip-tools &&
+              ./pipupdate.sh &&
+              if ! output=$(git status --porcelain) || [ -n "$output" ]; then
+                  echo "*** ./pipupdate.sh produced changes to the repository; these changes should be checked in ***";
+                  git --no-pager diff;
+                  exit 1;
+              fi
     in:
       $let:
         test_tasks:
