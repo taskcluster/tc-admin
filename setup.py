@@ -15,7 +15,7 @@ setup(
     packages=find_packages("."),
     install_requires=[
         "taskcluster~=16.2.0",
-        "click<7",
+        "click<8",
         "blessings<2",
         "attrs",  # http://www.attrs.org/en/stable/backward-compatibility.html
         "memoized==0.3",  # no semver..
