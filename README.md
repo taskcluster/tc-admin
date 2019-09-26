@@ -52,6 +52,9 @@ appconfig = AppConfig()
 The `tc-admin` command looks for `tc-admin.py` in the current directory, or in the directory given by `$TC_ADMIN_PY` or command-line argument `--tc-admin-py`.
 Like most Python modules, the global `__file__` is set when `tc-admin.py` is executed, and can be used to determine relative paths.
 
+Before `tc-admin.py` is executed, the current working directory is changed to the directory containing it.
+This enables relative imports as well as loading files with relative paths (such as with LocalLoader, below).
+
 ## Programmatic Interface
 
 This library can also be used programmatically.
@@ -69,6 +72,8 @@ def boot():
 if __name__ == "__main__":
     boot()
 ```
+
+Note that the current directory is not automatically set in this case.
 
 ## AppConfig
 
@@ -136,6 +141,92 @@ To help distinguish checks from tests, include a `pytest.ini` in this directory:
 python_classes = Check*
 python_files = check_*.py
 python_functions = check_*
+```
+
+### Loading Config Sources
+
+Most uses of this library load configuration data from some easily-modified YAML files.
+The `tcadmin.util.config` package provides some support for loading and parsing these files.
+All of this is entirely optional; use what is appropriate to the purpose.
+
+#### Loaders
+
+First, define a loader that can load data from files.
+
+```python
+from tcadmin.util.config import LocalLoader
+
+loader = LocalLoader()
+```
+
+The LocalLoader class knows how to load configuration from files relative to `tc-admin.py`.
+It has a `load` method that will load data, optionally parsing it as YAML:
+
+```python
+data = loader.load("data.bin")
+aliases = lodaer.load("aliases.yml", parse="yaml")
+```
+
+You can also define your own loader class.
+Just implement the `load_raw` method to return bytes, given a filename.
+
+#### Config
+
+YAML data is inconvenient to deal with in Python, introducig a lot of `[".."]` noise.
+Commonly, config files are either a top-level array, or a top-level object with named "stanzas" of configuration.
+The ConfigList and ConfigDict classes support these formats.
+We suggest using these with the Python `attrs` library.
+
+Define a class that inherits from either of these classes, specifies the filename to load from, and has an `Item` class for the items in the collection:
+
+```python
+from tcadmin.util.config import ConfigList
+
+class Workers(ConfigList):
+    filename = "workers.yml"
+
+    @attr.s
+    class Item:
+        workerId = attr.ib(type=str)
+        bigness = attr.ib(type=int, default=1)
+```
+
+Then simply call `Workers.load(loader)` to load a `workers.yml` that looks something like
+
+```yaml
+- workerId: small
+  bigness: 5
+- workerId: huge
+  bigness: 5000
+```
+
+The ConfigDict class is similar, but parses files like
+
+```yaml
+small:
+  bigness: 5
+huge:
+  bigness: 5000
+```
+
+ConfigList creates new `Item` instances from array elements `item` with `Item(**item)`.
+ConfigDict creates new `Item` instances from `k: item` with `Item(k, **item)`.
+This approach is compatible with `attrs`, where in the latter case `k` should be the first attribute defined.
+
+If array elements or object values are not themselves YAML objects, add a class method named `transform_item` to transform the data in the YAML file into a Python dictionary.
+For example:
+
+```python
+class Workers(ConfigList):
+
+    @classmethod
+    def transform_item(cls, item):
+        # given a simple string, assume that is the workerId and apply defaults
+        if isinstance(item, str):
+            return {"workerId": item}
+        return item
+
+    ...
 ```
 
 ## Resources

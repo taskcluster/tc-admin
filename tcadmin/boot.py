@@ -51,6 +51,9 @@ def boot():
     with open(tcadmin) as f:
         code = compile(f.read(), tcadmin, "exec")
 
+    dir = os.path.dirname(tcadmin)
+    os.chdir(dir)
+
     globals = {"__file__": tcadmin}
     exec(code, globals, globals)
     try:
