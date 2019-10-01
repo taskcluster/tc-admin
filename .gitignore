@@ -6,3 +6,4 @@ tc_admin.egg-info
 __pycache__
 .release/
 dist/
+pip-wheel-metadata/
