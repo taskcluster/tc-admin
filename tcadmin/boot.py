@@ -42,7 +42,7 @@ def find_tc_admin():
     return os.path.abspath(tcadmin)
 
 
-def boot():
+def boot(main=main):
     tcadmin = find_tc_admin()
     if not os.path.exists(tcadmin):
         bail("Error: {} does not exist".format(tcadmin))
