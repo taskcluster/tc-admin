@@ -15,13 +15,13 @@ setup(
     packages=find_packages("."),
     install_requires=[
         "taskcluster~=16.2.0",
-        "click<8",
-        "blessings<2",
-        "attrs",  # http://www.attrs.org/en/stable/backward-compatibility.html
+        "click~=6.7",
+        "blessings~=1.7",
+        "attrs~=18.2.0",
         "memoized==0.3",  # no semver..
-        "sortedcontainers<3",
-        "aiohttp<4",
-        "pytest<4",
+        "sortedcontainers~=2.0.5",
+        "aiohttp~=2.3.10",
+        "pytest~=3.10.1",
     ],
     setup_requires=["pytest-runner", "flake8"],
     tests_require=["pytest<4", "pytest-mock", "pytest-asyncio", "flake8"],
