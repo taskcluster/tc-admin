@@ -22,7 +22,7 @@ setup(
         "sortedcontainers~=2.1.0",
         "aiohttp~=2.3.10",
         "pytest~=5.2",
-        "pyyaml~=3.13",
+        "pyyaml~=4.2b1",
     ],
     setup_requires=["pytest-runner", "flake8"],
     tests_require=["pytest", "pytest-mock", "pytest-asyncio~=0.10.0", "flake8"],
