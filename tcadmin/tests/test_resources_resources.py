@@ -170,9 +170,10 @@ def test_resources_from_json():
 
 def test_resources_add_unmanaged_prohibited():
     "Adding an unmanaged resource is an error"
-    with pytest.raises(RuntimeError, message="unmanaged resource: Thing=x"):
+    with pytest.raises(RuntimeError) as exc:
         rsrcs = Resources([], ["OtherStuff"])
         rsrcs.add(Thing("x", "1"))
+    assert "unmanaged resource: Thing=x" in str(exc.value)
 
 
 def test_resources_manages():
@@ -185,14 +186,16 @@ def test_resources_manages():
 
 def test_resources_verify_duplicates_prohibited():
     "Duplicate resources are not allowed"
-    with pytest.raises(RuntimeError, message="duplicate resources: Thing=x"):
+    with pytest.raises(RuntimeError) as exc:
         Resources([Thing("x", "1"), Thing("x", "1")], [".*"])
+    assert "duplicate resources: Thing=x" in str(exc.value)
 
 
 def test_resources_verify_unmanaged_prohibited():
     "Duplicate resources are not allowed"
-    with pytest.raises(RuntimeError, message="unmanaged resources: ListThing=y"):
+    with pytest.raises(RuntimeError) as exc:
         Resources([Thing("x", "1"), ListThing("y", [])], ["Thing=*"])
+    assert "unmanaged resources: ListThing=y" in str(exc.value)
 
 
 def test_resources_str():

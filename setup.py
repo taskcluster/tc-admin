@@ -21,11 +21,11 @@ setup(
         "memoized==0.3",  # no semver..
         "sortedcontainers~=2.1.0",
         "aiohttp~=2.3.10",
-        "pytest~=3.10.1",
+        "pytest~=5.2",
         "pyyaml~=3.13",
     ],
     setup_requires=["pytest-runner", "flake8"],
-    tests_require=["pytest<4", "pytest-mock", "pytest-asyncio", "flake8"],
+    tests_require=["pytest", "pytest-mock", "pytest-asyncio~=0.10.0", "flake8"],
     classifiers=("Programming Language :: Python :: 3",),
     entry_points={
         "console_scripts": [
