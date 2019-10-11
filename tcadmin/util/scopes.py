@@ -6,8 +6,6 @@
 
 import re
 
-from ..resources import Role
-
 
 class Resolver:
     """
@@ -23,6 +21,8 @@ class Resolver:
     def from_resources(cls, resources):
         """Construct an instance from a Resources instance, ignoring any non-Role
         resources"""
+        from ..resources import Role
+
         roles = {}
         for resource in resources:
             if isinstance(resource, Role):
