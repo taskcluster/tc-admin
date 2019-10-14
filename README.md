@@ -247,6 +247,10 @@ The class has the following methods:
 * `resources.filter(pattern)` - return a new Resources object containing only resources matching the given regular expression string
 * `resources.map(functor)` - return a new Resources object, with fuctor applied to each resource.  This is typically used in modifiers.
 
+Resources must be unique -- tc-admin cannot manage multiple hooks with the same name, for example.
+However, some resource kinds support merging, where adding a resource with the same identity as one that already exists "merges" it into the existing resource.
+See the description of roles, below.
+
 The remaining classes represent individual resources.
 Each has an `id` formed from its kind and the unique identifier for the resource in the Taskcluster.
 For example, `Hook=release-hooks/beta-release`.
@@ -282,13 +286,26 @@ The items in `bindings` are instances of `Binding(exchange=.., routingKeyPattern
 ```python
 from tcadmin.resources import Role
 
-hook = Role(
+role = Role(
     roleId=..,
     description=..,
     scopes=(.., ..))
 ```
 
 As with hooks, `scopes` must be a tuple (not a list) of strings.
+
+Roles can be merged if their descriptions match.
+The resulting role contains the union of the scopes of the input roles.
+This functionality makes management of roles easier in cases where different parts of the generation process may add scopes to the same role.
+
+For example:
+
+```python
+resources.add(Role(roleId="my-role", description="My Role", scopes=["scope1"]))
+resources.add(Role(roleId="my-role", description="My Role", scopes=["scope2"]))
+```
+
+This will result in a single Role with scopes `["scope1", "scope2"]`.
 
 ### WorkerPool
 

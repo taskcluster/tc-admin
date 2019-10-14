@@ -19,6 +19,17 @@ class Thing(Resource):
 
 
 @attr.s
+class MergeableThing(Resource):
+    thingId = attr.ib(type=str)
+    value = attr.ib(type=str)
+
+    def merge(self, other):
+        return MergeableThing(
+            thingId=self.thingId, value=self.value + "|" + other.value
+        )
+
+
+@attr.s
 class ListThing(Resource):
     listThingId = attr.ib(type=str)
 
@@ -136,6 +147,14 @@ def test_resources_filter():
     assert [r.thingId for r in coll] == ["abc", "abd"]
 
 
+def test_resources_merge():
+    "Resources merge when added"
+    coll = Resources([], [".*"])
+    coll.add(MergeableThing(thingId="a", value="artichoke"))
+    coll.add(MergeableThing(thingId="a", value="aardvark"))
+    assert coll.resources[0] == MergeableThing(thingId="a", value="artichoke|aardvark")
+
+
 def test_resources_to_json():
     "Resources.to_json produces the expected data structure"
     rsrcs = Resources(
@@ -184,11 +203,19 @@ def test_resources_manages():
     assert not rsrcs.managed.matches("Thing=y")
 
 
-def test_resources_verify_duplicates_prohibited():
+def test_resources_verify_duplicates_prohibited_constructor():
     "Duplicate resources are not allowed"
     with pytest.raises(RuntimeError) as exc:
         Resources([Thing("x", "1"), Thing("x", "1")], [".*"])
-    assert "duplicate resources: Thing=x" in str(exc.value)
+    assert "duplicate resources" in str(exc.value)
+
+
+def test_resources_verify_duplicates_prohibited():
+    "Duplicate resources are not allowed"
+    rsrcs = Resources([Thing("x", "1")], [".*"])
+    with pytest.raises(RuntimeError) as exc:
+        rsrcs.add(Thing("x", "1"))
+    assert "Cannot merge resources of kind Thing" in str(exc.value)
 
 
 def test_resources_verify_unmanaged_prohibited():

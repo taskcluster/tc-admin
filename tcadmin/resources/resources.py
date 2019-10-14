@@ -9,7 +9,6 @@ import attr
 import blessings
 import functools
 import textwrap
-import itertools
 from memoized import memoized
 from sortedcontainers import SortedKeyList
 
@@ -50,6 +49,15 @@ class Resource(object):
     def to_api(self):
         "Construct a payload for Taskcluster API methods"
         raise NotImplementedError
+
+    def merge(self, other):
+        """
+        Construct a 'merged' resource, given another resource with the same kind and id.
+
+        Generally, resources can be merged if all fields either match or can be combined
+        in some way, such as taking the union of scopesets
+        """
+        raise RuntimeError("Cannot merge resources of kind {}".format(self.kind))
 
     @property
     def kind(self):
@@ -101,21 +109,37 @@ class Resources:
     )
 
     def __attrs_post_init__(self):
+        self._by_id = {r.id: r for r in self.resources}
+        if len(self._by_id) != len(self.resources):
+            raise RuntimeError("duplicate resources passed to Resources constructor")
         self._verify()
 
-    def add(self, resource):
+    def add(self, resource, _skip_verify=False):
         "Add the given resource to the collection"
         if not self.is_managed(resource.id):
             raise RuntimeError("unmanaged resource: " + resource.id)
+
+        # if the resource already exists, try to merge it and remove the
+        # previous version from the list of resources (SortedKeyList does not
+        # support in-place replacement of items)
+        if resource.id in self._by_id:
+            existing = self._by_id[resource.id]
+            resource = self._by_id[resource.id].merge(resource)
+            idx = self.resources.index(existing)
+            del self.resources[idx]
+
+        self._by_id[resource.id] = resource
         self.resources.add(resource)
-        self._verify()
+
+        if not _skip_verify:
+            self._verify()
 
     def update(self, resources):
         "Add the given resources to the collection"
         for resource in resources:
             if not self.is_managed(resource.id):
                 raise RuntimeError("unmanaged resource: " + resource.id)
-        self.resources.update(resources)
+            self.add(resource, _skip_verify=True)
         self._verify()
 
     def manage(self, pattern):
@@ -140,15 +164,6 @@ class Resources:
 
     def _verify(self):
         "Verify that this set of resources is legal (all managed, no duplicates)"
-
-        # search for duplicates, taking advantage of sorting
-        pairs = zip(
-            itertools.chain([None], (r1.id for r1 in self)), (r2.id for r2 in self)
-        )
-        dupes = [a for (a, b) in pairs if a == b]
-        if dupes:
-            unique_dupes = sorted(set(dupes))
-            raise RuntimeError("duplicate resources: " + ", ".join(unique_dupes))
 
         unmanaged = sorted([r.id for r in self if not self.is_managed(r.id)])
         if unmanaged:

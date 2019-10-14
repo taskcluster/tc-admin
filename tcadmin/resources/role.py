@@ -8,6 +8,7 @@ import attr
 
 from .resources import Resource
 from .util import description_converter, scopes_converter, list_formatter
+from ..util.scopes import normalizeScopes
 
 
 @attr.s
@@ -30,3 +31,12 @@ class Role(Resource):
     def to_api(self):
         "Construct a payload for use with auth.createRole or auth.updateRole"
         return {"description": self.description, "scopes": self.scopes}
+
+    def merge(self, other):
+        assert self.roleId == other.roleId
+        if self.description != other.description:
+            raise RuntimeError(
+                "Descriptions for {} to be merged differ".format(self.id)
+            )
+        scopes = normalizeScopes(self.scopes + other.scopes)
+        return Role(roleId=self.roleId, description=self.description, scopes=scopes)

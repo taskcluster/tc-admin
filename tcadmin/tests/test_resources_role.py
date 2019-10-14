@@ -4,6 +4,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
+import pytest
 import textwrap
 
 from tcadmin.resources.resources import Resource
@@ -51,3 +52,32 @@ def test_role_from_api():
     assert role.roleId == "my:role-id"
     assert role.description == api_result["description"]
     assert role.scopes == ("scope-a", "scope-b")
+
+
+def test_role_merge_simple():
+    "Roles with matching descriptions can be merged"
+    r1 = Role(roleId="role", description="test", scopes=["a"])
+    r2 = Role(roleId="role", description="test", scopes=["b"])
+    merged = r1.merge(r2)
+    assert merged.roleId == "role"
+    assert merged.description.endswith("test")
+    assert merged.scopes == ("a", "b")
+
+
+def test_role_merge_normalized():
+    "Scopes are normalized when merging"
+    r1 = Role(roleId="role", description="test", scopes=["a", "b*"])
+    r2 = Role(roleId="role", description="test", scopes=["a", "bcdef", "c*"])
+    merged = r1.merge(r2)
+    assert merged.roleId == "role"
+    assert merged.description.endswith("test")
+    assert merged.scopes == ("a", "b*", "c*")
+
+
+def test_role_merge_different_descr():
+    "Descriptions must match to merge"
+    r1 = Role(roleId="role", description="test1", scopes=["a"])
+    r2 = Role(roleId="role", description="test2", scopes=["b"])
+    with pytest.raises(RuntimeError) as exc:
+        r1.merge(r2)
+    assert "Descriptions for Role=role to be merged differ" in str(exc.value)
