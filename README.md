@@ -422,3 +422,13 @@ The library uses [Black](https://black.readthedocs.io/en/stable/) to format code
 pip install black
 black tcadmin
 ```
+
+## Releasing
+
+To release:
+
+ * update version in `setup.py` and `git commit -m "vX.Y.Z"`
+ * `git tag vX.Y.z`
+ * push those changes to master
+ * `./release.sh --real` and enter your pypi credentials when prompted (omit the `--real` to try it against the testing pypi, if you're not sure)
+ * Find the tag in https://github.com/taskcluster/tc-admin/releases and create a new release with a brief desscription of the changes
