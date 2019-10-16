@@ -164,7 +164,7 @@ It has a `load` method that will load data, optionally parsing it as YAML:
 
 ```python
 data = loader.load("data.bin")
-aliases = lodaer.load("aliases.yml", parse="yaml")
+aliases = loader.load("aliases.yml", parse="yaml")
 ```
 
 You can also define your own loader class.
