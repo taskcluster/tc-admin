@@ -7,36 +7,42 @@
 import os
 import yaml
 import attr
+import pytest
 
 from tcadmin.util.config import ConfigList, ConfigDict, LocalLoader, StaticLoader
 
 
-def test_local_loader():
+@pytest.mark.asyncio
+async def test_local_loader():
     dir = os.path.dirname(__file__)
     loader = LocalLoader(dir)
-    assert yaml.load(loader.load_raw("testfile.yml")) == {"data": [1, 2]}
+    assert yaml.load(await loader.load_raw("testfile.yml")) == {"data": [1, 2]}
 
 
-def test_local_loader_parse():
+@pytest.mark.asyncio
+async def test_local_loader_parse():
     dir = os.path.dirname(__file__)
     loader = LocalLoader(dir)
-    assert loader.load("testfile.yml", parse="yaml") == {"data": [1, 2]}
+    assert await loader.load("testfile.yml", parse="yaml") == {"data": [1, 2]}
 
 
-def test_local_loader_no_parse():
+@pytest.mark.asyncio
+async def test_local_loader_no_parse():
     dir = os.path.dirname(__file__)
     loader = LocalLoader(dir)
-    assert yaml.load(loader.load("testfile.yml")) == {"data": [1, 2]}
+    assert yaml.load(await loader.load("testfile.yml")) == {"data": [1, 2]}
 
 
-def test_static_loader_yaml():
+@pytest.mark.asyncio
+async def test_static_loader_yaml():
     loader = StaticLoader({"data.yml": {"foo": "bar"}})
-    assert yaml.load(loader.load_raw("data.yml")) == {"foo": "bar"}
+    assert yaml.load(await loader.load_raw("data.yml")) == {"foo": "bar"}
 
 
-def test_static_loader_raw():
+@pytest.mark.asyncio
+async def test_static_loader_raw():
     loader = StaticLoader({"data.bin": b"abcd"})
-    assert loader.load_raw("data.bin") == b"abcd"
+    assert await loader.load_raw("data.bin") == b"abcd"
 
 
 loader = StaticLoader(
@@ -68,8 +74,9 @@ class KVs(ConfigList):
         return sum(i.v for i in self)
 
 
-def test_config_array():
-    kvs = KVs.load(loader)
+@pytest.mark.asyncio
+async def test_config_array():
+    kvs = await KVs.load(loader)
     assert kvs[0].k == "a"
     assert kvs[0].v == 1
     assert kvs[1].k == "b"
@@ -95,6 +102,7 @@ class Nicknames(ConfigDict):
         historical = attr.ib(type=bool, default=False)
 
 
-def test_config_dict():
-    nicks = Nicknames.load(loader)
+@pytest.mark.asyncio
+async def test_config_dict():
+    nicks = await Nicknames.load(loader)
     assert nicks["Gertie"].fullname == "Gertrude"
