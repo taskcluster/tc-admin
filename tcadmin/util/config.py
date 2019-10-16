@@ -10,10 +10,10 @@ import yaml
 
 
 class Loader(ABC):
-    def load(self, filename, parse=None):
+    async def load(self, filename, parse=None):
         """Load the given file.  If parse is `"yaml"` then the content is parsed
         as YAML; otherwise it is returned as a bytestring."""
-        raw = self.load_raw(filename)
+        raw = await self.load_raw(filename)
         if parse == "yaml":
             return yaml.load(raw)
         elif parse:
@@ -21,7 +21,7 @@ class Loader(ABC):
         return raw
 
     @abstractmethod
-    def load_raw(self, filename):
+    async def load_raw(self, filename):
         pass
 
 
@@ -29,7 +29,7 @@ class StaticLoader(Loader):
     def __init__(self, data):
         self.data = data
 
-    def load_raw(self, filename):
+    async def load_raw(self, filename):
         raw = self.data[filename]
         if not isinstance(raw, bytes):
             return yaml.dump(raw)
@@ -40,15 +40,15 @@ class LocalLoader(Loader):
     def __init__(self, directory="."):
         self.directory = directory
 
-    def load_raw(self, filename):
+    async def load_raw(self, filename):
         with open(os.path.join(self.directory, filename), "rb") as f:
             return f.read()
 
 
 class ConfigList(list):
     @classmethod
-    def load(cls, loader):
-        data = loader.load(cls.filename, parse="yaml")
+    async def load(cls, loader):
+        data = await loader.load(cls.filename, parse="yaml")
         assert isinstance(data, list), "{} is not a YAML array".format(cls.filename)
         return cls(cls.Item(**cls.transform_item(item)) for item in data)
 
@@ -59,8 +59,8 @@ class ConfigList(list):
 
 class ConfigDict(dict):
     @classmethod
-    def load(cls, loader):
-        data = loader.load(cls.filename, parse="yaml")
+    async def load(cls, loader):
+        data = await loader.load(cls.filename, parse="yaml")
         assert isinstance(data, dict), "{} is not a YAML object".format(cls.filename)
         return cls((k, cls.Item(k, **cls.transform_item(v))) for k, v in data.items())
 

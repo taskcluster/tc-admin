@@ -164,7 +164,7 @@ It has a `load` method that will load data, optionally parsing it as YAML:
 
 ```python
 data = loader.load("data.bin")
-aliases = loader.load("aliases.yml", parse="yaml")
+aliases = await loader.load("aliases.yml", parse="yaml")
 ```
 
 You can also define your own loader class.
@@ -191,7 +191,7 @@ class Workers(ConfigList):
         bigness = attr.ib(type=int, default=1)
 ```
 
-Then simply call `Workers.load(loader)` to load a `workers.yml` that looks something like
+Then simply call `await Workers.load(loader)` to load a `workers.yml` that looks something like
 
 ```yaml
 - workerId: small
