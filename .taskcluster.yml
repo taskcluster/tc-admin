@@ -21,9 +21,15 @@ tasks:
         url: ${event.repository.url}
         ref: ${event.after}
       else:
-        git_url: ${event.pull_request.head.repo.git_url}
-        url: ${event.pull_request.head.repo.url}
-        ref: ${event.pull_request.head.sha}
+        $if: 'tasks_for == "github-pull-request"'
+        then:
+          git_url: ${event.pull_request.head.repo.git_url}
+          url: ${event.pull_request.head.repo.url}
+          ref: ${event.pull_request.head.sha}
+        else:
+          git_url: ${event.repository.url}
+          url: ${event.repository.url}
+          ref: ${event.release.tag_name}
   in:
     $let:
       tests:
