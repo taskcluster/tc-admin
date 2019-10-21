@@ -89,6 +89,10 @@ class AppConfig:
     # treated as relative to the current directory.
     check_path = attr.ib(type=str, init=False, default="checks")
 
+    # utilities for resource attr.ib's
+    description_prefix = attr.ib(type=str, init=False,
+                                 default="*DO NOT EDIT* - This resource is configured automatically.")
+
     # Command-line options for the resource-generation process
     options = attr.ib(init=False, factory=lambda: OptionsRegistry("options"))
 
