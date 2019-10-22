@@ -7,7 +7,7 @@
 from ..util.json import pretty_json
 
 # To import the description_prefix
-from ../appconfig import AppConfig
+from ..appconfig import AppConfig
 
 
 def description_converter(value):
