@@ -39,6 +39,15 @@ class Updater:
     async def delete_role(self, role):
         await self.auth.deleteRole(role.roleId)
 
+    async def create_client(self, client):
+        await self.auth.createClient(client.clientId, client.to_api())
+
+    async def update_client(self, client):
+        await self.auth.updateClient(client.clientId, client.to_api())
+
+    async def delete_client(self, client):
+        await self.auth.deleteClient(client.clientId)
+
     async def create_hook(self, hook):
         await self.hooks.createHook(hook.hookGroupId, hook.hookId, hook.to_api())
 
