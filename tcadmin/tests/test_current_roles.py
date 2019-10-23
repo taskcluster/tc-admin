@@ -11,7 +11,7 @@ from tcadmin.current.roles import fetch_roles
 
 
 @pytest.fixture
-def Auth(mocker):
+def AuthForRoles(mocker):
     """
     Mock out Auth in tcadmin.current.roles.
 
@@ -40,7 +40,7 @@ def make_role():
 
 
 @pytest.mark.asyncio
-async def test_fetch_roles_empty(Auth):
+async def test_fetch_roles_empty(AuthForRoles):
     "When there are no roles, nothing happens"
     resources = Resources([], [".*"])
     await fetch_roles(resources)
@@ -48,21 +48,21 @@ async def test_fetch_roles_empty(Auth):
 
 
 @pytest.mark.asyncio
-async def test_fetch_roles_managed(Auth, make_role):
+async def test_fetch_roles_managed(AuthForRoles, make_role):
     "When a role is present and managed, it is included"
     resources = Resources([], [".*"])
     api_role = make_role()
-    Auth.roles.append(api_role)
+    AuthForRoles.roles.append(api_role)
     await fetch_roles(resources)
     assert list(resources) == [Role.from_api(api_role)]
 
 
 @pytest.mark.asyncio
-async def test_fetch_roles_unmanaged(Auth, make_role):
+async def test_fetch_roles_unmanaged(AuthForRoles, make_role):
     "When a role is present and unmanaged, it is not included"
     resources = Resources([], ["Role=managed*"])
     api_role1 = make_role(roleId="managed-role")
     api_role2 = make_role(roleId="un-managed-role")
-    Auth.roles.extend([api_role1, api_role2])
+    AuthForRoles.roles.extend([api_role1, api_role2])
     await fetch_roles(resources)
     assert list(resources) == [Role.from_api(api_role1)]
