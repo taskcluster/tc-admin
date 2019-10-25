@@ -6,7 +6,7 @@
 
 import asyncio
 from ..resources import Resources
-from . import hooks, clients, roles, aws_provisioner_workertypes, worker_pools
+from . import hooks, clients, roles, aws_provisioner_workertypes, worker_pools, secrets
 
 
 async def resources(managed):
@@ -21,5 +21,6 @@ async def resources(managed):
         hooks.fetch_hooks(resources),
         aws_provisioner_workertypes.fetch_aws_provisioner_workertypes(resources),
         worker_pools.fetch_worker_pools(resources),
+        secrets.fetch_secrets(resources),
     )
     return resources

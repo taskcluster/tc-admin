@@ -6,6 +6,7 @@
 
 import click
 import functools
+import contextlib
 
 
 class ClickOptionsRegistry:
@@ -36,6 +37,16 @@ output_options = ClickOptionsRegistry("output_options")
 diff_options = ClickOptionsRegistry("diff_options")
 check_options = ClickOptionsRegistry("check_options")
 apply_options = ClickOptionsRegistry("apply_options")
+
+
+@contextlib.contextmanager
+def test_options(**options):
+    "Context manager to set fake options"
+    cmd = click.Command("test")
+    ctx = click.Context(cmd)
+    ctx.params.update(options)
+    with ctx:
+        yield
 
 
 def with_options(*options):
