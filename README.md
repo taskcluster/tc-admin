@@ -307,6 +307,25 @@ resources.add(Role(roleId="my-role", description="My Role", scopes=["scope2"]))
 
 This will result in a single Role with scopes `["scope1", "scope2"]`.
 
+### Client
+
+```python
+from tcadmin.resources import Client
+
+client = Client
+    clientId=..,
+    description=..,
+    scopes=(.., ..))
+```
+
+Clients work much like roles.
+As with roles, `scopes` must be a tuple (not a list) of strings.
+Clients configured by this library have an expiration date far in the future and thus effectively do not expire.
+This library does not manage access tokens: it discards them from the response to `auth.createClient`.
+The expectation is that users of the managed clients will call `auth.resetAccessToken` and use the returned token.
+
+Clients can be merged if their descriptions match, just like roles.
+
 ### WorkerPool
 
 ```python
