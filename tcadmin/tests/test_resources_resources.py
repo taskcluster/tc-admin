@@ -33,7 +33,7 @@ class MergeableThing(Resource):
 class ListThing(Resource):
     listThingId = attr.ib(type=str)
 
-    def things_formatter(value):
+    def things_formatter(id, value):
         return "\n".join("- " + e for e in value)
 
     things = attr.ib(type=list, metadata={"formatter": things_formatter})
