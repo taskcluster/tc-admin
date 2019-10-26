@@ -15,7 +15,7 @@ setup(
     packages=find_packages("."),
     install_requires=[
         "taskcluster~=21.2.0",
-        "click~=6.7",
+        "click~=7.0",
         "blessings~=1.7",
         "attrs~=19.3.0",
         "memoized==0.3",  # no semver..
