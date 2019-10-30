@@ -9,7 +9,7 @@ import blessings
 from .util.ansi import strip_ansi
 from .util.sessions import aiohttp_session
 
-from taskcluster.aio import Auth, Hooks, AwsProvisioner, WorkerManager
+from taskcluster.aio import Auth, Hooks, AwsProvisioner, WorkerManager, Secrets
 from taskcluster import optionsFromEnvironment, TaskclusterRestFailure
 
 t = blessings.Terminal()
@@ -22,6 +22,7 @@ class Updater:
 
     def __init__(self):
         self.auth = Auth(optionsFromEnvironment(), session=aiohttp_session())
+        self.secrets = Secrets(optionsFromEnvironment(), session=aiohttp_session())
         self.hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
         self.awsprovisioner = AwsProvisioner(
             optionsFromEnvironment(), session=aiohttp_session()
@@ -47,6 +48,19 @@ class Updater:
 
     async def delete_client(self, client):
         await self.auth.deleteClient(client.clientId)
+
+    async def create_secret(self, secret):
+        if not secret.has_secret():
+            raise RuntimeError("Cannot apply secrets with --without-secrets")
+        await self.secrets.set(secret.name, secret.to_api())
+
+    async def update_secret(self, secret):
+        if not secret.has_secret():
+            raise RuntimeError("Cannot apply secrets with --without-secrets")
+        await self.secrets.set(secret.name, secret.to_api())
+
+    async def delete_secret(self, secret):
+        await self.secrets.remove(secret.name)
 
     async def create_hook(self, hook):
         await self.hooks.createHook(hook.hookGroupId, hook.hookId, hook.to_api())
