@@ -13,6 +13,9 @@ This will require `TASKCLUSTER_ROOT_URL` to be set in the environment, to know w
 Similarly, `tc-admin current` will generate the current set of resources (optionally with `--json`).
 To compare them, run `tc-admin diff`.
 
+If the configuration includes secrets, you may want to pass the `--without-secrets` option.
+This option skips managing the content of secrets, and thus needs neither access to secret values nor Taskcluster credentials to fetch secrets.
+
 Run `tc-admin apply` to apply the changes.
 Note that only `apply` will require Taskcluster credentials, and it's a good practice to only set TC credentials when running this command.
 
@@ -113,7 +116,7 @@ async def update_resources(resources):
 
 ### Modifiers
 
-Modifiers are responsible for modifying an existing set of reosurces.
+Modifiers are responsible for modifying an existing set of resources.
 Since resources are immutable, the signature differs slightly from generators:
 
 ```python
@@ -363,7 +366,7 @@ Clients work much like roles.
 As with roles, `scopes` must be a tuple (not a list) of strings.
 Clients configured by this library have an expiration date far in the future and thus effectively do not expire.
 This library does not manage access tokens: it discards them from the response to `auth.createClient`.
-The expectation is that users of the managed clients will call `auth.resetAccessToken` and use the returned token.
+The expectation is that project admins who need credentials for the managed clients will call `auth.resetAccessToken` and use the returned token.
 
 Clients can be merged if their descriptions match, just like roles.
 
