@@ -43,6 +43,9 @@ class OptionsRegistry:
         self.option_names = {}
         self.name = name
 
+        # special case for --with-secrets
+        self.option_names["--with-secrets"] = "with_secrets"
+
     def add(self, name, *, required=False, help=None, default=None):
         """
         Register a command-line option.  Once options are parsed, the value
@@ -65,11 +68,16 @@ class OptionsRegistry:
 
     def get(self, name):
         """Get a value for a command-line options"""
+        ctx = click.get_current_context()
         try:
             click_name = self.option_names[name]
         except KeyError:
-            raise KeyError("No option named {} is registered".format(name))
-        ctx = click.get_current_context()
+            try:
+                # fall back to reading built-in tc-admin options
+                click_name = name
+                ctx.params[click_name]
+            except KeyError:
+                raise KeyError("No option named {} is registered".format(name))
         return ctx.params[click_name]
 
     def _apply(self, fn):

@@ -26,7 +26,7 @@ def bindings_validator(instance, attribute, value):
         raise ValueError("bindings must be a sequence of Binding instances")
 
 
-def bindings_formatter(value):
+def bindings_formatter(id, value):
     """Format bindings as a list of bulleted strings"""
     return "\n".join("- {}".format(v) for v in value)
 

@@ -79,7 +79,9 @@ class Resource(object):
         rv = ["{t.underline}{id}{t.normal}:".format(t=t, id=self.id)]
         for a in attr.fields(self.__class__):
             label = "  {t.bold}{a.name}{t.normal}:".format(t=t, a=a)
-            formatted = a.metadata.get("formatter", str)(getattr(self, a.name))
+            formatted = a.metadata.get("formatter", lambda id, v: str(v))(
+                self.id, getattr(self, a.name)
+            )
             if "\n" in formatted:
                 rv.append(label)
                 rv.append(textwrap.indent(formatted, "    "))

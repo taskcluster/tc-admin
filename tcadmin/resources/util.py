@@ -25,11 +25,11 @@ def scopes_converter(value):
     return tuple(sorted(value))
 
 
-def list_formatter(value):
+def list_formatter(id, value):
     """Format as a list of bulleted strings"""
     return "\n".join("- " + scope for scope in value)
 
 
-def json_formatter(value):
+def json_formatter(id, value):
     """Format as a pretty-printed JSON string"""
     return pretty_json(value)

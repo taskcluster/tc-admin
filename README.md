@@ -13,6 +13,9 @@ This will require `TASKCLUSTER_ROOT_URL` to be set in the environment, to know w
 Similarly, `tc-admin current` will generate the current set of resources (optionally with `--json`).
 To compare them, run `tc-admin diff`.
 
+If the configuration includes secrets, you may want to pass the `--without-secrets` option.
+This option skips managing the content of secrets, and thus needs neither access to secret values nor Taskcluster credentials to fetch secrets.
+
 Run `tc-admin apply` to apply the changes.
 Note that only `apply` will require Taskcluster credentials, and it's a good practice to only set TC credentials when running this command.
 
@@ -94,9 +97,26 @@ async def update_resources(resources):
     # modify in place ...
 ```
 
+When generating secrets, respect the `--with-secrets` option, and generate secrets without values when it is false.
+You can also use this option to determine whether the generation process requires access to secret values.
+This allows generation runs with `--without-secrets` to occur without any credentials or access to secret values.
+
+```python
+@appconfig.generators.register
+async def update_resources(resources):
+    # modify in place ...
+    if appconfig.options.get('--with-secrets'):
+        secretstore = load_secret_values()
+        resources.add(Secret(
+            name="top-secret/cookie-recipe",
+            secret=secretstore.decrypt('recipes/double-chocolate-chip')))
+     else:
+        resources.add(Secret(name="top-secret/cookie-recipe"))
+```
+
 ### Modifiers
 
-Modifiers are responsible for modifying an existing set of reosurces.
+Modifiers are responsible for modifying an existing set of resources.
 Since resources are immutable, the signature differs slightly from generators:
 
 ```python
@@ -128,6 +148,8 @@ async def update_resources(resources):
     branch = appconfig.options.get("--branch")
     # ...
 ```
+
+As a special case, the `--with-secrets` secret is available through this same mechanism.
 
 ### Checks
 
@@ -281,6 +303,28 @@ Both `schedule` and `bindings` must be tuples, not lists (as lists are mutable).
 The items in `schedule` are cron-like strings.
 The items in `bindings` are instances of `Binding(exchange=.., routingKeyPattern=..)`.
 
+### Secret
+
+```python
+from tcadmin.resources import Secret
+
+secret = Secret(
+    name=..,
+    secret=..)
+
+# or, when not managing secret values
+
+secret = Secret(name=..)
+```
+
+Secrets are managed using the Secret resource type.
+While Taskcluster supports expiration times on secrets, this library sets those times the far future, effectively creating non-expiring secrets
+
+This library is careful to not display secret values in its output.
+Instead, it displays `<unknown>` when not managing secret values, and displays a salted hash of the secret value when managing secret values.
+The salted hash allows `tc-admin diff` to show that a secret value has changed, without revealing the value of that secret.
+The salt includes a per-run salt, and the name of the secret, with the result that even if two secrets have the same value, they will be shown with different hashes in `tc-admin generate`.
+
 ### Role
 
 ```python
@@ -317,6 +361,12 @@ client = Client(
     description=..,
     scopes=(.., ..))
 ```
+
+Clients work much like roles.
+As with roles, `scopes` must be a tuple (not a list) of strings.
+Clients configured by this library have an expiration date far in the future and thus effectively do not expire.
+This library does not manage access tokens: it discards them from the response to `auth.createClient`.
+The expectation is that project admins who need credentials for the managed clients will call `auth.resetAccessToken` and use the returned token.
 
 Clients are managed and can be merged like roles.
 Any associated access tokens are not handled by this library,
