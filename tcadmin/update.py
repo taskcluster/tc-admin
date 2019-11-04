@@ -86,8 +86,8 @@ class Updater:
         except TaskclusterRestFailure as e:
             # A 409 Conflict error indicates this worker pool already exists,
             # and in most cases this means it's still in the process of being
-            # deleted (that is, has providerId = "null-provider" as set below in
-            # delete_workerpool).  In this case, we just update the worker pool
+            # deleted (that is, has providerId = "null-provider" as set by
+            # deleteWorkerPool).  In this case, we just update the worker pool
             # in-place.
             if e.status_code == 409:
                 return await self.update_workerpool(wp)
@@ -97,12 +97,7 @@ class Updater:
         await self.worker_manager.updateWorkerPool(wp.workerPoolId, wp.to_api())
 
     async def delete_workerpool(self, wp):
-        # worker-manager doesn't support deleting directly; instead we set the
-        # providerId to "null-provider".  Once the pool has no workers, the
-        # worker-manager will delete it.
-        as_api = wp.to_api()
-        as_api["providerId"] = "null-provider"
-        await self.worker_manager.updateWorkerPool(wp.workerPoolId, as_api)
+        await self.worker_manager.deleteWorkerPool(wp.workerPoolId)
 
     async def update_resource(self, verb, resource):
         msg = {

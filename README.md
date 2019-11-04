@@ -356,7 +356,7 @@ This will result in a single Role with scopes `["scope1", "scope2"]`.
 ```python
 from tcadmin.resources import Client
 
-client = Client
+client = Client(
     clientId=..,
     description=..,
     scopes=(.., ..))
@@ -368,7 +368,11 @@ Clients configured by this library have an expiration date far in the future and
 This library does not manage access tokens: it discards them from the response to `auth.createClient`.
 The expectation is that project admins who need credentials for the managed clients will call `auth.resetAccessToken` and use the returned token.
 
-Clients can be merged if their descriptions match, just like roles.
+Clients are managed and can be merged like roles.
+Any associated access tokens are not handled by this library,
+and should be reset with the `resetAccessToken` API after a client is created.
+
+Like roles, the clients managed here last "forever".
 
 ### WorkerPool
 
