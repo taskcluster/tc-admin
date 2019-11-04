@@ -364,14 +364,10 @@ client = Client(
 
 Clients work much like roles.
 As with roles, `scopes` must be a tuple (not a list) of strings.
-Clients configured by this library have an expiration date far in the future and thus effectively do not expire.
 This library does not manage access tokens: it discards them from the response to `auth.createClient`.
 The expectation is that project admins who need credentials for the managed clients will call `auth.resetAccessToken` and use the returned token.
 
-Clients are managed and can be merged like roles.
-Any associated access tokens are not handled by this library,
-and should be reset with the `resetAccessToken` API after a client is created.
-
+Clients configured by this library have an expiration date far in the future.
 Like roles, the clients managed here last "forever".
 
 ### WorkerPool
