@@ -9,7 +9,7 @@ import blessings
 from .util.ansi import strip_ansi
 from .util.sessions import aiohttp_session
 
-from taskcluster.aio import Auth, Hooks, AwsProvisioner, WorkerManager, Secrets
+from taskcluster.aio import Auth, Hooks, WorkerManager, Secrets
 from taskcluster import optionsFromEnvironment, TaskclusterRestFailure
 
 t = blessings.Terminal()
@@ -24,9 +24,6 @@ class Updater:
         self.auth = Auth(optionsFromEnvironment(), session=aiohttp_session())
         self.secrets = Secrets(optionsFromEnvironment(), session=aiohttp_session())
         self.hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
-        self.awsprovisioner = AwsProvisioner(
-            optionsFromEnvironment(), session=aiohttp_session()
-        )
         self.worker_manager = WorkerManager(
             optionsFromEnvironment(), session=aiohttp_session()
         )
@@ -70,15 +67,6 @@ class Updater:
 
     async def delete_hook(self, hook):
         await self.hooks.removeHook(hook.hookGroupId, hook.hookId)
-
-    async def create_awsprovisionerworkertype(self, wt):
-        await self.awsprovisioner.createWorkerType(wt.workerType, wt.to_api())
-
-    async def update_awsprovisionerworkertype(self, wt):
-        await self.awsprovisioner.updateWorkerType(wt.workerType, wt.to_api())
-
-    async def delete_awsprovisionerworkertype(self, wt):
-        await self.awsprovisioner.removeWorkerType(wt.workerType)
 
     async def create_workerpool(self, wp):
         try:

@@ -8,7 +8,6 @@ from .resources import Resources
 from .role import Role
 from .client import Client
 from .hook import Hook, Binding
-from .aws_provisioner_workertype import AwsProvisionerWorkerType
 from .worker_pool import WorkerPool
 from .secret import Secret
 
@@ -17,7 +16,6 @@ __all__ = [
     "Role",
     "Hook",
     "Binding",
-    "AwsProvisionerWorkerType",
     "WorkerPool",
     "Client",
     "Secret",
