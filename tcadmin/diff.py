@@ -6,7 +6,7 @@
 
 import re
 import click
-import difflib
+import patiencediff
 import blessings
 import attr
 
@@ -95,7 +95,7 @@ def textual_diff(generated, current, context):
                 return match.group(1)
         return ""
 
-    lines = difflib.unified_diff(
+    lines = patiencediff.unified_diff(
         left, right, lineterm="", fromfile="current", tofile="generated", n=context
     )
     colors = {

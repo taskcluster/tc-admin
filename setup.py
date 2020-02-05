@@ -23,6 +23,7 @@ setup(
         "aiohttp~=2.3.10",
         "pytest~=5.2",
         "pyyaml~=4.2b1",
+        "patiencediff==0.1.0",
     ],
     setup_requires=["pytest-runner", "flake8"],
     tests_require=["pytest", "pytest-mock", "pytest-asyncio~=0.10.0", "flake8"],
