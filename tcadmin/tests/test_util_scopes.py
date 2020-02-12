@@ -9,6 +9,7 @@ import taskcluster
 import os
 
 from tcadmin.util.scopes import Resolver, satisfies
+from tcadmin.util.taskcluster import optionsFromEnvironment
 from tcadmin.resources import Role, Resources
 
 
@@ -234,7 +235,7 @@ def auth():
             pytest.fail(msg)
         else:
             pytest.skip(msg)
-    return taskcluster.Auth(taskcluster.optionsFromEnvironment())
+    return taskcluster.Auth(optionsFromEnvironment())
 
 
 @pytest.fixture(scope="module")

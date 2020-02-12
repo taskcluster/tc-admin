@@ -5,10 +5,10 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 from taskcluster.aio import Hooks
-from taskcluster import optionsFromEnvironment
 
 from ..resources import Hook
 from ..util.sessions import aiohttp_session
+from ..util.taskcluster import optionsFromEnvironment
 
 
 async def fetch_hooks(resources):
