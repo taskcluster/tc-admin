@@ -109,10 +109,11 @@ def main(appconfig):
     @with_aiohttp_session
     async def applyCommand(**kwargs):
         "Apply the expected runtime configuration"
-        if not os.environ.get("TASKCLUSTER_CLIENT_ID"):
-            raise click.UsageError("TASKCLUSTER_CLIENT_ID must be set")
-        if not os.environ.get("TASKCLUSTER_ACCESS_TOKEN"):
-            raise click.UsageError("TASKCLUSTER_ACCESS_TOKEN must be set")
+        if not os.environ.get("TASKCLUSTER_PROXY_URL"):
+            if not os.environ.get("TASKCLUSTER_CLIENT_ID"):
+                raise click.UsageError("TASKCLUSTER_CLIENT_ID must be set")
+            if not os.environ.get("TASKCLUSTER_ACCESS_TOKEN"):
+                raise click.UsageError("TASKCLUSTER_ACCESS_TOKEN must be set")
 
         with AppConfig._as_current(appconfig):
             expected = await generate.resources()
