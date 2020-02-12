@@ -5,10 +5,10 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 from taskcluster.aio import Auth
-from taskcluster import optionsFromEnvironment
 
 from ..resources import Client
 from ..util.sessions import aiohttp_session
+from ..util.taskcluster import optionsFromEnvironment
 
 
 async def fetch_clients(resources):

@@ -8,9 +8,10 @@ import blessings
 
 from .util.ansi import strip_ansi
 from .util.sessions import aiohttp_session
+from .util.taskcluster import optionsFromEnvironment
 
 from taskcluster.aio import Auth, Hooks, WorkerManager, Secrets
-from taskcluster import optionsFromEnvironment, TaskclusterRestFailure
+from taskcluster import TaskclusterRestFailure
 
 t = blessings.Terminal()
 

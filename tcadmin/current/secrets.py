@@ -5,11 +5,11 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 from taskcluster.aio import Secrets
-from taskcluster import optionsFromEnvironment
 
 from ..options import with_options
 from ..resources import Secret
 from ..util.sessions import aiohttp_session
+from ..util.taskcluster import optionsFromEnvironment
 
 
 @with_options("with_secrets")
