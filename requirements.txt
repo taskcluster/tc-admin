@@ -168,10 +168,10 @@ taskcluster-urls==12.1.0 \
     --hash=sha256:1dc740c32c7beb31e11ed7ccf9da2d47a504acdb3170c8900649433b0fd16fb2 \
     --hash=sha256:4a62c776aeba6d45044789a8845ec4d8521bc1bb6ebfc86d79ee759bcdd4f2f7 \
     # via taskcluster
-taskcluster==26.0.1 \
-    --hash=sha256:caf4c7de1e76f4aa9173d0b3a13cd36384a5cabf71d559adf1f550cf5a2840c7 \
-    --hash=sha256:cda8c1afbe6210eacad498414314ffd77104a23c854f008ad3efa7215e6f7834 \
-    --hash=sha256:ded9373f3fc61b0d62d5292319f14ee0a62e651cf067d3439e899bebda4765ab \
+taskcluster==27.0.0 \
+    --hash=sha256:2bed90238c8c2c7273624e8c64ce485987ca121588dac6490a23aca91943852e \
+    --hash=sha256:4905b57911aec5cae2f4530e5571080285ec12cfa7367ce01b7a196fbf19749a \
+    --hash=sha256:f79e07b074cd716936b80c2a4583c03be1254376fa36d2ba11932c44cd1af676 \
     # via tc-admin (setup.py)
 urllib3==1.25.6 \
     --hash=sha256:3de946ffbed6e6746608990594d08faac602528ac7015ac28d33cee6a45b7398 \
