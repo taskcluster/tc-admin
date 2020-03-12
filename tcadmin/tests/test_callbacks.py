@@ -55,10 +55,12 @@ async def test_registry_run():
     func = AsyncMock()
     reg.add("after_apply", func, resources=[Role, Hook])
     await reg.run("before_apply", "delete", Secret("xxx"))
+    await reg.run("after_apply", "delete", Secret("xxx"))
     assert not func.called
 
     # Should not run on action mismatch
     func = AsyncMock()
     reg.add("after_apply", func, actions=["delete"])
     await reg.run("before_apply", "update", Secret("xxx"))
+    await reg.run("after_apply", "update", Secret("xxx"))
     assert not func.called
