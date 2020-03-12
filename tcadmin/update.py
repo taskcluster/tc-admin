@@ -6,9 +6,11 @@
 
 import blessings
 
+from .appconfig import AppConfig
 from .util.ansi import strip_ansi
 from .util.sessions import aiohttp_session
 from .util.taskcluster import optionsFromEnvironment
+from . import ACTION_CREATE, ACTION_UPDATE, ACTION_DELETE, BEFORE_APPLY, AFTER_APPLY
 
 from taskcluster.aio import Auth, Hooks, WorkerManager, Secrets
 from taskcluster import TaskclusterRestFailure
@@ -89,16 +91,23 @@ class Updater:
         await self.worker_manager.deleteWorkerPool(wp.workerPoolId)
 
     async def update_resource(self, verb, resource):
+        # Run callbacks for that resource before the apply
+        appconfig = AppConfig.current()
+        await appconfig.callbacks.run(BEFORE_APPLY, verb, resource)
+
         msg = {
-            "create": "{t.green}Creating{t.normal} {resource.id}",
-            "update": "{t.yellow}Updating{t.normal} {resource.id}",
-            "delete": "{t.red}Deleting{t.normal} {resource.id}",
+            ACTION_CREATE: "{t.green}Creating{t.normal} {resource.id}",
+            ACTION_UPDATE: "{t.yellow}Updating{t.normal} {resource.id}",
+            ACTION_DELETE: "{t.red}Deleting{t.normal} {resource.id}",
         }[verb].format(t=t, resource=resource)
         try:
             print(msg)
             await getattr(self, "{}_{}".format(verb, resource.kind.lower()))(resource)
         except Exception as e:
             raise RuntimeError("Error While {}".format(strip_ansi(msg))) from e
+
+        # Run callbacks for that resource after the apply
+        await appconfig.callbacks.run(AFTER_APPLY, verb, resource)
 
     async def update(self, generated, current):
         "update all resources to match generated"
@@ -119,9 +128,9 @@ class Updater:
                     c = current_resources[id]
                     if c == g:
                         continue  # no difference
-                    await self.update_resource("update", g)
+                    await self.update_resource(ACTION_UPDATE, g)
                 else:
-                    await self.update_resource("create", g)
+                    await self.update_resource(ACTION_CREATE, g)
             else:
                 c = current_resources[id]
-                await self.update_resource("delete", c)
+                await self.update_resource(ACTION_DELETE, c)

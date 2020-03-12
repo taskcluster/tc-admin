@@ -8,6 +8,9 @@ import attr
 import asyncio
 from contextlib import contextmanager
 
+from .callbacks import CallbacksRegistry
+
+
 import click
 
 
@@ -107,6 +110,11 @@ class AppConfig:
     # Resource modifiers, each called with a resources object and expected to return
     # a new set of resources (such as with `resources.map` or `resources.filter`)
     modifiers = attr.ib(init=False, factory=lambda: CallablesRegistry("modifiers"))
+
+    # Callbacks to trigger a custom action during the apply workflow
+    # * before_apply will gives access to resources before they are modified
+    # * after_apply will gives access to resources after they are modified
+    callbacks = attr.ib(init=False, factory=lambda: CallbacksRegistry())
 
     @classmethod
     def current(cls):

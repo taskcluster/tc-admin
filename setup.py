@@ -26,7 +26,7 @@ setup(
         "patiencediff==0.1.0",
     ],
     setup_requires=["pytest-runner", "flake8"],
-    tests_require=["pytest", "pytest-mock", "pytest-asyncio~=0.10.0", "flake8"],
+    tests_require=["pytest", "pytest-mock", "pytest-asyncio~=0.10.0", "flake8", "asyncmock"],
     classifiers=("Programming Language :: Python :: 3",),
     entry_points={
         "console_scripts": [
