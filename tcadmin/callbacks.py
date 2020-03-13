@@ -63,5 +63,3 @@ class CallbacksRegistry:
         for callback in self.callbacks[trigger]:
             if action in callback.actions and resource.__class__ in callback.resources:
                 await callback.callable(action, resource)
-            else:
-                print(action, resource.__class__)
