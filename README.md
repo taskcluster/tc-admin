@@ -128,6 +128,35 @@ async def modify_resources(resources):
 
 Modifiers are called sequentially in the order in which they were registered.
 
+### Callbacks
+
+Callbacks are external function from your own application that can be executed at specific times during the `tc-admin apply` execution:
+
+* A `before_apply` callback will run before a resource is created, updated or deleted,
+* A `after_apply` callback will run after a resource has beencreated, updated or deleted.
+
+Supported actions are :
+
+* create
+* update
+* delete
+
+By default all actions are used.
+
+All resources are supported by callbacks, and enabled by default. If you want to limit your callback to some resources, you need to specify them using their class (not a string).
+
+You can declare your callbacks as:
+
+```python
+from tcadmin.resources import Secret
+
+async def my_action(action, resource):
+    print("Got a callback on", action, resource)
+
+# Will call your function when a secret has been updated or deleted
+appconfig.callbacks.add("after_apply", my_action, actions=["update", "delete"], resources=[Secret, ])
+```
+
 ### Command-Line Options
 
 Apps can add additional command-line options, the values of which are then available during resource generation.
