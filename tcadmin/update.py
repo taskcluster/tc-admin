@@ -10,7 +10,13 @@ from .appconfig import AppConfig
 from .util.ansi import strip_ansi
 from .util.sessions import aiohttp_session
 from .util.taskcluster import optionsFromEnvironment
-from . import ACTION_CREATE, ACTION_UPDATE, ACTION_DELETE, BEFORE_APPLY, AFTER_APPLY
+from .constants import (
+    ACTION_CREATE,
+    ACTION_UPDATE,
+    ACTION_DELETE,
+    BEFORE_APPLY,
+    AFTER_APPLY,
+)
 
 from taskcluster.aio import Auth, Hooks, WorkerManager, Secrets
 from taskcluster import TaskclusterRestFailure
