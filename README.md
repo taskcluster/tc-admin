@@ -161,7 +161,7 @@ async def my_action(action, resource):
     print("Got a callback on", action, resource)
 
 # Will call your function when a secret has been updated or deleted
-appconfig.callbacks.add("after_apply", after_apply, actions=["update", "delete"], resources=[Secret, ])
+appconfig.callbacks.add("after_apply", my_action, actions=["update", "delete"], resources=[Secret, ])
 ```
 
 ### Command-Line Options
