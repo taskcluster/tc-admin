@@ -143,14 +143,7 @@ Supported actions are :
 
 By default all actions are used.
 
-Supported resources are:
-* `tcadmin.resources.Role`
-* `tcadmin.resources.Hook`
-* `tcadmin.resources.WorkerPool`
-* `tcadmin.resources.Client`
-* `tcadmin.resources.Secret`
-
-By default all resources are used.
+All resources are supported by callbacks, and enabled by default. If you want to limit your callback to some resources, you need to specify them using their class (not a string).
 
 You can declare your callbacks as:
 
