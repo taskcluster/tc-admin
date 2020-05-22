@@ -14,7 +14,7 @@ setup(
     url="https://github.com/taskcluster/tc-admin",
     packages=find_packages("."),
     install_requires=[
-        "taskcluster~=29.1.3",
+        "taskcluster~=30.0.1",
         "click~=7.0",
         "blessings~=1.7",
         "attrs~=19.3.0",
