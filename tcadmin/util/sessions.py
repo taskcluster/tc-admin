@@ -20,7 +20,7 @@ def with_aiohttp_session(fn):
     async def wrap(*args, **kwargs):
         global _aiohttp_session
         assert not _aiohttp_session, "nested with_aiohttp_session calls!"
-        with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession() as session:
             _aiohttp_session = session
             try:
                 return await fn(*args, **kwargs)
