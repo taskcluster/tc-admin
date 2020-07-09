@@ -150,7 +150,8 @@ taskcluster-urls==12.1.0 \
 taskcluster==34.0.1 \
     --hash=sha256:42615a5d45c86bc1b4819dcfbb02512a4638a2b57d95e1cc29186b43e78c89b3 \
     --hash=sha256:ce158f537800f865a3abfcb943d92af3ed1294ed783c1318feb5688f23f2b959 \
-    --hash=sha256:e61ba01d4761fda28b5eefed652c5b9311b834faea434406c19ed8a6a8472b23
+    --hash=sha256:e61ba01d4761fda28b5eefed652c5b9311b834faea434406c19ed8a6a8472b23 \
+    # via tc-admin (setup.py)
 typing-extensions==3.7.4.2 \
     --hash=sha256:6e95524d8a547a91e08f404ae485bbb71962de46967e1b71a0cb89af24e761c5 \
     --hash=sha256:79ee589a3caca649a9bfd2a8de4709837400dfa00b6cc81962a1e6a1815969ae \
