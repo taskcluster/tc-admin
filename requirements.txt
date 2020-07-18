@@ -143,9 +143,10 @@ sortedcontainers==2.2.2 \
     --hash=sha256:4e73a757831fc3ca4de2859c422564239a31d8213d09a2a666e375807034d2ba \
     --hash=sha256:c633ebde8580f241f274c1f8994a665c0e54a17724fecd0cae2f079e09c36d3f \
     # via tc-admin (setup.py)
-taskcluster-urls==12.1.0 \
-    --hash=sha256:1dc740c32c7beb31e11ed7ccf9da2d47a504acdb3170c8900649433b0fd16fb2 \
-    --hash=sha256:4a62c776aeba6d45044789a8845ec4d8521bc1bb6ebfc86d79ee759bcdd4f2f7 \
+taskcluster-urls==13.0.1 \
+    --hash=sha256:5e25e7e6818e8877178b175ff43d2e6548afad72694aa125f404a7329ece0973 \
+    --hash=sha256:b25e122ecec249c4299ac7b20b08db76e3e2025bdaeb699a9d444556de5fd367 \
+    --hash=sha256:f66dcbd6572a6216ab65949f0fa0b91f2df647918028436c384e6af5cd12ae2b \
     # via taskcluster
 taskcluster==34.0.1 \
     --hash=sha256:42615a5d45c86bc1b4819dcfbb02512a4638a2b57d95e1cc29186b43e78c89b3 \
