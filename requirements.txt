@@ -54,6 +54,9 @@ importlib-metadata==1.7.0 \
     --hash=sha256:90bb658cdbbf6d1735b6341ce708fc7024a3e14e99ffdc5783edea9f9b077f83 \
     --hash=sha256:dc15b2969b4ce36305c51eebe62d418ac7791e9a157911d58bfb1f9ccd8e2070 \
     # via pluggy, pytest
+iniconfig==1.0.0 \
+    --hash=sha256:aa0b40f50a00e72323cb5d41302f9c6165728fd764ac8822aa3fff00a40d56b4 \
+    # via pytest
 memoized==0.3 \
     --hash=sha256:cdce8bacc6941a64f9a825067602c13810cfd9b84efaaf024c400ef6e7d378d8 \
     # via tc-admin (setup.py)
@@ -118,7 +121,8 @@ pyparsing==2.4.7 \
     # via packaging
 pytest==6.0.0 \
     --hash=sha256:869ec27f9b89964ccfe4fbdd5ccb8d3f285aaa3e9aa16a8491b9c8829148c230 \
-    --hash=sha256:a64d8fb4c15cdc70dae047352e980a197d855747cc885eb332cb73ddcc769168
+    --hash=sha256:a64d8fb4c15cdc70dae047352e980a197d855747cc885eb332cb73ddcc769168 \
+    # via tc-admin (setup.py)
 pyyaml==4.2b4 \
     --hash=sha256:254bf6fda2b7c651837acb2c718e213df29d531eebf00edb54743d10bcb694eb \
     --hash=sha256:3108529b78577327d15eec243f0ff348a0640b0c3478d67ad7f5648f93bac3e2 \
@@ -152,6 +156,10 @@ taskcluster==35.0.0 \
     --hash=sha256:bdabe2b07a25ab38a47caf88d46341303dc854fd2048ac45c8e41cc4eee868bc \
     --hash=sha256:f60e5de976152501ee9520b4cc102fa6e3e2d9630e75bc0045ba5153f9bad594 \
     # via tc-admin (setup.py)
+toml==0.10.1 \
+    --hash=sha256:926b612be1e5ce0634a2ca03470f95169cf16f939018233a670519cb4ac58b0f \
+    --hash=sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88 \
+    # via pytest
 typing-extensions==3.7.4.2 \
     --hash=sha256:6e95524d8a547a91e08f404ae485bbb71962de46967e1b71a0cb89af24e761c5 \
     --hash=sha256:79ee589a3caca649a9bfd2a8de4709837400dfa00b6cc81962a1e6a1815969ae \
@@ -161,10 +169,6 @@ urllib3==1.25.10 \
     --hash=sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a \
     --hash=sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461 \
     # via requests
-wcwidth==0.2.5 \
-    --hash=sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784 \
-    --hash=sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83 \
-    # via pytest
 yarl==1.5.0 \
     --hash=sha256:1707230e1ea48ea06a3e20acb4ce05a38d2465bd9566c21f48f6212a88e47536 \
     --hash=sha256:1f269e8e6676193a94635399a77c9059e1826fb6265c9204c9e5a8ccd36006e1 \
