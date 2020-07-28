@@ -21,7 +21,7 @@ setup(
         "memoized==0.3",  # no semver..
         "sortedcontainers~=2.2.2",
         "aiohttp~=3.6.2",
-        "pytest~=5.2",
+        "pytest~=6.0.0",
         "pyyaml~=4.2b1",
         "patiencediff==0.2.0",
     ],
