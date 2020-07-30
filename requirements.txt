@@ -121,7 +121,8 @@ pyparsing==2.4.7 \
     # via packaging
 pytest==6.0.1 \
     --hash=sha256:85228d75db9f45e06e57ef9bf4429267f81ac7c0d742cc9ed63d09886a9fe6f4 \
-    --hash=sha256:8b6007800c53fdacd5a5c192203f4e531eb2a1540ad9c752e052ec0f7143dbad
+    --hash=sha256:8b6007800c53fdacd5a5c192203f4e531eb2a1540ad9c752e052ec0f7143dbad \
+    # via tc-admin (setup.py)
 pyyaml==4.2b4 \
     --hash=sha256:254bf6fda2b7c651837acb2c718e213df29d531eebf00edb54743d10bcb694eb \
     --hash=sha256:3108529b78577327d15eec243f0ff348a0640b0c3478d67ad7f5648f93bac3e2 \
