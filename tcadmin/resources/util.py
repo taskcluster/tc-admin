@@ -6,17 +6,14 @@
 
 from ..util.json import pretty_json
 
-# utilities for resource attr.ib's
-DESCRIPTION_PREFIX = """\
-*DO NOT EDIT* - This resource is configured automatically.
-
-"""
-
 
 def description_converter(value):
     """Prepend *DO NOT EDIT* and a short explainer to the given value"""
-    if not value.startswith("*DO NOT EDIT*"):
-        value = DESCRIPTION_PREFIX + value
+    from ..appconfig import AppConfig
+
+    description_prefix = AppConfig.current().description_prefix
+    if not value.startswith(description_prefix):
+        value = description_prefix + value
     return value
 
 

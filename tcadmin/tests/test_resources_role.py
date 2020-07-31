@@ -11,6 +11,9 @@ from tcadmin.resources.resources import Resource
 from tcadmin.resources.role import Role
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 def test_role_formatter():
     "Roles are properly formatted with a string, including the description preamble and sorted scopes"
     role = Role("my:role-id", "This is my role", ["b", "a", "c"])

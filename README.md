@@ -194,6 +194,20 @@ python_files = check_*.py
 python_functions = check_*
 ```
 
+### description_prefix
+
+The `appconfig.description_prefix` property allows the users to customize the prefix of the description.
+This can be customized in the `tc-admin.py` as follows:
+
+```python
+from tcadmin.appconfig import AppConfig
+
+appconfig = AppConfig()
+appconfig.description_prefix = "YOUR_CUSTOM_PREFIX"
+```
+
+The DEFAULT value of the description_prefix is `*DO NOT EDIT* - This resource is configured automatically.\n\n`
+
 ### Loading Config Sources
 
 Most uses of this library load configuration data from some easily-modified YAML files.

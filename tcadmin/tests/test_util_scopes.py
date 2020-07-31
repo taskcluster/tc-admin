@@ -13,6 +13,9 @@ from tcadmin.util.taskcluster import optionsFromEnvironment
 from tcadmin.resources import Role, Resources
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 def test_from_resources():
     resources = Resources(
         resources=[

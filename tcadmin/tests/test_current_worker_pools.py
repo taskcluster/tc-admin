@@ -10,6 +10,9 @@ from tcadmin.resources import Resources
 from tcadmin.current.worker_pools import fetch_worker_pools
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 @pytest.fixture
 def WorkerManager(mocker):
     """

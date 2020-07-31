@@ -10,6 +10,9 @@ from tcadmin.resources import Resources, Hook
 from tcadmin.current.hooks import fetch_hooks
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 @pytest.fixture
 def Hooks(mocker):
     """

@@ -11,6 +11,9 @@ from tcadmin.resources.resources import Resource
 from tcadmin.resources.client import Client
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 def test_client_formatter():
     "Clients are properly formatted with a string, including the description preamble and sorted scopes"
     client = Client("my:client-id", "This is my client", ["b", "a", "c"])

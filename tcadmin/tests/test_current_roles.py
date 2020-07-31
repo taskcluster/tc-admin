@@ -10,6 +10,9 @@ from tcadmin.resources import Resources, Role
 from tcadmin.current.roles import fetch_roles
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 @pytest.fixture
 def AuthForRoles(mocker):
     """
