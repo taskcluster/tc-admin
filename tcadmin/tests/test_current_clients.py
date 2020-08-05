@@ -10,6 +10,9 @@ from tcadmin.resources import Resources, Client
 from tcadmin.current.clients import fetch_clients
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 @pytest.fixture
 def AuthForClients(mocker):
     """

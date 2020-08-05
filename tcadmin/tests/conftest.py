@@ -19,3 +19,15 @@ def pytest_collection_modifyitems(config, items):
         for item in items:
             if "slow" in item.keywords:
                 item.add_marker(skip_slow)
+
+
+@pytest.fixture(scope="module")
+def appconfig():
+    # don't import this at the top level, as it results in `blessings.Terminal` being
+    # initialized in a situation where output is to a console, and it includes underlines
+    # and bold and colors in the output, causing test failures
+    from tcadmin.appconfig import AppConfig
+
+    appconfig = AppConfig()
+    with AppConfig._as_current(appconfig):
+        yield appconfig

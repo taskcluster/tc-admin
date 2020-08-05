@@ -10,6 +10,9 @@ import textwrap
 from tcadmin.resources.worker_pool import WorkerPool
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 @pytest.fixture(scope="module")
 def simple_wp():
     return WorkerPool(

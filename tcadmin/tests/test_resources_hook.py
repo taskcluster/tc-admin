@@ -10,6 +10,9 @@ import textwrap
 from tcadmin.resources.hook import Hook, Binding
 
 
+pytestmark = pytest.mark.usefixtures("appconfig")
+
+
 @pytest.fixture(scope="module")
 def simple_hook():
     return Hook(

@@ -11,6 +11,7 @@ import pytest
 
 from tcadmin import boot
 
+
 TC_ADMIN_PY = textwrap.dedent(
     """
     from tcadmin.appconfig import AppConfig
