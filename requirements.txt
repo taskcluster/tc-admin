@@ -155,7 +155,8 @@ taskcluster-urls==13.0.1 \
 taskcluster==37.0.0 \
     --hash=sha256:1b32e4e2606e02671634f26a98c934df33bd01ee2a32a7fc19158aaf6ee9dcd4 \
     --hash=sha256:22b3022e3407bbb16f5b748eada7d1940496214c8504c3d479fae6fa39411479 \
-    --hash=sha256:27d38a95a9f89e26f116e07bcf3a0cc2674f08ce0d63c84561fadce369256ce1
+    --hash=sha256:27d38a95a9f89e26f116e07bcf3a0cc2674f08ce0d63c84561fadce369256ce1 \
+    # via tc-admin (setup.py)
 toml==0.10.1 \
     --hash=sha256:926b612be1e5ce0634a2ca03470f95169cf16f939018233a670519cb4ac58b0f \
     --hash=sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88 \
