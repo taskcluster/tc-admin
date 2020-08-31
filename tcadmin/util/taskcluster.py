@@ -11,8 +11,6 @@ import os
 def optionsFromEnvironment():
     """Build Taskcluster options, supporting proxy"""
     if "TASKCLUSTER_PROXY_URL" in os.environ:
-        return {
-            "rootUrl": os.environ["TASKCLUSTER_PROXY_URL"],
-        }
+        return {"rootUrl": os.environ["TASKCLUSTER_PROXY_URL"]}
     else:
         return originalOptions()

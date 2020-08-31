@@ -15,10 +15,7 @@ def test_registry_add():
 
     # Empty registry
     reg = CallbacksRegistry()
-    assert reg.callbacks == {
-        "before_apply": [],
-        "after_apply": [],
-    }
+    assert reg.callbacks == {"before_apply": [], "after_apply": []}
 
     # Add a dummy callback
     callback = reg.add("before_apply", lambda: True)

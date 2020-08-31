@@ -11,12 +11,4 @@ from .hook import Hook, Binding
 from .worker_pool import WorkerPool
 from .secret import Secret
 
-__all__ = [
-    "Resources",
-    "Role",
-    "Hook",
-    "Binding",
-    "WorkerPool",
-    "Client",
-    "Secret",
-]
+__all__ = ["Resources", "Role", "Hook", "Binding", "WorkerPool", "Client", "Secret"]

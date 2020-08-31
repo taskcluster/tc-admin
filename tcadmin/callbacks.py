@@ -18,10 +18,7 @@ class CallbacksRegistry:
     """
 
     def __init__(self):
-        self.callbacks = {
-            BEFORE_APPLY: [],
-            AFTER_APPLY: [],
-        }
+        self.callbacks = {BEFORE_APPLY: [], AFTER_APPLY: []}
 
     def add(self, trigger, callable, actions=ACTIONS, resources=SUPPORTED_RESOURCES):
         """Store a new async function as a callback that will be triggered during the apply workflow
