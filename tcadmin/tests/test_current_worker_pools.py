@@ -27,7 +27,7 @@ def WorkerManager(mocker):
         async def listWorkerPools(self, query):
             limit = query.get("limit", 1)
             offset = int(query.get("continuationToken", "0"))
-            res = {"workerPools": WorkerManager.workerPools[offset : offset + limit]}
+            res = {"workerPools": WorkerManager.workerPools[offset:offset + limit]}
             if offset + limit < len(WorkerManager.workerPools):
                 res["continuationToken"] = str(offset + limit)
             return res

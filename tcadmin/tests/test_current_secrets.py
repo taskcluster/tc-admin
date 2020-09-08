@@ -24,7 +24,7 @@ def Secrets(mocker):
             limit = query.get("limit", 1)
             offset = int(query.get("continuationToken", "0"))
             res = {
-                "secrets": [s["name"] for s in Secrets.secrets[offset : offset + limit]]
+                "secrets": [s["name"] for s in Secrets.secrets[offset:offset + limit]]
             }
             if offset + limit < len(Secrets.secrets):
                 res["continuationToken"] = str(offset + limit)

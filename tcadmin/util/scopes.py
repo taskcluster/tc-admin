@@ -67,7 +67,7 @@ class Resolver:
                     if role.endswith("*"):
                         pfx = assume[:-1]
                         if scope.startswith(pfx):
-                            for s in self._star_match(scope[len(pfx) :], role_scopes):
+                            for s in self._star_match(scope[len(pfx):], role_scopes):
                                 add_scope(s, role)
                                 scopes[s].update(already_expanded)
                     if scope.endswith("*"):

@@ -27,7 +27,7 @@ def AuthForClients(mocker):
         async def listClients(self, query={}):
             limit = query.get("limit", 1)
             offset = int(query.get("continuationToken", "0"))
-            res = {"clients": Auth.clients[offset : offset + limit]}
+            res = {"clients": Auth.clients[offset:offset + limit]}
             if offset + limit < len(Auth.clients):
                 res["continuationToken"] = str(offset + limit)
             return res
