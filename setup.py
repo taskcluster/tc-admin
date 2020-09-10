@@ -27,7 +27,9 @@ setup(
     ],
     setup_requires=["pytest-runner", "flake8"],
     tests_require=["pytest", "pytest-mock", "pytest-asyncio~=0.14.0", "flake8", "asyncmock"],
-    classifiers=("Programming Language :: Python :: 3",),
+    classifiers=[
+        "Programming Language :: Python :: 3",
+    ],
     entry_points={
         "console_scripts": [
             "tc-admin = tcadmin.boot:boot",
