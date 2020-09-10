@@ -34,10 +34,10 @@ def find_tc_admin():
                 tcadmin = sys.argv[i + 1]
             except IndexError:
                 bail("Error: --tc-admin-py requires an argument")
-            sys.argv[i : i + 2] = []
+            sys.argv[i:i + 2] = []
         if arg.startswith("--tc-admin-py="):
-            tcadmin = arg[len("--tc-admin-py=") :]
-            sys.argv[i : i + 1] = []
+            tcadmin = arg[len("--tc-admin-py="):]
+            sys.argv[i:i + 1] = []
 
     return os.path.abspath(tcadmin)
 
