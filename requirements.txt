@@ -197,4 +197,5 @@ yarl==1.5.1 \
     # via aiohttp
 zipp==3.2.0 \
     --hash=sha256:43f4fa8d8bb313e65d8323a3952ef8756bf40f9a5c3ea7334be23ee4ec8278b6 \
-    --hash=sha256:b52f22895f4cfce194bc8172f3819ee8de7540aa6d873535a8668b730b8b411f
+    --hash=sha256:b52f22895f4cfce194bc8172f3819ee8de7540aa6d873535a8668b730b8b411f \
+    # via importlib-metadata
