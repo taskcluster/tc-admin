@@ -3,6 +3,7 @@
     "config:base",
     ":pinDependencies"
   ],
+  "rangeStrategy": "widen",
   "packageRules": [
     {
       "packageNames": "taskcluster",
