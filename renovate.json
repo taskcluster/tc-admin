@@ -3,6 +3,7 @@
     "config:base",
     ":pinDependencies"
   ],
+  "rangeStrategy": "widen",
   "packageRules": [
     {
       "packageNames": "taskcluster",
@@ -14,5 +15,6 @@
       },
       "automerge": true
     }
-  ]
+  ],
+  "automerge": true
 }
