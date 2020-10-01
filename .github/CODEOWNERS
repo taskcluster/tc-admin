@@ -1,3 +1,6 @@
 # see http://code.v.igoro.us/posts/2019/07/codeowners.html
 
 * @taskcluster/tc-admin-reviewers
+
+# don't flag reviewers for changes only to dependencies (usually by renovate)
+setup.py
