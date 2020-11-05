@@ -17,7 +17,7 @@ setup(
         "taskcluster~=38.0.1",
         "click~=7.0",
         "blessings~=1.7",
-        "attrs~=20.2.0",
+        "attrs~=20.3.0",
         "memoized==0.3",  # no semver..
         "sortedcontainers~=2.2.2",
         "aiohttp~=3.7.0",
