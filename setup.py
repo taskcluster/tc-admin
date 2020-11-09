@@ -19,7 +19,7 @@ setup(
         "blessings~=1.7",
         "attrs~=20.3.0",
         "memoized==0.3",  # no semver..
-        "sortedcontainers~=2.2.2",
+        "sortedcontainers~=2.3.0",
         "aiohttp~=3.7.0",
         "pytest~=6.1.0",
         "pyyaml~=5.3.1",
