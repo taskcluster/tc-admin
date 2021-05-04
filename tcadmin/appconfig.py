@@ -107,6 +107,9 @@ class AppConfig:
         default="*DO NOT EDIT* - This resource is configured automatically.\n\n",
     )
 
+    # The root URL for the deployment, or an async callable to return it.
+    root_url = attr.ib(type=str, init=False, default=None)
+
     # Command-line options for the resource-generation process
     options = attr.ib(init=False, factory=lambda: OptionsRegistry("options"))
 

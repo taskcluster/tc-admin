@@ -38,15 +38,14 @@ def main(appconfig):
     def cmd():
         """Manage Taskcluster configuration.
 
-        The environment variable TASKCLUSTER_ROOT_URL must be set for all
-        invocations of this command, giving the Taskcluster deployment against
-        which it is run.
+        The root URL for the Taskcluster deployment against which to run is
+        given either in `tc-admin.py` or via the environment variable
+        TASKCLUSTER_ROOT_URL.
 
         For `tcadmin apply`, TASKCLUSTER_CLIENT_ID and TASKCLUSTER_ACCESS_TOKEN
         must also be supplied.
         """
-        if not os.environ.get("TASKCLUSTER_ROOT_URL"):
-            raise click.UsageError("TASKCLUSTER_ROOT_URL must be set")
+        pass
 
     @cmd.command(name="generate")
     @options.generate_options.apply
