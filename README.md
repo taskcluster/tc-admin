@@ -208,6 +208,32 @@ appconfig.description_prefix = "YOUR_CUSTOM_PREFIX"
 
 The DEFAULT value of the description_prefix is `*DO NOT EDIT* - This resource is configured automatically.\n\n`
 
+### Root URL
+
+For the common case of a configuration that applies to only one Taskcluster deployment, specify that deployment's root URL in `tc-admin.py`:
+
+```python
+from tcadmin.appconfig import AppConfig
+
+appconfig = AppConfig()
+appconfig.root_url = "https://taskcluster.example.com"
+```
+
+To support more complex cases, this value can also be an async callable.
+It will be invoked once, after the `click` options have been processed, so it can access `appconfig.options` if necessary.
+
+The current root URL is available from an async helper function:
+
+```python
+from tcadmin.util.root_url import root_url
+
+async def foo():
+    print(await root_url())
+```
+
+This will retrieve the value from the AppConfig or, if that is not set, from `TASKCLUSTER_ROOT_URL`.
+If both are set, and the values do not match, it will produce an error message.
+
 ### Loading Config Sources
 
 Most uses of this library load configuration data from some easily-modified YAML files.
@@ -512,18 +538,6 @@ assert ml.matches("foo")
 ```
 
 This functionality is used to track managed resources, but may be useful otherwise.
-
-### Root URL
-
-The current root_url is available from a short helper function:
-
-```python
-from tcadmin.util.root_url import root_url
-
-print(root_url())
-```
-
-This does little more than retrieve the value from `os.environ`, but is a little less verbose.
 
 # Development
 
