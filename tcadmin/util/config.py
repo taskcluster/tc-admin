@@ -15,7 +15,7 @@ class Loader(ABC):
         as YAML; otherwise it is returned as a bytestring."""
         raw = await self.load_raw(filename)
         if parse == "yaml":
-            return yaml.load(raw)
+            return yaml.load(raw, Loader=yaml.Loader)
         elif parse:
             raise ValueError("Unknown parse format {}".format(parse))
         return raw
