@@ -8,11 +8,11 @@ from taskcluster.aio import Auth
 
 from ..resources import Role
 from ..util.sessions import aiohttp_session
-from ..util.taskcluster import optionsFromEnvironment
+from ..util.taskcluster import tcClientOptions
 
 
 async def fetch_roles(resources):
-    auth = Auth(optionsFromEnvironment(), session=aiohttp_session())
+    auth = Auth(await tcClientOptions(), session=aiohttp_session())
     for role in await auth.listRoles():
         role = Role.from_api(role)
         if resources.is_managed(role.id):

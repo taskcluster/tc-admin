@@ -31,3 +31,12 @@ def appconfig():
     appconfig = AppConfig()
     with AppConfig._as_current(appconfig):
         yield appconfig
+
+
+@pytest.fixture(scope="module")
+def fake_root_url():
+    import tcadmin.util.root_url
+    fake_root_url = "https://tc-testing.example.com"
+    tcadmin.util.root_url._root_url = fake_root_url
+    yield fake_root_url
+    tcadmin.util.root_url._root_url = None

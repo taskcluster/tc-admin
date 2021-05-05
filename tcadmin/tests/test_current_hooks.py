@@ -10,7 +10,7 @@ from tcadmin.resources import Resources, Hook
 from tcadmin.current.hooks import fetch_hooks
 
 
-pytestmark = pytest.mark.usefixtures("appconfig")
+pytestmark = pytest.mark.usefixtures("appconfig", "fake_root_url")
 
 
 @pytest.fixture

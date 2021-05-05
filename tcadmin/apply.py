@@ -31,5 +31,5 @@ async def apply_changes(generated, current, grep):
             resources=(r for r in current.resources if reg.search(r.id)),
         )
 
-    updater = Updater()
+    updater = await Updater()
     await updater.update(generated, current)

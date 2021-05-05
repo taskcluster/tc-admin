@@ -8,11 +8,11 @@ from taskcluster.aio import Auth
 
 from ..resources import Client
 from ..util.sessions import aiohttp_session
-from ..util.taskcluster import optionsFromEnvironment
+from ..util.taskcluster import tcClientOptions
 
 
 async def fetch_clients(resources):
-    auth = Auth(optionsFromEnvironment(), session=aiohttp_session())
+    auth = Auth(await tcClientOptions(), session=aiohttp_session())
     query = {}
     while True:
         res = await auth.listClients(query=query)

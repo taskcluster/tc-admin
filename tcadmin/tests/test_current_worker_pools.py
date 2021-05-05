@@ -10,7 +10,7 @@ from tcadmin.resources import Resources
 from tcadmin.current.worker_pools import fetch_worker_pools
 
 
-pytestmark = pytest.mark.usefixtures("appconfig")
+pytestmark = pytest.mark.usefixtures("appconfig", "fake_root_url")
 
 
 @pytest.fixture

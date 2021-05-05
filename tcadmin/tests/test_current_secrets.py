@@ -11,6 +11,9 @@ from tcadmin.resources import Resources, Secret
 from tcadmin.current.secrets import fetch_secrets
 
 
+pytestmark = pytest.mark.usefixtures("fake_root_url")
+
+
 @pytest.fixture
 def Secrets(mocker):
     """

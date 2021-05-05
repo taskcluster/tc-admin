@@ -8,11 +8,11 @@ from taskcluster.aio import Hooks
 
 from ..resources import Hook
 from ..util.sessions import aiohttp_session
-from ..util.taskcluster import optionsFromEnvironment
+from ..util.taskcluster import tcClientOptions
 
 
 async def fetch_hooks(resources):
-    hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
+    hooks = Hooks(await tcClientOptions(), session=aiohttp_session())
     for hookGroupId in (await hooks.listHookGroups())["groups"]:
         idPrefix = "Hook={}/".format(hookGroupId)
         # if no hook with this hookGroupId is managed, skip it

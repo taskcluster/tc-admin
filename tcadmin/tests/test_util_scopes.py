@@ -9,7 +9,6 @@ import taskcluster
 import os
 
 from tcadmin.util.scopes import Resolver, satisfies
-from tcadmin.util.taskcluster import optionsFromEnvironment
 from tcadmin.resources import Role, Resources
 
 
@@ -238,7 +237,8 @@ def auth():
             pytest.fail(msg)
         else:
             pytest.skip(msg)
-    return taskcluster.Auth(optionsFromEnvironment())
+        return
+    return taskcluster.Auth({"rootUrl": os.environ["TASKCLUSTER_ROOT_URL"]})
 
 
 @pytest.fixture(scope="module")
