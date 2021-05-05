@@ -247,7 +247,6 @@ def resolver(auth):
     return Resolver({r["roleId"]: r["scopes"] for r in roles})
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "scope",
     [
