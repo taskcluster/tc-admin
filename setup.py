@@ -18,7 +18,6 @@ setup(
         "click~=7.0",
         "blessings~=1.7",
         "attrs~=20.3.0",
-        "memoized==0.3",  # no semver..
         "sortedcontainers~=2.3.0",
         "aiohttp~=3.7.0",
         "pytest~=6.2.0",

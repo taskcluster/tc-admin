@@ -16,7 +16,7 @@ from tcadmin.util.config import ConfigList, ConfigDict, LocalLoader, StaticLoade
 async def test_local_loader():
     dir = os.path.dirname(__file__)
     loader = LocalLoader(dir)
-    assert yaml.load(await loader.load_raw("testfile.yml")) == {"data": [1, 2]}
+    assert yaml.load(await loader.load_raw("testfile.yml"), Loader=yaml.Loader) == {"data": [1, 2]}
 
 
 @pytest.mark.asyncio
@@ -30,13 +30,13 @@ async def test_local_loader_parse():
 async def test_local_loader_no_parse():
     dir = os.path.dirname(__file__)
     loader = LocalLoader(dir)
-    assert yaml.load(await loader.load("testfile.yml")) == {"data": [1, 2]}
+    assert yaml.load(await loader.load("testfile.yml"), Loader=yaml.Loader) == {"data": [1, 2]}
 
 
 @pytest.mark.asyncio
 async def test_static_loader_yaml():
     loader = StaticLoader({"data.yml": {"foo": "bar"}})
-    assert yaml.load(await loader.load_raw("data.yml")) == {"foo": "bar"}
+    assert yaml.load(await loader.load_raw("data.yml"), Loader=yaml.Loader) == {"foo": "bar"}
 
 
 @pytest.mark.asyncio

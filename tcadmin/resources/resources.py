@@ -9,7 +9,6 @@ import attr
 import blessings
 import functools
 import textwrap
-from memoized import memoized
 from sortedcontainers import SortedKeyList
 
 from ..util.matchlist import MatchList
@@ -26,9 +25,12 @@ class Resource(object):
     """
 
     @classmethod
-    @memoized
     def _kind_classes(cls):
-        return dict((c.__name__, c) for c in cls.__subclasses__())
+        try:
+            return cls.__kind_classes
+        except AttributeError:
+            cls.__kind_classes = dict((c.__name__, c) for c in cls.__subclasses__())
+            return cls.__kind_classes
 
     @classmethod
     def from_json(cls, json):
