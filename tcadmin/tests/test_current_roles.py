@@ -10,7 +10,7 @@ from tcadmin.resources import Resources, Role
 from tcadmin.current.roles import fetch_roles
 
 
-pytestmark = pytest.mark.usefixtures("appconfig")
+pytestmark = pytest.mark.usefixtures("appconfig", "fake_root_url")
 
 
 @pytest.fixture

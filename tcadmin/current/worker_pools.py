@@ -8,11 +8,11 @@ from taskcluster.aio import WorkerManager
 
 from ..resources import WorkerPool
 from ..util.sessions import aiohttp_session
-from ..util.taskcluster import optionsFromEnvironment
+from ..util.taskcluster import tcClientOptions
 
 
 async def fetch_worker_pools(resources):
-    worker_manager = WorkerManager(optionsFromEnvironment(), session=aiohttp_session())
+    worker_manager = WorkerManager(await tcClientOptions(), session=aiohttp_session())
     query = {}
     while True:
         res = await worker_manager.listWorkerPools(query=query)

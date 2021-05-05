@@ -9,12 +9,12 @@ from taskcluster.aio import Secrets
 from ..options import with_options
 from ..resources import Secret
 from ..util.sessions import aiohttp_session
-from ..util.taskcluster import optionsFromEnvironment
+from ..util.taskcluster import tcClientOptions
 
 
 @with_options("with_secrets")
 async def fetch_secrets(resources, with_secrets):
-    api = Secrets(optionsFromEnvironment(), session=aiohttp_session())
+    api = Secrets(await tcClientOptions(), session=aiohttp_session())
     query = {}
     while True:
         res = await api.list(query=query)

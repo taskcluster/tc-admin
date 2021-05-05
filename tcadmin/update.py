@@ -9,7 +9,7 @@ import blessings
 from .appconfig import AppConfig
 from .util.ansi import strip_ansi
 from .util.sessions import aiohttp_session
-from .util.taskcluster import optionsFromEnvironment
+from .util.taskcluster import tcClientOptions
 from .constants import (
     ACTION_CREATE,
     ACTION_UPDATE,
@@ -29,12 +29,12 @@ class Updater:
     A simple one-instance class to encapsulate shared Taskcluster API clients.
     """
 
-    def __init__(self):
-        self.auth = Auth(optionsFromEnvironment(), session=aiohttp_session())
-        self.secrets = Secrets(optionsFromEnvironment(), session=aiohttp_session())
-        self.hooks = Hooks(optionsFromEnvironment(), session=aiohttp_session())
+    async def __init__(self):
+        self.auth = Auth(await tcClientOptions(), session=aiohttp_session())
+        self.secrets = Secrets(await tcClientOptions(), session=aiohttp_session())
+        self.hooks = Hooks(await tcClientOptions(), session=aiohttp_session())
         self.worker_manager = WorkerManager(
-            optionsFromEnvironment(), session=aiohttp_session()
+            await tcClientOptions(), session=aiohttp_session()
         )
 
     async def create_role(self, role):
