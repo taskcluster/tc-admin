@@ -29,13 +29,16 @@ class Updater:
     A simple one-instance class to encapsulate shared Taskcluster API clients.
     """
 
-    async def __init__(self):
-        self.auth = Auth(await tcClientOptions(), session=aiohttp_session())
-        self.secrets = Secrets(await tcClientOptions(), session=aiohttp_session())
-        self.hooks = Hooks(await tcClientOptions(), session=aiohttp_session())
-        self.worker_manager = WorkerManager(
-            await tcClientOptions(), session=aiohttp_session()
-        )
+    @classmethod
+    async def setup(cls):
+        return cls(await tcClientOptions(), session=aiohttp_session())
+
+    def __init__(self, options, session):
+        "Use `Updater.create()` instead of calling this directly."
+        self.auth = Auth(options, session)
+        self.secrets = Secrets(options, session)
+        self.hooks = Hooks(options, session)
+        self.worker_manager = WorkerManager(options, session)
 
     async def create_role(self, role):
         await self.auth.createRole(role.roleId, role.to_api())
