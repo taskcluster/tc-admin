@@ -5,12 +5,21 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import os
+import re
 import click
 
 from ..appconfig import AppConfig
 
 
 _root_url = None
+_url_re = re.compile("^https?://[a-z0-9.-]+/?$")
+
+
+def _normalize(root_url):
+    """Normalize a rootUrl, stripping trailing `/` and checking its format."""
+    if not _url_re.match(root_url):
+        raise click.UsageError("Given root URL {root_url} is not a valid root URL")
+    return root_url.rstrip('/')
 
 
 async def root_url():
@@ -27,9 +36,9 @@ async def root_url():
         if "TASKCLUSTER_ROOT_URL" in os.environ:
             if os.environ["TASKCLUSTER_ROOT_URL"] != root_url:
                 raise click.UsageError(f"TASKCLUSTER_ROOT_URL does not match {root_url}")
-        _root_url = root_url
+        _root_url = _normalize(root_url)
     else:
         if "TASKCLUSTER_ROOT_URL" not in os.environ:
             raise click.UsageError("TASKCLUSTER_ROOT_URL must be set")
-        _root_url = os.environ["TASKCLUSTER_ROOT_URL"]
+        _root_url = _normalize(os.environ["TASKCLUSTER_ROOT_URL"])
     return _root_url
