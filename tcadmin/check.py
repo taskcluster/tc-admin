@@ -21,5 +21,4 @@ def run_checks(pytest_options):
     if not os.path.exists(check_path):
         print("No checks defined; path {} does not exist".format(check_path))
         return False
-    os.chdir(check_path)
-    return 0 == pytest.main(list(pytest_options))
+    return 0 == pytest.main([check_path] + list(pytest_options))
