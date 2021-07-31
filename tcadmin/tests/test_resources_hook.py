@@ -60,7 +60,7 @@ def test_hook_formatter(simple_hook):
 
 
 def test_role_from_api():
-    "HOoks are properly read from a Taskcluster API result"
+    "Hooks are properly read from a Taskcluster API result"
     api_result = {
         "hookGroupId": "garbage",
         "hookId": "test",
@@ -87,3 +87,40 @@ def test_role_from_api():
     assert hook.task == {"$magic": "build-task"}
     assert hook.bindings == (Binding(exchange="e", routingKeyPattern="rkp"),)
     assert hook.triggerSchema == {}
+
+
+def test_hook_validity():
+    "Hook objects are properly instantiated"
+    hook1 = {
+        "hookGroupId": "garbage",
+        "hookId": "test",
+        "metadata": {
+            "name": "my-test",
+            "description": "*DO NOT EDIT* - This resource is configured automatically."
+            "\n\nThis is my role",
+            "owner": "dustin@mozilla.com",
+            "emailOnError": False,
+        },
+        "schedule": ["0 0 9,21 * * 1-5", "0 0 12 * * 0,6"],
+        "task": {"$magic": "build-task"},
+        "triggerSchema": {},
+        "bindings": [{"exchange": "e", "routingKeyPattern": "rkp"}],
+    }
+    Hook.check_hook_validity(hook1)
+    hook2 = {
+        "hookGroupId": "garbage",
+        "hookId": "test",
+        "metadata": {
+            "name": "my-test",
+            "description": "*DO NOT EDIT* - This resource is configured automatically."
+            "\n\nThis is my role",
+            "owner": "dustin@mozilla.com",
+            "emailOnError": False,
+        },
+        "schedule": ["0 0 9,21 * * 1-5", "0 0 12 * * 0,6"],
+        "task": {"$magic": "build-task"},
+        "triggerSchema": {},
+        "bindings": [{"exchange": "e", "routingKeyPattern": "rkp"}],
+        "routes": "test-route"
+    }
+    Hook.check_hook_validity(hook2)

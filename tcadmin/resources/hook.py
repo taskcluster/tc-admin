@@ -101,3 +101,12 @@ class Hook(Resource):
             "task": self.task,
             "triggerSchema": self.triggerSchema,
         }
+
+    def check_hook_validity(self):
+        "Ensure that hook object has the valid properties"
+        for property in dir(self):
+            if property not in dir(Hook):
+                print(f"{property} is an invalid property for a Hook object")
+                break
+        else:
+            print("Validated: Hook has been properly instantiated")
