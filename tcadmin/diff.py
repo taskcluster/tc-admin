@@ -6,15 +6,38 @@
 
 import re
 import click
-import patiencediff
 import blessings
 import attr
+import tempfile
+import subprocess
 
 from .util.ansi import strip_ansi
 from .resources import Resources
 from .options import with_options, diff_options
 
 t = blessings.Terminal()
+
+
+def fast_diff(left, right, n):
+    left_file = tempfile.NamedTemporaryFile("w")
+    left_file.write("\n".join(left))
+    right_file = tempfile.NamedTemporaryFile("w")
+    right_file.write("\n".join(right))
+    output = subprocess.run(
+        [
+            "diff",
+            f"-U{n}",
+            "--label",
+            "current",
+            "--label",
+            "generated",
+            left_file.name,
+            right_file.name,
+        ],
+        encoding="utf8",
+        stdout=subprocess.PIPE,
+    ).stdout
+    return output.split("\n")
 
 
 diff_options.add(
@@ -95,9 +118,7 @@ def textual_diff(generated, current, context):
                 return match.group(1)
         return ""
 
-    lines = patiencediff.unified_diff(
-        left, right, lineterm="", fromfile="current", tofile="generated", n=context
-    )
+    lines = fast_diff(left, right, context)
     colors = {
         "-": lambda s: t.red(strip_ansi(s)),
         "+": lambda s: t.green(strip_ansi(s)),
