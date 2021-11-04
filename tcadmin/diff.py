@@ -8,8 +8,8 @@ import re
 import click
 import blessings
 import attr
-import tempfile
 import subprocess
+from tempfile import NamedTemporaryFile
 
 from .util.ansi import strip_ansi
 from .resources import Resources
@@ -19,25 +19,24 @@ t = blessings.Terminal()
 
 
 def fast_diff(left, right, n):
-    left_file = tempfile.NamedTemporaryFile("w")
-    left_file.write("\n".join(left))
-    right_file = tempfile.NamedTemporaryFile("w")
-    right_file.write("\n".join(right))
-    output = subprocess.run(
-        [
-            "diff",
-            f"-U{n}",
-            "--label",
-            "current",
-            "--label",
-            "generated",
-            left_file.name,
-            right_file.name,
-        ],
-        encoding="utf8",
-        stdout=subprocess.PIPE,
-    ).stdout
-    return output.split("\n")
+    with NamedTemporaryFile("w") as left_file, NamedTemporaryFile("w") as right_file:
+        left_file.write("\n".join(left))
+        right_file.write("\n".join(right))
+        output = subprocess.run(
+            [
+                "diff",
+                f"-U{n}",
+                "--label",
+                "current",
+                "--label",
+                "generated",
+                left_file.name,
+                right_file.name,
+            ],
+            encoding="utf8",
+            stdout=subprocess.PIPE,
+        ).stdout
+        return output.split("\n")
 
 
 diff_options.add(
