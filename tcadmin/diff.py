@@ -9,6 +9,7 @@ import click
 import blessings
 import attr
 import subprocess
+from collections import defaultdict
 from tempfile import NamedTemporaryFile
 
 from .util.ansi import strip_ansi
@@ -118,11 +119,11 @@ def textual_diff(generated, current, context):
         return ""
 
     lines = fast_diff(left, right, context)
+    colors = defaultdict(lambda: lambda s: s)
     colors = {
         "-": lambda s: t.red(strip_ansi(s)),
         "+": lambda s: t.green(strip_ansi(s)),
         "@": lambda s: t.yellow(strip_ansi(s)) + " " + contextualize(s),
-        " ": lambda s: s,
     }
     # colorize the lines
     lines = (
