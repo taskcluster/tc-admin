@@ -7,3 +7,4 @@ __pycache__
 .release/
 dist/
 pip-wheel-metadata/
+.python-version
