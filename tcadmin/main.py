@@ -21,6 +21,24 @@ from . import apply
 from . import options
 
 
+def pre_apply_check():
+    if not os.environ.get("TASKCLUSTER_PROXY_URL"):
+        if not os.environ.get("TASKCLUSTER_CLIENT_ID"):
+            raise click.UsageError("TASKCLUSTER_CLIENT_ID must be set")
+        if not os.environ.get("TASKCLUSTER_ACCESS_TOKEN"):
+            raise click.UsageError("TASKCLUSTER_ACCESS_TOKEN must be set")
+
+
+pre_cmd_checks = {
+    "apply": [pre_apply_check],
+}
+
+
+def run_pre_check(name):
+    for check_fn in pre_cmd_checks.get(name, []):
+        check_fn()
+
+
 def run_async(fn):
     @functools.wraps(fn)
     def wrap(*args, **kwargs):
@@ -55,6 +73,7 @@ def main(appconfig):
     @with_aiohttp_session
     async def generateCommand(**kwargs):
         "Generate the the expected runtime configuration"
+        run_pre_check("generate")
         with AppConfig._as_current(appconfig):
             output.display_resources(await generate.resources())
 
@@ -68,6 +87,7 @@ def main(appconfig):
         "Fetch the current runtime configuration"
         # generate the expected resources so that we can limit the current
         # resources to only what we manage
+        run_pre_check("current")
         with AppConfig._as_current(appconfig):
             expected = await generate.resources()
             output.display_resources(await current.resources(expected.managed))
@@ -80,6 +100,7 @@ def main(appconfig):
     @with_aiohttp_session
     async def diffCommand(**kwargs):
         "Compare the the current and expected runtime configuration"
+        run_pre_check("diff")
         with AppConfig._as_current(appconfig):
             expected = await generate.resources()
             actual = await current.resources(expected.managed)
@@ -96,6 +117,7 @@ def main(appconfig):
 
         This uses pytest under the hood, and you can supply pytest args such
         as `-x` and `-vv` after a `--`: `ci-admin check -- -x -vv`"""
+        run_pre_check("check")
         with AppConfig._as_current(appconfig):
             if not check.run_checks():
                 sys.exit(1)
@@ -108,11 +130,7 @@ def main(appconfig):
     @with_aiohttp_session
     async def applyCommand(**kwargs):
         "Apply the expected runtime configuration"
-        if not os.environ.get("TASKCLUSTER_PROXY_URL"):
-            if not os.environ.get("TASKCLUSTER_CLIENT_ID"):
-                raise click.UsageError("TASKCLUSTER_CLIENT_ID must be set")
-            if not os.environ.get("TASKCLUSTER_ACCESS_TOKEN"):
-                raise click.UsageError("TASKCLUSTER_ACCESS_TOKEN must be set")
+        run_pre_check("apply")
 
         with AppConfig._as_current(appconfig):
             expected = await generate.resources()
