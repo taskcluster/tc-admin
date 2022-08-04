@@ -445,7 +445,7 @@ Like roles, the clients managed here last "forever".
 ```python
 from tcadmin.resources import WorkerPool
 
-hook = WorkerPool(
+workerPool = WorkerPool(
     workerPoolId=..,
     providerId=..,
     description=..,
