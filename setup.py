@@ -15,7 +15,7 @@ setup(
     packages=find_packages("."),
     install_requires=[
         "taskcluster~=44.0.0",
-        "click~=8.0.0",
+        "click>=8.0.0,<8.2",
         "blessings~=1.7",
         "attrs>=21.4.0,<22.2",
         "sortedcontainers~=2.4.0",
