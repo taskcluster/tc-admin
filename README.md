@@ -569,4 +569,4 @@ To release:
  * `git tag vX.Y.z`
  * push those changes to `main`
  * `./release.sh --real` and enter your pypi credentials when prompted (omit the `--real` to try it against the testing pypi, if you're not sure)
- * Find the tag in https://github.com/taskcluster/tc-admin/releases and create a new release with a brief desscription of the changes
+ * Find the tag in https://github.com/taskcluster/tc-admin/releases and create a new release with a brief description of the changes
