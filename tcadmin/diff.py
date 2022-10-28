@@ -120,11 +120,11 @@ def textual_diff(generated, current, context):
 
     lines = fast_diff(left, right, context)
     colors = defaultdict(lambda: lambda s: s)
-    colors = {
+    colors.update({
         "-": lambda s: t.red(strip_ansi(s)),
         "+": lambda s: t.green(strip_ansi(s)),
         "@": lambda s: t.yellow(strip_ansi(s)) + " " + contextualize(s),
-    }
+    })
     # colorize the lines
     lines = (
         colors[l[0]](l).rstrip() for l in (line if line else " " for line in lines)
