@@ -20,7 +20,7 @@ setup(
         "attrs>=21.4.0,<22.3",
         "sortedcontainers~=2.4.0",
         "aiohttp~=3.8.0",
-        "pytest>=7.0.0,<7.3",
+        "pytest>=7.0.0,<7.4",
         "pyyaml~=6.0",
     ],
     setup_requires=["pytest-runner", "flake8"],
