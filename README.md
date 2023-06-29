@@ -570,3 +570,13 @@ To release:
  * push those changes to `main`
  * `./release.sh --real` and enter your pypi credentials when prompted (omit the `--real` to try it against the testing pypi, if you're not sure)
  * Find the tag in https://github.com/taskcluster/tc-admin/releases and create a new release with a brief description of the changes
+
+
+## Docker image
+
+To build and publish new version of tc-admin docker image run:
+
+```bash
+docker build -t tc-admin:X.Y.Z .
+docker push tc-admin:X.Y.Z
+```
