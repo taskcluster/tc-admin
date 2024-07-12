@@ -22,7 +22,11 @@ t = blessings.Terminal()
 def fast_diff(left, right, n):
     with NamedTemporaryFile("w") as left_file, NamedTemporaryFile("w") as right_file:
         left_file.write("\n".join(left))
+        left_file.flush()
+
         right_file.write("\n".join(right))
+        right_file.flush()
+
         output = subprocess.run(
             [
                 "diff",
