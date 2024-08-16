@@ -9,17 +9,17 @@ import click
 from .options import with_options, output_options
 
 
-output_options.add(click.option("--text/--json", default=True, help="output format"))
+output_options.add(click.option("--yaml/--json", default=True, help="output format"))
 output_options.add(
     click.option("--grep", help="regular expression limiting resources displayed")
 )
 
 
-@with_options("text", "grep")
-def display_resources(resources, text, grep):
+@with_options("yaml", "grep")
+def display_resources(resources, yaml, grep):
     if grep:
         resources = resources.filter(grep)
-    if text:
-        print(resources)
+    if yaml:
+        print(resources.to_yaml())
     else:
-        print(repr(resources))
+        print(resources.to_json())

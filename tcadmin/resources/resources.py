@@ -13,6 +13,7 @@ from sortedcontainers import SortedKeyList
 
 from ..util.matchlist import MatchList
 from ..util.json import pretty_json
+from ..util.yaml import pretty_yaml
 
 t = blessings.Terminal()
 
@@ -47,6 +48,9 @@ class Resource(object):
         d = attr.asdict(self)
         d["kind"] = self.kind
         return d
+
+    def to_yaml(self):
+        return self.to_json()
 
     def to_api(self):
         "Construct a payload for Taskcluster API methods"
@@ -181,19 +185,17 @@ class Resources:
         return self.resources.__iter__()
 
     def __str__(self):
-        self._verify()
-        return "managed:\n{}\n\nresources:\n{}".format(
-            "\n".join("  - " + m for m in self.managed),
-            textwrap.indent("\n\n".join(str(r) for r in self), "  "),
-        )
+        return self.to_yaml()
 
-    def __repr__(self):
-        return pretty_json(self.to_json())
+    def to_yaml(self):
+        "Convert to a YAML data structure"
+        self._verify()
+        return pretty_yaml({"resources": [r.to_yaml() for r in self], "managed": list(self.managed)})
 
     def to_json(self):
         "Convert to a JSON-able data structure"
         self._verify()
-        return {"resources": [r.to_json() for r in self], "managed": list(self.managed)}
+        return pretty_json({"resources": [r.to_json() for r in self], "managed": list(self.managed)})
 
     @classmethod
     def from_json(cls, json):
