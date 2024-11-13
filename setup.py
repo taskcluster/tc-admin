@@ -19,7 +19,7 @@ setup(
         "blessings~=1.7",
         "attrs>=21.4.0,<24.3",
         "sortedcontainers~=2.4.0",
-        "aiohttp>=3.8.0,<3.11",
+        "aiohttp>=3.8.0,<3.12",
         "pytest>=7.0.0,<8.4",
         "pyyaml~=6.0",
     ],
