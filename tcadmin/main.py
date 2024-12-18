@@ -106,7 +106,7 @@ def main(appconfig):
             actual = await current.resources(expected.managed)
             different = diff.show_diff(expected, actual)
             if different:
-                sys.exit(1)
+                sys.exit(2)
 
     @cmd.command(name="check")
     @options.generate_options.apply
