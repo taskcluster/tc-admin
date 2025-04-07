@@ -20,7 +20,11 @@ def with_aiohttp_session(fn):
     async def wrap(*args, **kwargs):
         global _aiohttp_session
         assert not _aiohttp_session, "nested with_aiohttp_session calls!"
-        async with aiohttp.ClientSession() as session:
+        default_headers = {
+            "User-Agent": "tc-admin",
+        }
+
+        async with aiohttp.ClientSession(headers=default_headers) as session:
             _aiohttp_session = session
             try:
                 return await fn(*args, **kwargs)
