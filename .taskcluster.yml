@@ -33,8 +33,8 @@ tasks:
   in:
     $let:
       tests:
-        - image: 'python:3.11'
-          name: python:3.11 tests
+        - image: 'python:3.13'
+          name: python:3.13 tests
           command:
             - /bin/bash
             - '--login'
@@ -46,7 +46,7 @@ tasks:
               git checkout ${repo.ref} &&
               pip install -e . &&
               python setup.py test
-        - image: 'python:3.11'
+        - image: 'python:3.13'
           name: flake
           command:
             - /bin/bash
