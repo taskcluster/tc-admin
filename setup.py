@@ -26,10 +26,11 @@ setup(
     setup_requires=["pytest-runner", "flake8"],
     tests_require=["pytest", "pytest-mock", "pytest-asyncio>=0.18.0,<1.1", "flake8", "asyncmock"],
     classifiers=[
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
     ],
     entry_points={
         "console_scripts": [
