@@ -24,7 +24,7 @@ setup(
         "pyyaml~=6.0",
     ],
     setup_requires=["pytest-runner", "flake8"],
-    tests_require=["pytest", "pytest-mock", "pytest-asyncio>=0.18.0,<1.1", "flake8", "asyncmock"],
+    tests_require=["pytest", "pytest-mock", "pytest-asyncio>=0.18.0,<1.2", "flake8", "asyncmock"],
     classifiers=[
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
