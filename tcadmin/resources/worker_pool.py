@@ -24,6 +24,19 @@ class WorkerPool(Resource):
         return "{}={}".format(self.kind, self.workerPoolId)
 
     @classmethod
+    def _sort_launch_configs(cls, config):
+        "Ensure launchConfigs are sorted by location for cleaner `tc-admin diff`"
+
+        def sort_key(lc):
+            if "zone" in lc:
+                return lc["zone"]  # gcp
+            if "location" in lc:
+                return lc["location"]  # azure
+
+        config["launchConfigs"].sort(key=sort_key)
+        return config
+
+    @classmethod
     def from_api(cls, api_result):
         "Construct a new instance from the result of a taskcluster API call"
 
@@ -31,7 +44,7 @@ class WorkerPool(Resource):
             workerPoolId=api_result["workerPoolId"],
             description=api_result["description"],
             owner=api_result["owner"],
-            config=api_result["config"],
+            config=cls._sort_launch_configs(api_result["config"]),
             emailOnError=api_result["emailOnError"],
             providerId=api_result["providerId"],
         )
