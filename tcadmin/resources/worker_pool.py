@@ -33,7 +33,8 @@ class WorkerPool(Resource):
             if "location" in lc:
                 return lc["location"]  # azure
 
-        config["launchConfigs"].sort(key=sort_key)
+        if "launchConfigs" in config:
+            config["launchConfigs"].sort(key=sort_key)
         return config
 
     @classmethod
