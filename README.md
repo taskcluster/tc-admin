@@ -565,19 +565,4 @@ black tcadmin
 
 To release:
 
- * update version in `setup.py` and `git commit -m "vX.Y.Z"`
- * `git tag vX.Y.Z`
- * `git push`
- * `git push --tags`
- * `./release.sh --real` and enter your pypi credentials when prompted (omit the `--real` to try it against the testing pypi, if you're not sure)
- * go to https://github.com/taskcluster/tc-admin/releases/tag/vX.Y.Z and create a new release from the tag with a brief description of the changes
- * build and publish a new version of the linux/amd64 tc-admin docker image:
-
-```bash
-pass git pull
-pass hub.docker.com/taskclusterbot   # fetch credentials for making docker release
-docker logout
-docker login                         # use credentials output above
-docker build -t taskcluster/tc-admin:X.Y.Z .
-docker push taskcluster/tc-admin:X.Y.Z
-```
+ * `./release.sh -v <major>.<minor>.<patch> --real` and enter your pypi credentials when prompted (omit the `--real` to try it against the testing pypi, if you're not sure)
