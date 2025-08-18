@@ -41,7 +41,7 @@ async def test_fetch_worker_pools(WorkerManager):
     resources = Resources([], ["WorkerPool=managed*"])
     WorkerManager.workerPools = [
         {
-            "config": {"is": "config"},
+            "config": {"is": "config", "launchConfigs": [{"zone": "b"}, {"zone": "a"}]},
             "created": "2019-07-20T22:49:23.761Z",
             "lastModified": "2019-07-20T22:49:23.761Z",
             "workerPoolId": wpid,
