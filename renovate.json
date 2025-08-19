@@ -6,7 +6,9 @@
   "rangeStrategy": "widen",
   "packageRules": [
     {
-      "packageNames": "taskcluster",
+      "matchPackageNames": [
+        "taskcluster"
+      ],
       "minor": {
         "enabled": false
       },
