@@ -3,7 +3,8 @@
 # This script is used to generate releases of tc-admin. It should be the only
 # way that releases are created. There are two phases, the first is checking
 # that the code is in a clean and working state. The second phase is modifying
-# files, tagging, commiting and pushing to github.
+# files, tagging, commiting and pushing to pypi.org, github.com and
+# hub.docker.com.
 
 # exit in case of bad exit code or undefined var
 set -eu
@@ -16,7 +17,7 @@ function usage()
     echo
     echo "Options:"
     echo "  -v|--version <version>     Version number for release, e.g. --version 1.2.3"
-	echo "  --real, -r                 Publish to https://upload.pypi.org/legacy/ (otherwise publishes to https://test.pypi.org/legacy/)"
+    echo "  --real, -r                 Publish to https://upload.pypi.org/legacy/ (otherwise publishes to https://test.pypi.org/legacy/)"
     echo "  -h, --help                 Show this usage message"
 }
 
@@ -30,12 +31,32 @@ function inline_sed {
     git add "${file}"
 }
 
+function open_url {
+  local url="$1"
+  if [ -n "$BROWSER" ]; then
+    "$BROWSER" "$url" >/dev/null 2>&1 &
+  elif command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$url" >/dev/null 2>&1 &
+  elif command -v gio >/dev/null 2>&1; then
+    gio open "$url" >/dev/null 2>&1 &
+  elif command -v open >/dev/null 2>&1; then        # macOS
+    open "$url" >/dev/null 2>&1 &
+  elif command -v wslview >/dev/null 2>&1; then      # WSL
+    wslview "$url" >/dev/null 2>&1 &
+  elif command -v sensible-browser >/dev/null 2>&1; then  # Debian/Ubuntu
+    sensible-browser "$url" >/dev/null 2>&1 &
+  else
+    echo 'No opener found. Install xdg-utils or set $BROWSER.' >&2
+    return 1
+  fi
+}
+
 if [ -n "${VIRTUAL_ENV}" ]; then
     echo "Deactivate your virtualenv first" >&2
     exit 1
 fi
 
-REPOSITORY_URL='https://test.pypi.org/legacy/'
+PYPI_URL='https://test.pypi.org/legacy/'
 OFFICIAL_GIT_REPO='git@github.com:taskcluster/tc-admin'
 
 # step into directory containing this script
@@ -43,7 +64,7 @@ cd "$(dirname "${0}")"
 
 while [ ${#} -gt 0 ]; do
     case "$1" in
-        -r|--real) REPOSITORY_URL='https://upload.pypi.org/legacy/'; SHIFT=1;;
+        -r|--real) PYPI_URL='https://upload.pypi.org/legacy/'; SHIFT=1;;
         -v|--version) NEW_VERSION="$2"; SHIFT=2;;
         -h|--help) usage ; exit 0;;
         *) echo "Unknown argument: '$1'" >&2; usage >&2; exit 1;;
@@ -154,7 +175,7 @@ echo
 
 # Publish to PyPI using Twine, as recommended by:
 # https://packaging.python.org/tutorials/distributing-packages/#uploading-your-project-to-pypi
-.release/py3/bin/twine upload --repository-url $REPOSITORY_URL dist/*
+.release/py3/bin/twine upload --repository-url $PYPI_URL dist/*
 
 echo
 echo
@@ -170,4 +191,4 @@ docker login
 docker build -t "taskcluster/tc-admin:${NEW_VERSION}" .
 docker push "taskcluster/tc-admin:${NEW_VERSION}"
 echo
-echo "Now go to https://github.com/taskcluster/tc-admin/releases/new?tag=v${NEW_VERSION} and create a new release with a description of the changes"
+open_url "https://github.com/taskcluster/tc-admin/releases/new?tag=v${NEW_VERSION}"
