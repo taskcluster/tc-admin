@@ -32,6 +32,8 @@ class WorkerPool(Resource):
                 return lc["zone"]  # gcp
             if "location" in lc:
                 return lc["location"]  # azure
+            if "region" in lc:
+                return lc["region"]  # aws
 
         if "launchConfigs" in config:
             config["launchConfigs"].sort(key=sort_key)
