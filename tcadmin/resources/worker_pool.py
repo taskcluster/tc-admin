@@ -32,6 +32,8 @@ class WorkerPool(Resource):
                 return lc["zone"]  # gcp
             if "location" in lc:
                 return lc["location"]  # azure
+            if "armDeployment" in lc:
+                return lc["armDeployment"]["parameters"]["location"]["value"]  # azure ARM templates
             if "region" in lc:
                 return lc["region"]  # aws
 
