@@ -33,7 +33,7 @@ function inline_sed {
 
 function open_url {
   local url="$1"
-  if [ -n "$BROWSER" ]; then
+  if [ -n "${BROWSER:-}" ]; then
     "$BROWSER" "$url" >/dev/null 2>&1 &
   elif command -v xdg-open >/dev/null 2>&1; then
     xdg-open "$url" >/dev/null 2>&1 &
@@ -51,7 +51,7 @@ function open_url {
   fi
 }
 
-if [ -n "${VIRTUAL_ENV}" ]; then
+if [ -n "${VIRTUAL_ENV:-}" ]; then
     echo "Deactivate your virtualenv first" >&2
     exit 1
 fi
