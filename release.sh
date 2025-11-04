@@ -77,7 +77,7 @@ while [ ${#} -gt 0 ]; do
     shift "${SHIFT}"
 done
 
-if [ -z "${NEW_VERSION}" ]; then
+if [ -z "${NEW_VERSION:-}" ]; then
     usage >&2
     exit 64
 fi
