@@ -19,7 +19,7 @@ from .options import with_options, diff_options
 t = blessings.Terminal()
 
 
-def fast_diff(left, right, n):
+def fast_diff(left, right, n, minimal):
     with NamedTemporaryFile("w") as left_file, NamedTemporaryFile("w") as right_file:
         left_file.write("\n".join(left))
         left_file.flush()
@@ -27,17 +27,20 @@ def fast_diff(left, right, n):
         right_file.write("\n".join(right))
         right_file.flush()
 
-        output = subprocess.run(
-            [
+        args = [
                 "diff",
                 f"-U{n}",
                 "--label",
                 "current",
                 "--label",
                 "generated",
-                left_file.name,
-                right_file.name,
-            ],
+        ]
+        if minimal:
+            args.append("--minimal")
+        args.extend([left_file.name, right_file.name])
+
+        output = subprocess.run(
+            args,
             encoding="utf8",
             stdout=subprocess.PIPE,
         ).stdout
@@ -70,6 +73,14 @@ diff_options.add(
         help="only show resource IDs added (+), removed (-), or changed (@)",
     )
 )
+diff_options.add(
+    click.option(
+        "--minimal",
+        "-d",
+        is_flag=True,
+        help="try hard to find a smaller set of changes",
+    )
+)
 
 
 def id_diff(generated, current):
@@ -98,7 +109,7 @@ def id_diff(generated, current):
     return "\n".join(rv)
 
 
-def textual_diff(generated, current, context):
+def textual_diff(generated, current, context, minimal):
     """
     Compare changes from Resources instances geneated and current, returning a
     string.
@@ -122,7 +133,7 @@ def textual_diff(generated, current, context):
                 return match.group(1)
         return ""
 
-    lines = fast_diff(left, right, context)
+    lines = fast_diff(left, right, context, minimal)
     colors = defaultdict(lambda: lambda s: s)
     colors.update({
         "-": lambda s: t.red(strip_ansi(s)),
@@ -136,8 +147,8 @@ def textual_diff(generated, current, context):
     return "\n".join(lines)
 
 
-@with_options("ignore_descriptions", "grep", "ids_only", "context")
-def show_diff(generated, current, ignore_descriptions, grep, ids_only, context):
+@with_options("ignore_descriptions", "grep", "ids_only", "context", "minimal")
+def show_diff(generated, current, ignore_descriptions, grep, ids_only, context, minimal):
     # limit the resources considered if --grep
     if grep:
         generated = generated.filter(grep)
@@ -157,6 +168,6 @@ def show_diff(generated, current, ignore_descriptions, grep, ids_only, context):
     if ids_only:
         result = id_diff(generated, current)
     else:
-        result = textual_diff(generated, current, context)
+        result = textual_diff(generated, current, context, minimal)
     print(result)
     return result.strip() != ""
