@@ -42,11 +42,7 @@ def run_pre_check(name):
 def run_async(fn):
     @functools.wraps(fn)
     def wrap(*args, **kwargs):
-        try:
-            loop = asyncio.get_event_loop()
-            return loop.run_until_complete(fn(*args, **kwargs))
-        finally:
-            loop.close()
+        asyncio.run(fn(*args, **kwargs))
 
     return wrap
 
