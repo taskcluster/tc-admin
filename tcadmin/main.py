@@ -42,7 +42,7 @@ def run_pre_check(name):
 def run_async(fn):
     @functools.wraps(fn)
     def wrap(*args, **kwargs):
-        asyncio.run(fn(*args, **kwargs))
+        return asyncio.run(fn(*args, **kwargs))
 
     return wrap
 
