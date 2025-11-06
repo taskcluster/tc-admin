@@ -33,34 +33,37 @@ tasks:
   in:
     $let:
       tests:
-        - image: 'python:3.13'
-          name: python:3.13 tests
-          command:
-            - /bin/bash
-            - '--login'
-            - '-c'
-            - >-
-              git clone ${repo.git_url} repo &&
-              cd repo &&
-              git config advice.detachedHead false &&
-              git checkout ${repo.ref} &&
-              pip install -e . &&
-              pip install pytest pytest-mock "pytest-asyncio>=0.18.0,<1.2" flake8 asyncmock &&
-              pytest
-        - image: 'python:3.13'
-          name: flake
-          command:
-            - /bin/bash
-            - '--login'
-            - '-c'
-            - >-
-              git clone ${repo.git_url} repo &&
-              cd repo &&
-              git config advice.detachedHead false &&
-              git checkout ${repo.ref} &&
-              pip install -e . &&
-              pip install flake8 &&
-              flake8 tcadmin
+        $flatten:
+          $map: ['3.13', '3.14']
+          each(version):
+            - image: 'python:${version}'
+              name: 'python:${version} tests'
+              command:
+                - /bin/bash
+                - '--login'
+                - '-c'
+                - >-
+                  git clone ${repo.git_url} repo &&
+                  cd repo &&
+                  git config advice.detachedHead false &&
+                  git checkout ${repo.ref} &&
+                  pip install -e . &&
+                  pip install pytest pytest-mock "pytest-asyncio>=0.18.0,<1.2" flake8 asyncmock &&
+                  pytest
+            - image: 'python:${version}'
+              name: flake
+              command:
+                - /bin/bash
+                - '--login'
+                - '-c'
+                - >-
+                  git clone ${repo.git_url} repo &&
+                  cd repo &&
+                  git config advice.detachedHead false &&
+                  git checkout ${repo.ref} &&
+                  pip install -e . &&
+                  pip install flake8 &&
+                  flake8 tcadmin
     in:
       $let:
         test_tasks:
