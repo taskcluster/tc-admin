@@ -188,7 +188,10 @@ echo
 echo
 docker logout
 docker login
-docker build -t "taskcluster/tc-admin:${NEW_VERSION}" .
-docker push "taskcluster/tc-admin:${NEW_VERSION}"
+docker buildx create --name tc-admin-builder --use 2>/dev/null || docker buildx use tc-admin-builder
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t "taskcluster/tc-admin:${NEW_VERSION}" \
+  --push .
 echo
 open_url "https://github.com/taskcluster/tc-admin/releases/new?tag=v${NEW_VERSION}"
