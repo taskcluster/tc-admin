@@ -17,7 +17,7 @@ setup(
         "taskcluster",
         "click>=8.0.0,<8.4",
         "blessings~=1.7",
-        "attrs>=21.4.0,<25.5",
+        "attrs>=21.4.0,<26.2",
         "sortedcontainers~=2.4.0",
         "aiohttp>=3.8.0,<3.14",
         "pytest>=7.0.0,<9.1",
