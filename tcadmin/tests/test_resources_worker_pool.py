@@ -70,12 +70,10 @@ def test_role_from_api():
         "is": "config",
         "launchConfigs": [{"zone": "a"}, {"zone": "b"}],
     }
-    assert apwt.description == textwrap.dedent(
-        """\
-            *DO NOT EDIT* - This resource is configured automatically.
-
-            descr"""
-    )
+    # from_api preserves the API description verbatim, without prepending the
+    # *DO NOT EDIT* prefix; that prefix is only applied to user-supplied input
+    # via the regular Resource constructor.
+    assert apwt.description == "descr"
     assert apwt.owner == "owner"
     assert apwt.emailOnError is True
     assert apwt.providerId == "cirrus"

@@ -68,7 +68,7 @@ class Hook(Resource):
     @classmethod
     def from_api(cls, api_result):
         "Construct a new instance from the result of a taskcluster API call"
-        return cls(
+        return cls._construct_without_converters(
             hookId=api_result["hookId"],
             hookGroupId=api_result["hookGroupId"],
             # flatten the metadata sub-key
@@ -76,8 +76,10 @@ class Hook(Resource):
             name=api_result["metadata"]["name"],
             owner=api_result["metadata"]["owner"],
             emailOnError=api_result["metadata"]["emailOnError"],
-            schedule=api_result["schedule"],
-            bindings=tuple(Binding.from_api(b) for b in api_result["bindings"]),
+            schedule=schedule_converter(api_result["schedule"]),
+            bindings=bindings_converter(
+                tuple(Binding.from_api(b) for b in api_result["bindings"])
+            ),
             task=api_result["task"],
             triggerSchema=api_result["triggerSchema"],
         )

@@ -62,7 +62,12 @@ class Secret(Resource):
     @classmethod
     def from_api(cls, name, api_result=None):
         "Construct a new instance from the result of a taskcluster API call"
-        return cls(name=name, secret=api_result["secret"] if api_result else NoSecret)
+        # Use the no-converter constructor for consistency with other Resource
+        # subclasses, even though Secret has no field-level converters today.
+        return cls._construct_without_converters(
+            name=name,
+            secret=api_result["secret"] if api_result else NoSecret,
+        )
 
     def to_api(self):
         "Construct a payload for use with secrets.set"

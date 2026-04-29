@@ -30,10 +30,10 @@ class Client(Resource):
     @classmethod
     def from_api(cls, api_result):
         "Construct a new instance from the result of a taskcluster API call"
-        return cls(
+        return cls._construct_without_converters(
             clientId=api_result["clientId"],
             description=api_result["description"],
-            scopes=api_result["scopes"],
+            scopes=scopes_converter(api_result["scopes"]),
         )
 
     def to_api(self):
