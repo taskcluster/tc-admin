@@ -42,6 +42,37 @@ class Resource(object):
         kind = json.pop("kind")
         return cls._kind_classes()[kind](**json)
 
+    @classmethod
+    def _construct_without_converters(cls, **kwargs):
+        """
+        Build an instance of ``cls`` without running attrs field converters.
+
+        Used by ``from_api`` to keep live-API values verbatim. Validators and
+        ``__attrs_post_init__`` still run; defaults are honoured for any
+        field not present in ``kwargs``.
+        """
+        obj = cls.__new__(cls)
+        for field in attr.fields(cls):
+            if field.name in kwargs:
+                value = kwargs[field.name]
+            elif field.default is not attr.NOTHING:
+                if isinstance(field.default, attr.Factory):
+                    value = field.default.factory()
+                else:
+                    value = field.default
+            else:
+                raise TypeError(
+                    "{}._construct_without_converters() missing required "
+                    "field: {}".format(cls.__name__, field.name)
+                )
+            object.__setattr__(obj, field.name, value)
+        for field in attr.fields(cls):
+            if field.validator is not None:
+                field.validator(obj, field, getattr(obj, field.name))
+        if hasattr(obj, "__attrs_post_init__"):
+            obj.__attrs_post_init__()
+        return obj
+
     def to_json(self):
         "Return a JSON-able version of this object, including a `kind` property"
         d = attr.asdict(self)
