@@ -9,6 +9,7 @@ import attr
 import pytest
 import textwrap
 
+from tcadmin.resources import Client, Hook, Binding, Role, WorkerPool
 from tcadmin.resources.resources import Resource, Resources
 
 
@@ -185,6 +186,43 @@ def test_resources_from_json():
         [Thing("x", "1"), ListThing("lt", ["1", "2"]), Thing("y", "1")],
         ["ListThing=*", "Thing=*"],
     )
+
+
+def test_resources_json_roundtrip_with_real_resources(appconfig):
+    "A Resources set containing every non-Secret kind survives a full JSON round-trip"
+    rsrcs = Resources(
+        [
+            Role(roleId="r", description="d", scopes=["a:b"]),
+            Client(clientId="c", description="d", scopes=["a:b"]),
+            WorkerPool(
+                workerPoolId="p/x",
+                description="d",
+                owner="o@example.com",
+                config={"k": 1},
+                emailOnError=False,
+                providerId="gcp",
+            ),
+            Hook(
+                hookGroupId="g",
+                hookId="h",
+                name="n",
+                description="d",
+                owner="o@example.com",
+                emailOnError=False,
+                schedule=("0 0 * * *",),
+                bindings=(Binding(exchange="e", routingKeyPattern="#"),),
+                task={},
+                triggerSchema={},
+            ),
+        ],
+        ["Role=.*", "Client=.*", "WorkerPool=.*", "Hook=.*"],
+    )
+
+    blob = json.loads(json.dumps(rsrcs.to_json()))
+    reconstructed = Resources.from_json(blob)
+
+    assert list(reconstructed) == list(rsrcs)
+    assert list(reconstructed.managed) == list(rsrcs.managed)
 
 
 def test_resources_add_unmanaged_prohibited():

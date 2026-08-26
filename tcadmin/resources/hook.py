@@ -15,9 +15,19 @@ def schedule_converter(value):
     return tuple(value)
 
 
+def _is_binding(value):
+    """True if `value` is a dict with Binding's fields, i.e. the shape
+    `to_json` flattens a Binding into"""
+    binding_field_names = {f.name for f in attr.fields(Binding)}
+    return isinstance(value, dict) and set(value) == binding_field_names
+
+
 def bindings_converter(value):
-    """Convert a list to a tuple to ensure immutability"""
-    return tuple(sorted(value))
+    """Convert a list to a tuple to ensure immutability, reconstructing any
+    Bindings that were flattened to dicts by `to_json`"""
+    return tuple(
+        sorted(Binding(**v) if _is_binding(v) else v for v in value)
+    )
 
 
 def bindings_validator(instance, attribute, value):
