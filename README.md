@@ -19,6 +19,13 @@ This option skips managing the content of secrets, and thus needs neither access
 Run `tc-admin apply` to apply the changes.
 Note that only `apply` will require Taskcluster credentials, and it's a good practice to only set TC credentials when running this command.
 
+If generating resources is expensive, you can generate them once and reuse the result across several commands:
+```bash
+tc-admin generate --json > resources.json
+tc-admin apply --generated resources.json
+```
+This works with the `current`, `diff`, `check` and `apply` commands.
+
 See `tc-admin <command> --help` for more useful options.
 
 ## Checks
