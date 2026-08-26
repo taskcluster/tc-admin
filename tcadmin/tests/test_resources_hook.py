@@ -4,6 +4,8 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
+import pickle
+
 import pytest
 import textwrap
 
@@ -59,8 +61,16 @@ def test_hook_formatter(simple_hook):
     )
 
 
+def test_hook_pickle_roundtrip(simple_hook):
+    "Pickling a Hook round-trips"
+    unpickled = pickle.loads(pickle.dumps(simple_hook))
+    assert unpickled == simple_hook
+    assert unpickled.bindings == simple_hook.bindings
+    assert all(isinstance(b, Binding) for b in unpickled.bindings)
+
+
 def test_role_from_api():
-    "HOoks are properly read from a Taskcluster API result"
+    "Hooks are properly read from a Taskcluster API result"
     api_result = {
         "hookGroupId": "garbage",
         "hookId": "test",

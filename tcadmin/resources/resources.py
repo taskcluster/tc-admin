@@ -18,7 +18,7 @@ t = blessings.Terminal()
 
 
 @functools.total_ordering
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, frozen=True, getstate_setstate=False)
 class Resource(object):
     """
     Base class for a single runtime configuration resource

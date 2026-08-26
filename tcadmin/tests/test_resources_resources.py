@@ -5,6 +5,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
+import pickle
+
 import attr
 import pytest
 import textwrap
@@ -93,6 +95,15 @@ def test_resource_id_immutable():
     a = Thing("a", "V")
     with pytest.raises(Exception):
         a.id = "b"
+
+
+def test_resource_pickle_roundtrip():
+    "Resource subclasses must pickle correctly"
+    a = Thing("a", "V")
+    unpickled = pickle.loads(pickle.dumps(a))
+    assert unpickled == a
+    assert unpickled.thingId == "a"
+    assert unpickled.value == "V"
 
 
 def test_resource_str():
