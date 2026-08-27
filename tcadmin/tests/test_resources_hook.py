@@ -4,10 +4,12 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
+import json
 import pytest
 import textwrap
 
 from tcadmin.resources.hook import Hook, Binding
+from tcadmin.resources.resources import Resource
 
 
 pytestmark = pytest.mark.usefixtures("appconfig")
@@ -59,8 +61,32 @@ def test_hook_formatter(simple_hook):
     )
 
 
+def test_hook_json_roundtrip(simple_hook):
+    "A Hook survives to_json() -> json.dumps() -> json.loads() -> from_json()"
+    blob = json.loads(json.dumps(simple_hook.to_json()))
+    reconstructed = Resource.from_json(blob)
+    assert reconstructed == simple_hook
+
+
+def test_hook_bindings_rejects_dicts_not_shaped_like_binding():
+    "A dict that merely happens to not match Binding's fields is rejected, not coerced"
+    with pytest.raises(ValueError, match="bindings must be a sequence of Binding"):
+        Hook(
+            hookGroupId="g",
+            hookId="h",
+            name="n",
+            description="d",
+            owner="me@me.com",
+            emailOnError=False,
+            schedule=[],
+            task={},
+            bindings=[{"exchange": "e", "unexpectedField": "x"}],
+            triggerSchema={},
+        )
+
+
 def test_role_from_api():
-    "HOoks are properly read from a Taskcluster API result"
+    "Hooks are properly read from a Taskcluster API result"
     api_result = {
         "hookGroupId": "garbage",
         "hookId": "test",

@@ -55,9 +55,11 @@ class Secret(Resource):
 
     @classmethod
     def from_json(self, json):
-        # not clear what to do here, and `from_json` isn't widely used, so for
-        # the moment this is not implemented
-        raise NotImplementedError("from_json is not implemented for Secrets")
+        raise NotImplementedError(
+            "Secrets cannot be deserialized: `to_json` never emits secret values, "
+            "so a saved resource set cannot round-trip them. Generate secrets live, "
+            "or use --without-secrets."
+        )
 
     @classmethod
     def from_api(cls, name, api_result=None):
