@@ -18,7 +18,7 @@ _url_re = re.compile("^https?://[a-z0-9.-]+/?$")
 def _normalize(root_url):
     """Normalize a rootUrl, stripping trailing `/` and checking its format."""
     if not _url_re.match(root_url):
-        raise click.UsageError("Given root URL {root_url} is not a valid root URL")
+        raise click.UsageError(f"Given root URL {root_url} is not a valid root URL")
     return root_url.rstrip('/')
 
 
