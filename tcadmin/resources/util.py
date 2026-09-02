@@ -7,14 +7,28 @@
 from ..util.json import pretty_json
 
 
+class Description(str):
+    """A description string that remembers whether the value it was built
+    from (before the boilerplate prefix was added) had any real content.
+    """
+
+    def __new__(cls, value, has_content):
+        self = str.__new__(cls, value)
+        self.has_content = has_content
+        return self
+
+
 def description_converter(value):
     """Prepend *DO NOT EDIT* and a short explainer to the given value"""
     from ..appconfig import AppConfig
 
+    has_content = (
+        value.has_content if isinstance(value, Description) else bool(value)
+    )
     description_prefix = AppConfig.current().description_prefix
     if not value.startswith(description_prefix):
         value = description_prefix + value
-    return value
+    return Description(value, has_content)
 
 
 def scopes_converter(value):

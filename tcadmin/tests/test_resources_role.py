@@ -78,9 +78,38 @@ def test_role_merge_normalized():
 
 
 def test_role_merge_different_descr():
-    "Descriptions must match to merge"
+    "When both sides have a description, the left (self) side wins"
     r1 = Role(roleId="role", description="test1", scopes=["a"])
     r2 = Role(roleId="role", description="test2", scopes=["b"])
-    with pytest.raises(RuntimeError) as exc:
-        r1.merge(r2)
-    assert "Descriptions for Role=role to be merged differ" in str(exc.value)
+    merged = r1.merge(r2)
+    assert merged.description.endswith("test1")
+    assert merged.scopes == ("a", "b")
+
+
+def test_role_merge_missing_description_uses_other_side():
+    "If only one side has a description, that description is used"
+    with_descr = Role(roleId="role", description="test", scopes=["a"])
+    without_descr = Role(roleId="role", scopes=["b"])
+
+    merged = without_descr.merge(with_descr)
+    assert merged.description.endswith("test")
+    assert merged.scopes == ("a", "b")
+
+    merged = with_descr.merge(without_descr)
+    assert merged.description.endswith("test")
+    assert merged.scopes == ("a", "b")
+
+
+def test_role_merge_neither_has_description(appconfig):
+    "If neither side has a description, the merged role has none either"
+    r1 = Role(roleId="role", scopes=["a"])
+    r2 = Role(roleId="role", scopes=["b"])
+    merged = r1.merge(r2)
+    assert merged.description == appconfig.description_prefix
+    assert merged.scopes == ("a", "b")
+
+
+def test_role_description_is_optional(appconfig):
+    "A role can be constructed without a description at all"
+    role = Role(roleId="role", scopes=["a"])
+    assert role.description == appconfig.description_prefix

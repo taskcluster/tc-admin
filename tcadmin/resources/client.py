@@ -8,7 +8,7 @@ import attr
 import datetime
 
 from .resources import Resource
-from .util import description_converter, scopes_converter, list_formatter
+from .util import Description, description_converter, scopes_converter, list_formatter
 from ..util.scopes import normalizeScopes
 
 FOREVER = datetime.datetime(3000, 1, 1, 0, 0, 0)
@@ -17,9 +17,12 @@ FOREVER = datetime.datetime(3000, 1, 1, 0, 0, 0)
 @attr.s
 class Client(Resource):
     clientId = attr.ib(type=str)
-    description = attr.ib(type=str, converter=description_converter)
+    description = attr.ib(type=Description, default="", converter=description_converter)
     scopes = attr.ib(
-        type=tuple, converter=scopes_converter, metadata={"formatter": list_formatter}
+        type=tuple,
+        default=(),
+        converter=scopes_converter,
+        metadata={"formatter": list_formatter},
     )
 
     # NOTE: clients are managed like roles.  Any associated access tokens are
@@ -47,11 +50,6 @@ class Client(Resource):
 
     def merge(self, other):
         assert self.clientId == other.clientId
-        if self.description != other.description:
-            raise RuntimeError(
-                "Descriptions for {} to be merged differ".format(self.id)
-            )
+        description = self.description if self.description.has_content else other.description
         scopes = normalizeScopes(self.scopes + other.scopes)
-        return Client(
-            clientId=self.clientId, description=self.description, scopes=scopes
-        )
+        return Client(clientId=self.clientId, description=description, scopes=scopes)

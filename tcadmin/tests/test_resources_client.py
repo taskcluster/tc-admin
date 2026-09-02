@@ -78,9 +78,38 @@ def test_client_merge_normalized():
 
 
 def test_client_merge_different_descr():
-    "Descriptions must match to merge"
+    "When both sides have a description, the left (self) side wins"
     r1 = Client(clientId="client", description="test1", scopes=["a"])
     r2 = Client(clientId="client", description="test2", scopes=["b"])
-    with pytest.raises(RuntimeError) as exc:
-        r1.merge(r2)
-    assert "Descriptions for Client=client to be merged differ" in str(exc.value)
+    merged = r1.merge(r2)
+    assert merged.description.endswith("test1")
+    assert merged.scopes == ("a", "b")
+
+
+def test_client_merge_missing_description_uses_other_side():
+    "If only one side has a description, that description is used"
+    with_descr = Client(clientId="client", description="test", scopes=["a"])
+    without_descr = Client(clientId="client", scopes=["b"])
+
+    merged = without_descr.merge(with_descr)
+    assert merged.description.endswith("test")
+    assert merged.scopes == ("a", "b")
+
+    merged = with_descr.merge(without_descr)
+    assert merged.description.endswith("test")
+    assert merged.scopes == ("a", "b")
+
+
+def test_client_merge_neither_has_description(appconfig):
+    "If neither side has a description, the merged client has none either"
+    r1 = Client(clientId="client", scopes=["a"])
+    r2 = Client(clientId="client", scopes=["b"])
+    merged = r1.merge(r2)
+    assert merged.description == appconfig.description_prefix
+    assert merged.scopes == ("a", "b")
+
+
+def test_client_description_is_optional(appconfig):
+    "A client can be constructed without a description at all"
+    client = Client(clientId="client", scopes=["a"])
+    assert client.description == appconfig.description_prefix

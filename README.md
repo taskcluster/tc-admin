@@ -413,20 +413,23 @@ role = Role(
     scopes=(.., ..))
 ```
 
-As with hooks, `scopes` must be a tuple (not a list) of strings.
+As with hooks, `scopes` must be a tuple (not a list) of strings. The `description` is optional.
 
-Roles can be merged if their descriptions match.
+Roles with the same `roleId` are merged automatically.
 The resulting role contains the union of the scopes of the input roles.
 This functionality makes management of roles easier in cases where different parts of the generation process may add scopes to the same role.
+
+Descriptions do not need to match to merge. If only one side has a description that description is used, otherwise the first role's
+description wins.
 
 For example:
 
 ```python
 resources.add(Role(roleId="my-role", description="My Role", scopes=["scope1"]))
-resources.add(Role(roleId="my-role", description="My Role", scopes=["scope2"]))
+resources.add(Role(roleId="my-role", scopes=["scope2"]))
 ```
 
-This will result in a single Role with scopes `["scope1", "scope2"]`.
+This will result in a single Role with description `"My Role"` and scopes `["scope1", "scope2"]`.
 
 ### Client
 
