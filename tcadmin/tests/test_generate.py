@@ -28,7 +28,7 @@ async def test_resources_generates_no_path_given():
     appconfig.generators.register(add_a_role)
 
     with AppConfig._as_current(appconfig):
-        with test_options(generated=None):
+        with test_options(generated=None, only=None):
             resources = await generate.resources()
 
     assert called == [True]
@@ -52,9 +52,53 @@ async def test_resources_loads_from_path_without_generating(tmp_path):
         saved = Resources([Role(roleId="r", description="d", scopes=[])], ["Role=.*"])
         path.write_text(json.dumps(saved.to_json()))
 
-        with test_options(generated=str(path)):
+        with test_options(generated=str(path), only=None):
             resources = await generate.resources()
 
     assert called == []
     assert [r.id for r in resources] == ["Role=r"]
     assert list(resources.managed) == ["Role=.*"]
+
+
+@pytest.mark.asyncio
+async def test_resources_filters_by_name():
+    "With --only, only the named generators are called"
+    called = []
+
+    async def add_a_role(resources):
+        called.append("role")
+        resources.manage("Role=.*")
+        resources.add(Role(roleId="r", description="d", scopes=[]))
+
+    async def add_a_client(resources):
+        called.append("client")
+
+    appconfig = AppConfig()
+    appconfig.generators.register(add_a_role, name="role")
+    appconfig.generators.register(add_a_client, name="client")
+
+    with AppConfig._as_current(appconfig):
+        with test_options(generated=None, only="role,bogus"):
+            resources = await generate.resources()
+
+    assert called == ["role"]
+    assert [r.id for r in resources] == ["Role=r"]
+
+
+@pytest.mark.asyncio
+async def test_resources_unset_runs_every_generator():
+    "With --only unset, every generator is called"
+    called = []
+
+    async def add_a_role(resources):
+        called.append("role")
+        resources.manage("Role=.*")
+
+    appconfig = AppConfig()
+    appconfig.generators.register(add_a_role, name="role")
+
+    with AppConfig._as_current(appconfig):
+        with test_options(generated=None, only=None):
+            await generate.resources()
+
+    assert called == ["role"]

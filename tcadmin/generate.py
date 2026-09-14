@@ -23,10 +23,19 @@ generate_options.add(
         "`tc-admin generate --json`) instead of generating it.",
     )
 )
+generate_options.add(
+    click.option(
+        "--only",
+        metavar="NAMES",
+        default=None,
+        help="Comma-separated list of named generators to run (default: all). "
+        "Generators are named by passing `name=` to `appconfig.generators.register`.",
+    )
+)
 
 
-@with_options("generated")
-async def resources(generated=None):
+@with_options("generated", "only")
+async def resources(generated=None, only=None):
     """
     Generate the desired resources, or load a previously generated set from disk.
     """
@@ -35,8 +44,15 @@ async def resources(generated=None):
             return Resources.from_json(json.load(f))
 
     appconfig = AppConfig.current()
+    generators = appconfig.generators
+    if only:
+        wanted = [name.strip() for name in only.split(",") if name.strip()]
+        for name in sorted(set(wanted) - set(generators.names)):
+            click.echo(f"Warning: ignoring unknown resource generator: {name}", err=True)
+        generators = generators.filter(wanted)
+
     resources = Resources()
-    await appconfig.generators._call_all(resources)
+    await generators._call_all(resources)
     for mod in appconfig.modifiers:
         resources = await mod(resources)
     return resources

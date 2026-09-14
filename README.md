@@ -121,6 +121,16 @@ async def update_resources(resources):
         resources.add(Secret(name="top-secret/cookie-recipe"))
 ```
 
+Generators can be registered under a name, allowing users to select a subset of them to run with the `--only` option (e.g., `tc-admin generate --only hooks,roles`):
+
+```python
+appconfig.generators.register(update_hooks, name="hooks")
+appconfig.generators.register(update_roles, name="roles")
+```
+
+By default, every registered generator runs.
+Names given to `--only` that don't match a registered generator are ignored, with a warning printed to stderr.
+
 ### Modifiers
 
 Modifiers are responsible for modifying an existing set of resources.

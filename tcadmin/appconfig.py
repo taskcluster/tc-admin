@@ -24,17 +24,41 @@ class CallablesRegistry:
         self.callables = []
         self.name = name
 
-    def register(self, callable):
-        self.callables.append(callable)
-        return callable
+    def register(self, callable=None, *, name=None):
+        """Register a callable, optionally under a name that can later be used to
+        select a subset of registered callables (see `filter`).  Can be used as
+        a bare decorator (`@registry.register`), a decorator with a name
+        (`@registry.register(name="foo")`), or called directly
+        (`registry.register(fn)` / `registry.register(fn, name="foo")`)."""
+
+        def do_register(fn):
+            self.callables.append((name or fn.__name__, fn))
+            return fn
+
+        if callable is None:
+            return do_register
+        return do_register(callable)
+
+    @property
+    def names(self):
+        "Names under which callables were registered, in registration order"
+        return [name for name, _ in self.callables]
+
+    def filter(self, names):
+        """Return a new registry containing only the callables registered under
+        one of the given names."""
+        names = set(names)
+        rv = CallablesRegistry(self.name)
+        rv.callables = [(n, c) for n, c in self.callables if n in names]
+        return rv
 
     def __iter__(self):
-        return self.callables.__iter__()
+        return (callable for _, callable in self.callables)
 
     async def _call_all(self, *args, **kwargs):
         """Call all of the callables at the same time, waiting until they all
         complete."""
-        await asyncio.gather(*(c(*args, **kwargs) for c in self.callables))
+        await asyncio.gather(*(c(*args, **kwargs) for c in self))
 
 
 class OptionsRegistry:
