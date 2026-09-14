@@ -8,6 +8,14 @@ import asyncio
 from ..resources import Resources
 from . import hooks, clients, roles, worker_pools, secrets
 
+fetch_fns = {
+    "Client": clients.fetch_clients,
+    "Role": roles.fetch_roles,
+    "Hook": hooks.fetch_hooks,
+    "Secret": secrets.fetch_secrets,
+    "WorkerPool": worker_pools.fetch_worker_pools,
+}
+
 
 async def resources(managed):
     """
@@ -15,11 +23,7 @@ async def resources(managed):
     """
     resources = Resources([], managed)
 
-    await asyncio.gather(
-        clients.fetch_clients(resources),
-        roles.fetch_roles(resources),
-        hooks.fetch_hooks(resources),
-        worker_pools.fetch_worker_pools(resources),
-        secrets.fetch_secrets(resources),
-    )
+    kinds = {m.split("=", 1)[0] for m in managed}
+    fetchers = {fetch_fns[kind](resources) for kind in kinds if kind in fetch_fns}
+    await asyncio.gather(*fetchers)
     return resources
