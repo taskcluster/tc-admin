@@ -139,8 +139,10 @@ class Resources:
     )
     managed = attr.ib(
         type=MatchList,
-        converter=lambda managed: MatchList(managed),
-        default=MatchList([]),
+        converter=lambda managed: managed
+        if isinstance(managed, MatchList)
+        else MatchList(managed),
+        default=attr.Factory(lambda: MatchList([])),
     )
 
     def __attrs_post_init__(self):
@@ -177,9 +179,9 @@ class Resources:
             self.add(resource, _skip_verify=True)
         self._verify()
 
-    def manage(self, pattern):
+    def manage(self, pattern, excludes=()):
         "Add the given pattern to the list of managed resources"
-        self.managed.add(pattern)
+        self.managed.add(pattern, excludes=excludes)
 
     def filter(self, pattern):
         """Return a new Resources object with only resources matching the given regexp. The
@@ -214,7 +216,7 @@ class Resources:
     def __str__(self):
         self._verify()
         return "managed:\n{}\n\nresources:\n{}".format(
-            "\n".join("  - " + m for m in self.managed),
+            textwrap.indent(str(self.managed), "  "),
             textwrap.indent("\n\n".join(str(r) for r in self), "  "),
         )
 
@@ -224,7 +226,10 @@ class Resources:
     def to_json(self):
         "Convert to a JSON-able data structure"
         self._verify()
-        return {"resources": [r.to_json() for r in self], "managed": list(self.managed)}
+        return {
+            "resources": [r.to_json() for r in self],
+            "managed": self.managed.to_json(),
+        }
 
     @classmethod
     def from_json(cls, json):
