@@ -4,6 +4,8 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
+import re
+
 import pytest
 
 from tcadmin.resources import Resources, Hook
@@ -87,3 +89,19 @@ async def test_fetch_hook_managed_filter(Hooks, make_hook):
     await fetch_hooks(resources)
     assert list(resources) == sorted([Hook.from_api(h) for h in hooks[:3]])
     assert Hooks.listHookCalls == ["garbage", "imbstack", "project:gecko"]
+
+
+@pytest.mark.asyncio
+async def test_fetch_hook_managed_filter_escaped_prefix(Hooks, make_hook):
+    """
+    A managed pattern built with `re.escape` (which escapes `-` with a
+    backslash) must still be recognized as matching its hookGroupId's
+    prefix.
+    """
+    resource_id = "Hook=project-fuzzing/bugmon"
+    resources = Resources([], [re.escape(resource_id) + "$"])
+    hooks = [make_hook(hookGroupId="project-fuzzing", hookId="bugmon")]
+    Hooks.hooks.extend(hooks)
+    await fetch_hooks(resources)
+    assert list(resources) == [Hook.from_api(hooks[0])]
+    assert Hooks.listHookCalls == ["project-fuzzing"]

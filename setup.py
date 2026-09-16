@@ -22,6 +22,7 @@ setup(
         "aiohttp>=3.8.0,<3.15",
         "pytest>=7.0.0,<9.2",
         "pyyaml~=6.0",
+        "regex",
     ],
     classifiers=[
         'Programming Language :: Python :: 3.9',
