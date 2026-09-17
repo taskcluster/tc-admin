@@ -222,7 +222,9 @@ def test_resources_json_roundtrip_with_real_resources(appconfig):
     reconstructed = Resources.from_json(blob)
 
     assert list(reconstructed) == list(rsrcs)
-    assert list(reconstructed.managed) == list(rsrcs.managed)
+    assert [entry.include for entry in reconstructed.managed] == [
+        entry.include for entry in rsrcs.managed
+    ]
 
 
 def test_resources_add_unmanaged_prohibited():
@@ -239,6 +241,47 @@ def test_resources_manages():
     rsrcs.manage("Thing=x")
     assert rsrcs.managed.matches("Thing=x")
     assert not rsrcs.managed.matches("Thing=y")
+
+
+def test_resources_manage_with_excludes():
+    "manage() accepts excludes, carving a sub-pattern out of what's managed"
+    rsrcs = Resources([], [])
+    rsrcs.manage("Thing=.*", excludes=["Thing=x.*"])
+    assert rsrcs.managed.matches("Thing=y")
+    assert not rsrcs.managed.matches("Thing=x1")
+
+
+def test_resources_filter_preserves_excludes():
+    "filter() must not lose excludes from the managed list"
+    rsrcs = Resources([], [])
+    rsrcs.manage("Thing=.*", excludes=["Thing=x.*"])
+
+    filtered = rsrcs.filter(".*")
+
+    assert filtered.managed.matches("Thing=y")
+    assert not filtered.managed.matches("Thing=x1")
+
+
+def test_resources_map_preserves_excludes():
+    "map() must not lose excludes from the managed list"
+    rsrcs = Resources([], [])
+    rsrcs.manage("Thing=.*", excludes=["Thing=x.*"])
+
+    mapped = rsrcs.map(lambda r: r)
+
+    assert mapped.managed.matches("Thing=y")
+    assert not mapped.managed.matches("Thing=x1")
+
+
+def test_resources_to_json_preserves_excludes():
+    "to_json()/from_json() must not lose excludes from the managed list"
+    rsrcs = Resources([], [])
+    rsrcs.manage("Thing=.*", excludes=["Thing=x.*"])
+
+    reconstructed = Resources.from_json(rsrcs.to_json())
+
+    assert reconstructed.managed.matches("Thing=y")
+    assert not reconstructed.managed.matches("Thing=x1")
 
 
 def test_resources_verify_duplicates_prohibited_constructor():
@@ -282,6 +325,22 @@ def test_resources_str():
         Thing=y:
           thingId: y
           value: 1"""
+    )
+
+
+def test_resources_str_shows_excludes():
+    "Excludes must be visible in the human-readable managed list, not hidden"
+    resources = Resources([], [])
+    resources.manage("Thing=.*", excludes=["Thing=x.*"])
+    assert str(resources) == textwrap.dedent(
+        """\
+      managed:
+        - Thing=.*
+          Excluding:
+            - Thing=x.*
+
+      resources:
+      """
     )
 
 

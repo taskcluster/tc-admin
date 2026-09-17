@@ -57,7 +57,7 @@ async def test_resources_loads_from_path_without_generating(tmp_path):
 
     assert called == []
     assert [r.id for r in resources] == ["Role=r"]
-    assert list(resources.managed) == ["Role=.*"]
+    assert [entry.include for entry in resources.managed] == ["Role=.*"]
 
 
 @pytest.mark.asyncio

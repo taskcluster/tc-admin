@@ -20,7 +20,7 @@ async def fetch_hooks(resources):
         # Taskcluster API. We use the `regex` package for partial match
         # support.
         is_managed = any(
-            regex.match(m, idPrefix, partial=True) for m in resources.managed
+            regex.match(m.include, idPrefix, partial=True) for m in resources.managed
         )
         if not is_managed:
             continue

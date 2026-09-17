@@ -23,7 +23,7 @@ async def resources(managed):
     """
     resources = Resources([], managed)
 
-    kinds = {m.split("=", 1)[0] for m in managed}
+    kinds = {entry.include.split("=", 1)[0] for entry in resources.managed}
     fetchers = {fetch_fns[kind](resources) for kind in kinds if kind in fetch_fns}
     await asyncio.gather(*fetchers)
     return resources
