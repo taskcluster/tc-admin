@@ -4,6 +4,8 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
+import json
+
 import attr
 
 from .resources import Resource
@@ -15,7 +17,11 @@ class WorkerPool(Resource):
     workerPoolId = attr.ib(type=str)
     description = attr.ib(type=str, converter=description_converter)
     owner = attr.ib(type=str)
-    config = attr.ib(type=dict, metadata={"formatter": json_formatter})
+    config = attr.ib(
+        type=dict,
+        converter=lambda config: WorkerPool._sort_launch_configs(config),
+        metadata={"formatter": json_formatter},
+    )
     emailOnError = attr.ib(type=bool)
     providerId = attr.ib(type=str)
 
@@ -25,7 +31,8 @@ class WorkerPool(Resource):
 
     @classmethod
     def _sort_launch_configs(cls, config):
-        "Ensure launchConfigs are sorted by location for cleaner `tc-admin diff`"
+        """Ensure launchConfigs are sorted by location for cleaner `tc-admin diff`,
+        breaking ties by content since the API returns them in arbitrary order"""
 
         def sort_key(lc):
             if "zone" in lc:
@@ -36,9 +43,16 @@ class WorkerPool(Resource):
                 return lc["armDeployment"]["parameters"]["location"]["value"]  # azure ARM templates
             if "region" in lc:
                 return lc["region"]  # aws
+            return ""
 
         if "launchConfigs" in config:
-            config["launchConfigs"].sort(key=sort_key)
+            config = {
+                **config,
+                "launchConfigs": sorted(
+                    config["launchConfigs"],
+                    key=lambda lc: (sort_key(lc), json.dumps(lc, sort_keys=True)),
+                ),
+            }
         return config
 
     @classmethod

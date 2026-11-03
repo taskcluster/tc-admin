@@ -94,3 +94,29 @@ def test_to_api(simple_wp):
         "providerId": "cirrus",
     }
     assert simple_wp.to_api() == api_result
+
+
+def test_launch_config_order_ignored():
+    "Generated and API worker pools compare equal regardless of launchConfigs order"
+    lcs = [
+        {"region": "us-east-1", "zone": "us-east-1a"},
+        {"region": "us-east-1", "zone": "us-east-1b"},
+        {"region": "us-east-1", "Placement": {"AvailabilityZone": "us-east-1a"}},
+        {"region": "us-east-1", "Placement": {"AvailabilityZone": "us-east-1b"}},
+    ]
+    kwargs = dict(
+        workerPoolId="pp/ww",
+        description="descr",
+        owner="owner",
+        emailOnError=True,
+        providerId="cirrus",
+    )
+    generated = WorkerPool(config={"launchConfigs": lcs}, **kwargs)
+    api = WorkerPool.from_api(
+        {
+            "config": {"launchConfigs": list(reversed(lcs))},
+            **kwargs,
+            "description": generated.description,
+        }
+    )
+    assert generated == api
