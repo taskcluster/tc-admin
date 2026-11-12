@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name="tc-admin",
-    version="6.0.1",
+    version="7.0.0",
     description="Administration of Taskcluster runtime configuration",
     long_description=long_description,
     long_description_content_type='text/markdown',
