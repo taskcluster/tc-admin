@@ -30,12 +30,11 @@ def make_entries(patterns):
 class MatchList:
     """
     A MatchList is a list of regular expressions that can determine whether a
-    given string matches one of those patterns.  Patterns are rooted at the
-    left, but should use `$` where required to match the end of the string.
+    given string matches one of those patterns.  A pattern must match the
+    whole string, so use `.*` to match a prefix.
 
-    Each pattern is stored as a `Match(include, excludes)` pair: `excludes` are
-    checked against the same string, from the same starting position, as
-    `include` itself -- they are not relative to wherever `include` matched.
+    Each pattern is stored as a `Match(include, excludes)` pair: `excludes`
+    must also match the whole string.
     """
 
     _entries = attr.ib(type=list, converter=make_entries)
@@ -63,8 +62,8 @@ class MatchList:
     def matches(self, item):
         "Return True if this item is matched by one of the patterns in the list"
         return any(
-            re.match(entry.include, item)
-            and not any(re.match(exclude, item) for exclude in entry.excludes)
+            re.fullmatch(entry.include, item)
+            and not any(re.fullmatch(exclude, item) for exclude in entry.excludes)
             for entry in self._entries
         )
 

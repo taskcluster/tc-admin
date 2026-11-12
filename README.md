@@ -351,7 +351,7 @@ The class has the following methods:
 
 * `resources.add(resource)` - add a resource to the collection.  The resource must be managed.
 * `resources.update(iterable)` - add an iterable full of resources to the collection.  All resources must be managed.
-* `resources.manage(pattern)` - consider reources matching regular expression string `pattern` to be managed
+* `resources.manage(pattern)` - consider resources whose whole ID matches regular expression string `pattern` to be managed
 * `resources.is_managed(id)` - return true if the given resource is managed
 * `resources.filter(pattern)` - return a new Resources object containing only resources matching the given regular expression string
 * `resources.map(functor)` - return a new Resources object, with fuctor applied to each resource.  This is typically used in modifiers.
@@ -545,16 +545,18 @@ async def test_something():
 ### MatchList
 
 A MatchList is a list of regular expressions that can determine whether a given
-string matches one of those patterns.  Patterns are rooted at the left, but
-should use `$` where required to match the end of the string.
+string matches one of those patterns.  A pattern must match the whole string,
+so use `.*` to match a prefix.
 
 ```python
 from tcadmin.util.matchlist import MatchList
 
 ml = MatchList()
-ml.add("fo+$")
-ml.add("ba+r$")
+ml.add("fo+")
+ml.add("ba+r.*")
 assert ml.matches("foo")
+assert not ml.matches("food")
+assert ml.matches("barn")
 ```
 
 This functionality is used to track managed resources, but may be useful otherwise.

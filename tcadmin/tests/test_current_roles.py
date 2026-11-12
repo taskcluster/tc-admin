@@ -63,7 +63,7 @@ async def test_fetch_roles_managed(AuthForRoles, make_role):
 @pytest.mark.asyncio
 async def test_fetch_roles_unmanaged(AuthForRoles, make_role):
     "When a role is present and unmanaged, it is not included"
-    resources = Resources([], ["Role=managed*"])
+    resources = Resources([], ["Role=managed.*"])
     api_role1 = make_role(roleId="managed-role")
     api_role2 = make_role(roleId="un-managed-role")
     AuthForRoles.roles.extend([api_role1, api_role2])

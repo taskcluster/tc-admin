@@ -137,13 +137,13 @@ def test_resource_formatter():
 
 def test_resources_sorted():
     "Resources are always sorted"
-    coll = Resources([Thing("z", "3"), Thing("x", "1"), Thing("y", "2")], ["Thing=*"])
+    coll = Resources([Thing("z", "3"), Thing("x", "1"), Thing("y", "2")], ["Thing=.*"])
     assert [r.thingId for r in coll] == ["x", "y", "z"]
 
 
 def test_resources_filter():
     coll = Resources(
-        [Thing("abc", "3"), Thing("abd", "1"), Thing("dbc", "2")], ["Thing=*"]
+        [Thing("abc", "3"), Thing("abd", "1"), Thing("dbc", "2")], ["Thing=.*"]
     ).filter("hin.=a")
     assert [r.thingId for r in coll] == ["abc", "abd"]
 
@@ -160,10 +160,10 @@ def test_resources_to_json():
     "Resources.to_json produces the expected data structure"
     rsrcs = Resources(
         [Thing("x", "1"), Thing("y", "1"), ListThing("lt", ["1", "2"])],
-        ["Thing=*", "ListThing=*"],
+        ["Thing=.*", "ListThing=.*"],
     )
     assert rsrcs.to_json() == {
-        "managed": ["Thing=*", "ListThing=*"],
+        "managed": ["Thing=.*", "ListThing=.*"],
         "resources": [
             {"kind": "ListThing", "listThingId": "lt", "things": ["1", "2"]},
             {"kind": "Thing", "thingId": "x", "value": "1"},
@@ -175,7 +175,7 @@ def test_resources_to_json():
 def test_resources_from_json():
     "Resources.from_json consumes a data structure and produces the expected result"
     json = {
-        "managed": ["ListThing=*", "Thing=*"],
+        "managed": ["ListThing=.*", "Thing=.*"],
         "resources": [
             {"kind": "ListThing", "listThingId": "lt", "things": ["1", "2"]},
             {"kind": "Thing", "thingId": "x", "value": "1"},
@@ -184,7 +184,7 @@ def test_resources_from_json():
     }
     assert Resources.from_json(json) == Resources(
         [Thing("x", "1"), ListThing("lt", ["1", "2"]), Thing("y", "1")],
-        ["ListThing=*", "Thing=*"],
+        ["ListThing=.*", "Thing=.*"],
     )
 
 
@@ -240,6 +240,7 @@ def test_resources_manages():
     rsrcs = Resources([], [])
     rsrcs.manage("Thing=x")
     assert rsrcs.managed.matches("Thing=x")
+    assert not rsrcs.managed.matches("Thing=xy")
     assert not rsrcs.managed.matches("Thing=y")
 
 
@@ -302,19 +303,19 @@ def test_resources_verify_duplicates_prohibited():
 def test_resources_verify_unmanaged_prohibited():
     "Duplicate resources are not allowed"
     with pytest.raises(RuntimeError) as exc:
-        Resources([Thing("x", "1"), ListThing("y", [])], ["Thing=*"])
+        Resources([Thing("x", "1"), ListThing("y", [])], ["Thing=.*"])
     assert "unmanaged resources: ListThing=y" in str(exc.value)
 
 
 def test_resources_str():
     "Resources are stringified in order"
     resources = Resources(
-        [Thing("x", "1"), Thing("y", "1")], ["Thing=*", "OtherStuff=.*"]
+        [Thing("x", "1"), Thing("y", "1")], ["Thing=.*", "OtherStuff=.*"]
     )
     assert str(resources) == textwrap.dedent(
         """\
       managed:
-        - Thing=*
+        - Thing=.*
         - OtherStuff=.*
 
       resources:

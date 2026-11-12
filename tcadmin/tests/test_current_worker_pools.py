@@ -38,7 +38,7 @@ def WorkerManager(mocker):
 
 @pytest.mark.asyncio
 async def test_fetch_worker_pools(WorkerManager):
-    resources = Resources([], ["WorkerPool=managed*"])
+    resources = Resources([], ["WorkerPool=managed.*"])
     WorkerManager.workerPools = [
         {
             "config": {"is": "config", "launchConfigs": [{"zone": "b"}, {"zone": "a"}]},

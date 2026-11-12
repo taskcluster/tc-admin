@@ -68,7 +68,7 @@ async def test_fetch_clients_managed(AuthForClients, make_client):
 @pytest.mark.asyncio
 async def test_fetch_clients_unmanaged(AuthForClients, make_client):
     "When a client is present and unmanaged, it is not included"
-    resources = Resources([], ["Client=managed*"])
+    resources = Resources([], ["Client=managed.*"])
     api_client1 = make_client(clientId="managed-client")
     api_client2 = make_client(clientId="un-managed-client")
     AuthForClients.clients.extend([api_client1, api_client2])

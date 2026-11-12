@@ -59,7 +59,7 @@ async def test_fetch_secrets_managed(Secrets):
     with test_options(with_secrets=True):
         Secrets.secrets.append({"name": "secret1", "secret": "AA"})
         Secrets.secrets.append({"name": "unmanaged-secret2"})
-        resources = Resources([], ["Secret=secret"])
+        resources = Resources([], ["Secret=secret1"])
         await fetch_secrets(resources)
         assert list(sorted(resources)) == [Secret(name="secret1", secret="AA")]
 
