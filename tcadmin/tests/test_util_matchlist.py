@@ -24,10 +24,25 @@ def test_MatchList_matches_longer_star():
     assert ml.matches("axyz")
 
 
-def test_MatchList_match_rooted():
+def test_MatchList_matches_whole_string():
     ml = MatchList(["ab+"])
+    assert ml.matches("abb")
+    assert not ml.matches("abc")
+    assert not ml.matches("xab")
+
+
+def test_MatchList_matches_prefix_with_dot_star():
+    ml = MatchList(["ab.*"])
+    assert ml.matches("ab")
     assert ml.matches("abc")
-    assert not ml.matches("xabc")
+    assert not ml.matches("xab")
+
+
+def test_MatchList_excludes_match_whole_string():
+    ml = MatchList([])
+    ml.add("a.*", excludes=["ab"])
+    assert not ml.matches("ab")
+    assert ml.matches("abx")
 
 
 def test_MatchList_add_with_excludes():

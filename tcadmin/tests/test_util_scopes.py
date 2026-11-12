@@ -21,7 +21,7 @@ def test_from_resources():
             Role(roleId="role1", description="1", scopes=["one"]),
             Role(roleId="role2", description="2", scopes=["two"]),
         ],
-        managed=["Role=role*"],
+        managed=["Role=role.*"],
     )
     res = Resolver.from_resources(resources)
     assert sorted(res.expandScopes(["assume:role1"])) == ["assume:role1", "one"]
