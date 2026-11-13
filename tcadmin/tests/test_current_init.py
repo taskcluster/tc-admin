@@ -59,3 +59,30 @@ async def test_resources_honours_fetch_fns_patch(mocker):
     await current_resources(["Client=.*"])
 
     fake_fetch_clients.assert_called_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "pattern,kinds",
+    [
+        ("Hook=project-fuzzing/.*", {"Hook"}),
+        (r"^Hook=project\-fuzzing/.*$", {"Hook"}),
+        (r"Secret=repo:github\.com/foo/bar:.*", {"Secret"}),
+        ("WorkerPool=(?!proj-x/).*", {"WorkerPool"}),
+        ("(?!Role=foo).*", set(tc_current.fetch_fns)),
+        ("(?!Hook=project-fuzzing/|Role=repo:x).*", set(tc_current.fetch_fns)),
+        ("Role=foo|Client=bar", set(tc_current.fetch_fns)),
+        ("(?:Role|Client)=.*", set(tc_current.fetch_fns)),
+        ("Role=?.*", set(tc_current.fetch_fns)),
+        (".*", set(tc_current.fetch_fns)),
+    ],
+)
+async def test_resources_fetches_kinds_pattern_could_match(fetchers, pattern, kinds):
+    "Every kind that a pattern could match is fetched"
+    await current_resources([pattern])
+
+    for kind, fetcher in fetchers.items():
+        if kind in kinds:
+            fetcher.assert_called_once()
+        else:
+            fetcher.assert_not_called()
