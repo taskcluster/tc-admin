@@ -86,3 +86,23 @@ async def test_resources_fetches_kinds_pattern_could_match(fetchers, pattern, ki
             fetcher.assert_called_once()
         else:
             fetcher.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "patterns,kinds",
+    [
+        (["Hook=project-fuzzing/.*", "(?!Role=foo).*"], set(tc_current.fetch_fns)),
+        (["(?:Role|Client)=.*", "Secret=project/.*"], set(tc_current.fetch_fns)),
+        (["Hook=project-fuzzing/.*", "Secret=project/fuzzing/.*"], {"Hook", "Secret"}),
+    ],
+)
+async def test_resources_fetches_union_of_kinds(fetchers, patterns, kinds):
+    "The kinds fetched are the union of the kinds each pattern could match"
+    await current_resources(patterns)
+
+    for kind, fetcher in fetchers.items():
+        if kind in kinds:
+            fetcher.assert_called_once()
+        else:
+            fetcher.assert_not_called()
