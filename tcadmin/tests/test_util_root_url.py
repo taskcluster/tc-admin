@@ -32,7 +32,7 @@ async def test_root_url_from_env_trailing_slash(appconfig, root_url, monkeypatch
 @pytest.mark.asyncio
 async def test_root_url_not_set(appconfig, root_url, monkeypatch):
     monkeypatch.delenv("TASKCLUSTER_ROOT_URL", raising=False)
-    with pytest.raises(click.UsageError):
+    with pytest.raises(click.ClickException):
         await root_url()
 
 
@@ -65,12 +65,12 @@ async def test_root_url_from_appconfig_fn(appconfig, root_url, monkeypatch):
 async def test_root_url_from_appconfig_diferent(appconfig, root_url, monkeypatch):
     monkeypatch.setenv("TASKCLUSTER_ROOT_URL", "https://tc-testing.example.com")
     appconfig.root_url = "https://something-else.example.com"
-    with pytest.raises(click.UsageError):
+    with pytest.raises(click.ClickException):
         await root_url()
 
 
 @pytest.mark.asyncio
 async def test_root_url_invalid(root_url, monkeypatch):
     monkeypatch.setenv("TASKCLUSTER_ROOT_URL", "https://tc-testing.example.com/some/subpath")
-    with pytest.raises(click.UsageError):
+    with pytest.raises(click.ClickException):
         await root_url()

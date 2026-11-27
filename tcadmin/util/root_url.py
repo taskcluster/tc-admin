@@ -18,7 +18,7 @@ _url_re = re.compile("^https?://[a-z0-9.-]+/?$")
 def _normalize(root_url):
     """Normalize a rootUrl, stripping trailing `/` and checking its format."""
     if not _url_re.match(root_url):
-        raise click.UsageError(f"Given root URL {root_url} is not a valid root URL")
+        raise click.ClickException(f"Given root URL {root_url} is not a valid root URL")
     return root_url.rstrip('/')
 
 
@@ -35,10 +35,10 @@ async def root_url():
             root_url = await appconfig.root_url()
         if "TASKCLUSTER_ROOT_URL" in os.environ:
             if os.environ["TASKCLUSTER_ROOT_URL"] != root_url:
-                raise click.UsageError(f"TASKCLUSTER_ROOT_URL does not match {root_url}")
+                raise click.ClickException(f"TASKCLUSTER_ROOT_URL does not match {root_url}")
         _root_url = _normalize(root_url)
     else:
         if "TASKCLUSTER_ROOT_URL" not in os.environ:
-            raise click.UsageError("TASKCLUSTER_ROOT_URL must be set")
+            raise click.ClickException("TASKCLUSTER_ROOT_URL must be set")
         _root_url = _normalize(os.environ["TASKCLUSTER_ROOT_URL"])
     return _root_url
