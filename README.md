@@ -351,9 +351,9 @@ The class has the following methods:
 
 * `resources.add(resource)` - add a resource to the collection.  The resource must be managed.
 * `resources.update(iterable)` - add an iterable full of resources to the collection.  All resources must be managed.
-* `resources.manage(pattern)` - consider resources whose whole ID matches regular expression string `pattern` to be managed
+* `resources.manage(pattern, excludes=())` - consider resources whose whole ID matches regular expression string `pattern`, and none of the `excludes` patterns, to be managed
 * `resources.is_managed(id)` - return true if the given resource is managed
-* `resources.filter(pattern)` - return a new Resources object containing only resources matching the given regular expression string
+* `resources.filter(pattern)` - return a new Resources object containing only resources whose ID contains a match for the given regular expression string
 * `resources.map(functor)` - return a new Resources object, with fuctor applied to each resource.  This is typically used in modifiers.
 
 Resources must be unique -- tc-admin cannot manage multiple hooks with the same name, for example.
@@ -546,17 +546,22 @@ async def test_something():
 
 A MatchList is a list of regular expressions that can determine whether a given
 string matches one of those patterns.  A pattern must match the whole string,
-so use `.*` to match a prefix.
+so use `.*` to match a prefix.  A pattern can have `excludes`, which also must
+match the whole string.
 
 ```python
 from tcadmin.util.matchlist import MatchList
 
-ml = MatchList()
+ml = MatchList([])
 ml.add("fo+")
 ml.add("ba+r.*")
 assert ml.matches("foo")
 assert not ml.matches("food")
 assert ml.matches("barn")
+
+ml.add("Role=.*", excludes=["Role=hook-id:.*"])
+assert ml.matches("Role=admin")
+assert not ml.matches("Role=hook-id:project-foo/bar")
 ```
 
 This functionality is used to track managed resources, but may be useful otherwise.
