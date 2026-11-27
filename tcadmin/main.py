@@ -24,9 +24,9 @@ from . import options
 def pre_apply_check():
     if not os.environ.get("TASKCLUSTER_PROXY_URL"):
         if not os.environ.get("TASKCLUSTER_CLIENT_ID"):
-            raise click.UsageError("TASKCLUSTER_CLIENT_ID must be set")
+            raise click.ClickException("TASKCLUSTER_CLIENT_ID must be set")
         if not os.environ.get("TASKCLUSTER_ACCESS_TOKEN"):
-            raise click.UsageError("TASKCLUSTER_ACCESS_TOKEN must be set")
+            raise click.ClickException("TASKCLUSTER_ACCESS_TOKEN must be set")
 
 
 pre_cmd_checks = {
@@ -47,8 +47,27 @@ def run_async(fn):
     return wrap
 
 
-def main(appconfig):
-    @click.group()
+class Group(click.Group):
+    """A command group whose usage errors exit 1, as `diff` exits 2 when it finds
+    changes, rather than click's default of 2"""
+
+    def make_context(self, *args, **kwargs):
+        try:
+            return super().make_context(*args, **kwargs)
+        except click.UsageError as e:
+            e.exit_code = 1
+            raise
+
+    def invoke(self, ctx):
+        try:
+            return super().invoke(ctx)
+        except click.UsageError as e:
+            e.exit_code = 1
+            raise
+
+
+def cli(appconfig):
+    @click.group(cls=Group)
     def cmd():
         """Manage Taskcluster configuration.
 
@@ -95,7 +114,10 @@ def main(appconfig):
     @run_async
     @with_aiohttp_session
     async def diffCommand(**kwargs):
-        "Compare the the current and expected runtime configuration"
+        """Compare the the current and expected runtime configuration
+
+        Exits 0 if there are no changes, 2 if there are changes, and 1 on any
+        error."""
         run_pre_check("diff")
         with AppConfig._as_current(appconfig):
             expected = await generate.resources()
@@ -133,4 +155,8 @@ def main(appconfig):
             actual = await current.resources(expected.managed)
             await apply.apply_changes(expected, actual)
 
-    cmd()
+    return cmd
+
+
+def main(appconfig):
+    cli(appconfig)()
